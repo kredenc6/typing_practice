@@ -1,15 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
+import { ThemeProvider } from "@material-ui/core";
 import Settings from "./components/Settings/Settings";
 import TextDisplay from "./components/TextDisplay/TextDisplay";
 import Timer from "./accessories/Timer";
 import { Row } from "./textFunctions/transformTextToSymbolRows";
-import { defaultTheme, ThemeProvider } from "./styles/theme";
+
+import appTheme from "./styles/themes";
+import importedTextDisplayTheme from "./styles/textDisplayTheme/textDisplayTheme";
 
 export default function App() {
   const [text, setText] = useState("");
   const [timer, setTimer] = useState(new Timer());
   const [mistypedWords, setMistypedWords] = useState<Row["words"]>([]);
   const [mistypedSymbols, setMistypedSymbols] = useState<string[]>([]);
+  const [textDisplayTheme, setTextDisplayTheme] = useState(importedTextDisplayTheme);
+
+  // const textDisplayThemeContext = createContext({ textDisplayTheme, setTextDisplayTheme });
 
   useEffect(() => {
     if(mistypedWords.length) {
@@ -26,11 +32,19 @@ export default function App() {
   }, [mistypedWords, timer])
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <ThemeProvider theme={appTheme}>
       <div>
-        <Settings setText={setText} text={text} />
+        <Settings
+          setText={setText}
+          setTextDisplayTheme={setTextDisplayTheme}
+          text={text}
+          textDisplayTheme={textDisplayTheme} />
         <p style={{ fontSize: "30px" }}>This is just a test text.</p>
-        <TextDisplay setMistypedWords={setMistypedWords} text={text} timer={timer} />
+        <TextDisplay
+          setMistypedWords={setMistypedWords}
+          text={text}
+          textDisplayTheme={textDisplayTheme}
+          timer={timer} />
       </div>
     </ThemeProvider>
   );

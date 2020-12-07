@@ -1,5 +1,5 @@
 import React from "react";
-import { createUseStyles } from "react-jss";
+import { makeStyles } from "@material-ui/core";
 
 interface Props {
   symbol: string;
@@ -7,7 +7,7 @@ interface Props {
   wasCorrect: boolean;
 }
 
-const useStyles = createUseStyles({
+const useStyles = makeStyles({
   textSymbol: {
     // color: ({ relativePosition }: Omit<Props, "symbol">) => {
     //   if(relativePosition > 0) return "grey";

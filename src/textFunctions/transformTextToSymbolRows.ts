@@ -28,7 +28,6 @@ const lineEndersRegexp = /[ .,!?;:)\]}']|\n+/;
 
 
 const sortTextToRows = (text: string, lineLength: number, symbolWidths: FontSymbolData["symbolWidths"]) => {
-  console.log(symbolWidths);
   const splittedText = text.match(splitterRegexp) as string[];
   
   const rows = splittedText.reduce((textLines, unsortedWord) => {
@@ -71,34 +70,6 @@ function calcWordLength(word: string, symbolWidths: FontSymbolData["symbolWidths
   }
   return wordLength;
 }
-
-
-// const sortTextToRows = (text: string, maxSymbolsPerRow: number) => {
-//   const splittedText = text.match(splitterRegexp) as string[];
-//   const rows = splittedText.reduce((textLines, unsortedWord) => {
-//     const currentTextLineNumber = textLines.length - 1;
-//     const currentTextLine = textLines[currentTextLineNumber];
-//     const currentTextLineLength = currentTextLine.reduce((textLineLength, word) => textLineLength + word.length, 0);
-
-//     // If the next word fits into the line lengtht determined by maxSymbolsPerRow or it is a line ender...
-//     if(
-//       currentTextLineLength + unsortedWord.length < maxSymbolsPerRow ||
-//       lineEndersRegexp.test(unsortedWord)) {
-
-//       return textLines.map((textLine, i) => { // ...put it in to the line...
-//         if(i === currentTextLineNumber) {
-//           return [...textLine, unsortedWord];
-//         }
-//         return textLine;
-//       });
-//     }
-
-//     return [...textLines, [unsortedWord]]; // ...otherwise create a new line with the word.
-    
-//   }, [[]] as Array<string[]>);
-  
-//   return rows;
-// };
 
 export const transformTextToSymbolRows = (text: string, lineLength: number, symbolWidths: FontSymbolData["symbolWidths"]) => {
   if(!text) return [];

@@ -1,20 +1,27 @@
 // font styles for displaying text
-type FontSize = "20px" | "30px" | "40px";
-type FontFamily = "Bitter" | "Comfortaa" | "Fira Code" | "Inconsolata" | "monospace" | "Roboto Mono" | "Trispace";
+export type FontSize = "20px" | "30px" | "40px";
+export type FontFamily = "Bitter" | "Comfortaa" | "Fira Code" | "Inconsolata" | "monospace" | "Roboto Mono" | "Trispace";
+type FontLocation = "google" | "local";
 
 export interface FontStyle {
   fontFamily: FontFamily;
   fontSize: FontSize;
-  location: "google" | "local";
+  fontLocation: FontLocation;
 }
 
 export interface FontSymbolData extends FontStyle {
   symbolWidths: {
-    [propName: string]: number;
+    [keyboardChar: string]: number;
   }
 }
 
-// theme
-export interface Theme {
-  textDisplayFontStyle: FontStyle;
-}
+export type FontFamilies = {
+  name: FontFamily;
+  location: FontLocation;
+}[]
+
+export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> =
+  Pick<T, Exclude<keyof T, Keys>> 
+  & {
+      [K in Keys]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<Keys, K>>>
+  }[Keys]

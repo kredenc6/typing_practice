@@ -1,19 +1,15 @@
-import React from "react";
-import { normalizeWhitespace } from "../../textFunctions/normalizeWhitespace";
+import React, { HTMLProps } from "react";
 
 interface Props {
-  setText: React.Dispatch<React.SetStateAction<string>>;
-  text: string;
+  handleTextChange: (text: string) => void;
 }
 
-export default function TextInput({ setText, text }: Props) {
+export default function TextInput({ handleTextChange, ...inputProps }: Props & HTMLProps<HTMLInputElement>) {
   return(
     <div>
       <input
-        name="textInput"
-        onChange={e => setText(normalizeWhitespace(e.target.value))}
-        type="text"
-        value={text} />
+        onChange={e => handleTextChange(e.target.value)}
+        {...inputProps} />
     </div>
   )
 }
