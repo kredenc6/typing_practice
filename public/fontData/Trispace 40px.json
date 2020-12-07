@@ -1,7 +1,7 @@
 {
   "fontFamily": "Trispace",
   "fontSize": "40px",
-  "location": "google",
+  "fontLocation": "google",
   "symbolWidths": {
     "0": 26,
     "1": 26,

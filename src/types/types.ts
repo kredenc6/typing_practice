@@ -9,7 +9,7 @@ export interface FontStyle {
   fontLocation: FontLocation;
 }
 
-export interface FontSymbolData extends FontStyle {
+export interface FontData extends FontStyle {
   symbolWidths: {
     [keyboardChar: string]: number;
   }

@@ -1,4 +1,4 @@
-import { FontSymbolData } from "../types/types";
+import { FontData } from "../types/types";
 
 type WordType = "word" | "whitespace" | "other";
 
@@ -27,7 +27,7 @@ const splitterRegexp = /[0-9\p{L}]+|\s+|[^0-9\p{L}\s+]/giu; // numbers or letter
 const lineEndersRegexp = /[ .,!?;:)\]}']|\n+/;
 
 
-const sortTextToRows = (text: string, lineLength: number, symbolWidths: FontSymbolData["symbolWidths"]) => {
+const sortTextToRows = (text: string, lineLength: number, symbolWidths: FontData["symbolWidths"]) => {
   const splittedText = text.match(splitterRegexp) as string[];
   
   const rows = splittedText.reduce((textLines, unsortedWord) => {
@@ -55,7 +55,7 @@ const sortTextToRows = (text: string, lineLength: number, symbolWidths: FontSymb
   return rows;
 };
 
-function calcWordLength(word: string, symbolWidths: FontSymbolData["symbolWidths"]) {
+function calcWordLength(word: string, symbolWidths: FontData["symbolWidths"]) {
   let wordLength = 0;
   for(const symbol of word) {
     if(symbol === " ") {
@@ -71,7 +71,13 @@ function calcWordLength(word: string, symbolWidths: FontSymbolData["symbolWidths
   return wordLength;
 }
 
-export const transformTextToSymbolRows = (text: string, lineLength: number, symbolWidths: FontSymbolData["symbolWidths"]) => {
+export const transformTextToSymbolRows =
+(
+  text: string,
+  lineLength: number,
+  symbolWidths: FontData["symbolWidths"],
+  mistypedSymbols = [] as number[]
+) => {
   if(!text) return [];
   const rowArray: Row[] = [];
   let symbolPosition = 0;
@@ -83,25 +89,35 @@ export const transformTextToSymbolRows = (text: string, lineLength: number, symb
     const words: WordObject[] = [];
     
     for(const word of row) {
+      let wordInSymbolObjects: SymbolObject[] = [];
+      let wasWordCorrect = true;
+      
+      for(const symbol of word) {
+        const wasSymbolCorrect = !mistypedSymbols.includes(symbolPosition);
+        
+        wordInSymbolObjects.push({
+          symbol,
+          symbolPosition: symbolPosition,
+          wasCorrect: wasSymbolCorrect
+        });
+        
+        symbolPosition++;
+        symbolsInRowCount++;
+
+        if(!wasSymbolCorrect) {
+          wasWordCorrect = false;
+        }
+      }
+
       const wordObject: WordObject = {
         type: determineWordType(word),
         string: word,
-        symbols: [],
+        symbols: wordInSymbolObjects,
         wordPosition,
         typedSpeed: -1,
-        wasCorrect: true
+        wasCorrect: wasWordCorrect
       };
-      let wordInSymbolObjects: SymbolObject[] = [];
-      
-      for(const symbol of word) {
-        wordInSymbolObjects.push({
-          symbol,
-          symbolPosition: symbolPosition++,
-          wasCorrect: true
-        });
-        symbolsInRowCount++;
-      }
-      wordObject.symbols = wordInSymbolObjects;
+
       words.push(wordObject);
       wordPosition++;
     };

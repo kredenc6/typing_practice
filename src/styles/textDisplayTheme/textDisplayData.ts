@@ -1,12 +1,13 @@
-import { FontFamilies, FontSize, FontStyle } from "../../types/types";
+import { FontFamilies, FontSize, FontData } from "../../types/types";
 
-const textDisplayTheme: FontStyle = {
+const defaultTextDisplayFontData: FontData = {
   fontFamily: "Fira Code",
   fontSize: "30px",
-  fontLocation: "google"
+  fontLocation: "google",
+  symbolWidths: {}
 };
 
-export default textDisplayTheme;
+export default defaultTextDisplayFontData;
 
 export const fontFamilies: FontFamilies = [
   {

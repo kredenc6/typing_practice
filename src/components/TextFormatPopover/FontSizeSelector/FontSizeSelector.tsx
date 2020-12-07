@@ -1,12 +1,12 @@
 import React from "react";
 import { ButtonGroup, Grid } from "@material-ui/core";
 import SelectableFontSizeButton from "../SelectableFontSizeButton/SelectableFontSizeButton";
-import { fontSizes } from "../../../styles/textDisplayTheme/textDisplayTheme";
-import { FontStyle } from "../../../types/types";
+import { fontSizes } from "../../../styles/textDisplayTheme/textDisplayData";
+import { FontSize, FontStyle } from "../../../types/types";
 
 interface Props {
   handleFontSizeChange: (fontSize: FontStyle["fontSize"]) => void;
-  textDisplayTheme: FontStyle;
+  activeFontSize: FontSize;
 }
 
 interface SelectableFontSizeButtonProps {
@@ -31,12 +31,12 @@ const SELECTABLE_FONT_SIZE_BUTTON_VARIABLES: SelectableFontSizeButtonProps = {
   }
 };
 
-export default function FontSizeSelector({ handleFontSizeChange, textDisplayTheme }: Props) {
+export default function FontSizeSelector({ handleFontSizeChange, activeFontSize }: Props) {
   const GridButtonComponents = fontSizes.map(fontSize => {
     return (
       <Grid item key={fontSize}>
         <SelectableFontSizeButton
-          disabled={textDisplayTheme.fontSize === fontSize}
+          disabled={activeFontSize === fontSize}
           onClick={() => handleFontSizeChange(fontSize)}
           typographyVariant={SELECTABLE_FONT_SIZE_BUTTON_VARIABLES[fontSize].variant}
           typeDescription={SELECTABLE_FONT_SIZE_BUTTON_VARIABLES[fontSize].typeDescription} />

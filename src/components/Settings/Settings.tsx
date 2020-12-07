@@ -4,29 +4,31 @@ import TextInput from "../TextInput/TextInput";
 import { Palette, Refresh, TextFormat } from "@material-ui/icons";
 import ButtonIconPopover from "../ButtonIconPopover/ButtonIconPopover";
 import TextFormatPopover from "../TextFormatPopover/TextFormatPopover";
-import { FontStyle } from "../../types/types";
+import { FontData, RequireAtLeastOne } from "../../types/types";
 import normalizeText from "../../textFunctions/normalizeText";
 
 
 interface Props {
+  fontData: FontData;
+  handleFontDataChange: (fieldsToUpdate: RequireAtLeastOne<Pick<FontData, "fontFamily" | "fontSize">>) => Promise<void>;
   setText: React.Dispatch<React.SetStateAction<string>>;
-  setTextDisplayTheme: React.Dispatch<React.SetStateAction<FontStyle>>;
   text: string;
-  textDisplayTheme: FontStyle;
 }
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ palette }) => ({
   settingsWrapper: {
     padding: "0.5rem 1rem",
-    border: "1px solid #555"
+    border: `1px solid ${palette.divider}`
   }
-});
+}));
 
-export default function Settings({ setText, setTextDisplayTheme, text, textDisplayTheme }: Props) {
+export default function Settings({ fontData, handleFontDataChange, setText, text }: Props) {
   const classes = useStyles();
   const handleTextChange = async (text: string) => {
     setText(await normalizeText(text));
   };
+
+  const { fontFamily, fontSize } = fontData;
 
   return(
     <div className={classes.settingsWrapper}>
@@ -36,8 +38,8 @@ export default function Settings({ setText, setTextDisplayTheme, text, textDispl
         IconComponent={Palette}
         PopoverContent={
           <TextFormatPopover
-            setTextDisplayTheme={setTextDisplayTheme}
-            textDisplayTheme={textDisplayTheme} />
+            handleFontDataChange={handleFontDataChange}
+            fontTheme={{ fontFamily, fontSize }} />
         } />
       <IconButton>
         <Refresh />

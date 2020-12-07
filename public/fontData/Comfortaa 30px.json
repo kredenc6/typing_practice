@@ -1,7 +1,7 @@
 {
   "fontFamily": "Comfortaa",
   "fontSize": "30px",
-  "location": "google",
+  "fontLocation": "google",
   "symbolWidths": {
     "0": 17,
     "1": 11,

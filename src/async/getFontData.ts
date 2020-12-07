@@ -1,6 +1,6 @@
-import { FontFamily, FontSize, FontSymbolData } from "../types/types";
+import { FontFamily, FontSize, FontData } from "../types/types";
 
-export default function getFontData(fontFamily: FontFamily, fontSize: FontSize): Promise<FontSymbolData | null> {
+export default function getFontData(fontFamily: FontFamily, fontSize: FontSize): Promise<FontData | null> {
   return fetch(`./fontData/${fontFamily} ${fontSize}.json`)
     .then(response => response.json())
     .catch(err => {

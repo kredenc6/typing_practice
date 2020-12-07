@@ -1,14 +1,14 @@
 import React from "react";
 import { Grid, MenuItem, Select, Typography } from "@material-ui/core";
-import { fontFamilies } from "../../../styles/textDisplayTheme/textDisplayTheme";
+import { fontFamilies } from "../../../styles/textDisplayTheme/textDisplayData";
 import { FontFamily } from "../../../types/types";
 
 interface Props {
-  fontFamily: FontFamily;
+  activeFontFamily: FontFamily;
   handleFontFamilyChange: (fontFamily: FontFamily) => void;
 }
 
-export default function FontFaceSelector({ handleFontFamilyChange, fontFamily }: Props) {
+export default function FontFaceSelector({ handleFontFamilyChange, activeFontFamily }: Props) {
   const MenuItemComponents = fontFamilies.map(({ name }) => {
     return <MenuItem key={name} value={name}>{name}</MenuItem>
   });
@@ -19,7 +19,7 @@ export default function FontFaceSelector({ handleFontFamilyChange, fontFamily }:
         <Typography>Font face:</Typography>
       </Grid>
       <Grid item>
-        <Select onChange={e => handleFontFamilyChange(e.target.value as FontFamily)} value={fontFamily}>
+        <Select onChange={e => handleFontFamilyChange(e.target.value as FontFamily)} value={activeFontFamily}>
           {MenuItemComponents}
         </Select>
       </Grid>

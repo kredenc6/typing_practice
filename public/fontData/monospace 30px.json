@@ -1,7 +1,7 @@
 {
   "fontFamily": "monospace",
   "fontSize": "30px",
-  "location": "local",
+  "fontLocation": "local",
   "symbolWidths": {
     "0": 17,
     "1": 17,

@@ -1,7 +1,7 @@
 {
   "fontFamily": "Fira Code",
   "fontSize": "30px",
-  "location": "google",
+  "fontLocation": "google",
   "symbolWidths": {
     "0": 18,
     "1": 18,

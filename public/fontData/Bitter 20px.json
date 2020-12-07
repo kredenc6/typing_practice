@@ -1,7 +1,7 @@
 {
   "fontFamily": "Bitter",
   "fontSize": "20px",
-  "location": "google",
+  "fontLocation": "google",
   "symbolWidths": {
     "0": 13,
     "1": 8,

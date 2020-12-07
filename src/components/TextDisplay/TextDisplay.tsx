@@ -1,33 +1,31 @@
 import React, { useEffect, useRef, useState } from "react";
 import { makeStyles } from "@material-ui/core";
-import WebFont from "webfontloader";
 import {
   calculateDisplayTextInnerWidth,
+  collectMistypedSymbolPositions,
   collectMistypedWords,
+  getWordTimeObject,
   getPositions,
   getWordObject,
   updateRowWithMistype,
-  updateRowWithWordTime,
+  updateWordTime,
   updateSymbolRows
 } from "./helpFunctions";
 import DisplayedRow from "../DisplayedRow/DisplayedRow";
 import { Row, transformTextToSymbolRows } from "../../textFunctions/transformTextToSymbolRows";
 import Timer from "../../accessories/Timer";
-import { FontStyle, FontSymbolData } from "../../types/types";
-import getFontData from "../../async/getFontData";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
-
-import loadFont from "../../async/loadFont"
+import { FontData } from "../../types/types";
 
 interface Props {
+  fontData: FontData;
   setMistypedWords: React.Dispatch<React.SetStateAction<Row["words"]>>;
   text: string;
-  textDisplayTheme: FontStyle;
   timer: Timer;
 }
 
 interface FontDataAndTextRef {
-  fontData: FontSymbolData | null;
+  fontData: FontData | null;
   text: string;
 }
 
@@ -38,16 +36,15 @@ const useStyles = makeStyles(({ palette }) => ({
     // height: "4rem",
     margin: "1rem auto",
     padding: "0.5rem 1rem",
-    fontFamily: ({ fontFamily }: FontStyle) => fontFamily,
-    fontSize: ({ fontSize }: FontStyle) => fontSize,
+    fontFamily: ({ fontFamily }: FontData) => fontFamily,
+    fontSize: ({ fontSize }: FontData) => fontSize,
     borderTop: `1px solid ${palette.divider}`,
     borderBottom: `1px solid ${palette.divider}`
   }
 }));
 
-//BUG mistyped words reset after fontData change
-export default function TextDisplay({ setMistypedWords, text, textDisplayTheme: fontStyle, timer }: Props) {
-  const [fontData, setFontData] = useState<FontSymbolData | null>(null);
+//BUG ctrl+v text throws
+export default function TextDisplay({ fontData, setMistypedWords, text, timer }: Props) {
   const [symbolRows, setSymbolRows] = useState<Row[]>([]);
   const [rowPosition, setRowPosition] = useState(0);
   const [wordPosition, setWordPosition] = useState(0);
@@ -55,9 +52,9 @@ export default function TextDisplay({ setMistypedWords, text, textDisplayTheme: 
   const [enteredSymbol, setEnteredSymbol] = useState("");
   const [keyPressCount, setKeyPressCount] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
-  const [wordTimer, setWordTimer] = useState(new Timer(2));
+  const [wordTimer] = useState(new Timer(2));
   
-  const styles = useStyles(fontData ? fontData : fontStyle);
+  const styles = useStyles(fontData);
   const textDisplayRef: React.MutableRefObject<null | HTMLDivElement> = useRef(null);
   const fontDataAndTextRef: React.MutableRefObject<FontDataAndTextRef> = useRef({ fontData, text });
 
@@ -85,34 +82,22 @@ export default function TextDisplay({ setMistypedWords, text, textDisplayTheme: 
       const updatedRow = updateRowWithMistype(symbolRows, rowPosition, wordPosition, cursorPosition);
       
       updateSymbolRows(setSymbolRows, updatedRow, rowPosition);
-
-    // on correctly typed symbol
+      
+      // on correctly typed symbol
     } else {
       const newCursorPosition = cursorPosition + 1;
       const {
         rowPosition: newRowPosition,
         wordPosition: newWordPosition
       } = getPositions(newCursorPosition, symbolRows, rowPosition);
-
+      
       setRowPosition(newRowPosition);
       setWordPosition(newWordPosition);
       setCursorPosition(newCursorPosition);
     }
-
+    
     setEnteredSymbol(""); // reset typed symbol
   }, [enteredSymbol, isFinished, setMistypedWords, cursorPosition, timer, text, symbolRows, rowPosition, wordPosition, wordTimer])
-
-  // on changed font style
-  useEffect(() => {
-    if(!fontStyle) return;
-    getFontData(fontStyle.fontFamily, fontStyle.fontSize)
-      .then(newFontData => {
-        if(!newFontData) return;
-        saveFontData(newFontData, setFontData);
-      })
-      .catch(err => console.log(err.message));
-
-  }, [fontStyle])
 
   // on did mount add keypress event listener
   useEffect(() => {
@@ -129,15 +114,21 @@ export default function TextDisplay({ setMistypedWords, text, textDisplayTheme: 
 
   // on pasted text or changed font
   useEffect(() => {
+    // return on null values
     if(!fontData || !textDisplayRef.current) return;
     
-    // return if it's just changed cursorPosition
+    // return if there are no symbolWidth data loaded
+    const noSymbolWidths = !Object.keys(fontData.symbolWidths).length;
+    if(noSymbolWidths) return;
+    
+    // continue with only text or fontData change
     if(areObjectValuesSame(fontDataAndTextRef.current, { fontData, text })) return;
     fontDataAndTextRef.current = { fontData, text };
 
+    const mistypedSymbolPositions = collectMistypedSymbolPositions(symbolRows);
     const { paddingLeft, paddingRight, width } = getComputedStyle(textDisplayRef.current); // example: 1234.56px
     const displayTextInnerWidth = calculateDisplayTextInnerWidth(width, paddingLeft, paddingRight);
-    const newSymbolRows = transformTextToSymbolRows(text, displayTextInnerWidth, fontData.symbolWidths);
+    const newSymbolRows = transformTextToSymbolRows(text, displayTextInnerWidth, fontData.symbolWidths, mistypedSymbolPositions);
     const {
       rowPosition: newRowPosition,
       wordPosition: newWordPosition
@@ -146,33 +137,16 @@ export default function TextDisplay({ setMistypedWords, text, textDisplayTheme: 
     setSymbolRows(newSymbolRows);
     setRowPosition(newRowPosition);
     setWordPosition(newWordPosition);
-  }, [cursorPosition, fontData, text])
+  }, [cursorPosition, fontData, symbolRows, text])
 
+  // word timer
   useEffect(() => {
     if(!symbolRows.length) return;
-    let adjustableRowPosition = rowPosition;
-    let wordObject = getWordObject(symbolRows, adjustableRowPosition, wordPosition);
+    
+    const wordTimeObject = getWordTimeObject(wordTimer, symbolRows, rowPosition, wordPosition);
+    if(!wordTimeObject) return;
 
-    if(!wordObject && adjustableRowPosition > 0) { // it's possible we moved to the next row - check the previous one
-      adjustableRowPosition -= 1;
-      wordObject = getWordObject(symbolRows, adjustableRowPosition, wordPosition);
-    }
-    if(!wordObject) {
-      throw new Error("Did not get the needed word object.");
-    }
-
-    if(wordTimer.isRunning && wordObject.type !== "word") {
-      wordTimer.stop();
-      const wordTime = wordTimer.getTime();
-      const previousWordPosition = wordObject.wordPosition - 1;
-      const updatedRow = updateRowWithWordTime(symbolRows[adjustableRowPosition], previousWordPosition, wordTime);
-      
-      updateSymbolRows(setSymbolRows, updatedRow, adjustableRowPosition);
-    }
-
-    if(!wordTimer.isRunning && wordObject.type === "word") {
-      wordTimer.start();
-    }
+    updateWordTime(symbolRows, setSymbolRows, wordTimeObject);
   }, [symbolRows, rowPosition, wordPosition, wordTimer])
 
   const DisplayedRowComponents = symbolRows.map((row, rowIndex) =>  
@@ -193,21 +167,3 @@ export default function TextDisplay({ setMistypedWords, text, textDisplayTheme: 
     </div>
   );
 };
-
-function saveFontData(fontData: FontSymbolData, setFontData: (value: React.SetStateAction<FontSymbolData | null>) => void) {
-  const { fontFamily, fontLocation } = fontData;
-  if(fontLocation === "local") {
-    setFontData(fontData);
-  } else {
-    const config = {
-      [fontLocation]: {
-        families: [fontFamily]
-      },
-      fontactive: () => {
-        setFontData(fontData);
-      }
-    };
-
-    loadFont(config);
-  }
-}

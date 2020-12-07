@@ -1,7 +1,7 @@
 {
   "fontFamily": "Inconsolata",
   "fontSize": "40px",
-  "location": "google",
+  "fontLocation": "google",
   "symbolWidths": {
     "0": 20,
     "1": 20,

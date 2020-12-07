@@ -2,27 +2,27 @@ import React from "react";
 import { Divider } from "@material-ui/core";
 import FontSizeSelector from "./FontSizeSelector/FontSizeSelector";
 import FontFaceSelector from "./FontFaceSelector/FontFaceSelector";
-import { FontFamily, FontSize, FontStyle } from "../../types/types";
+import { FontData, FontFamily, FontSize, FontStyle, RequireAtLeastOne } from "../../types/types";
 
 interface Props {
-  setTextDisplayTheme: React.Dispatch<React.SetStateAction<FontStyle>>;
-  textDisplayTheme: FontStyle;
+  handleFontDataChange: (fieldsToUpdate: RequireAtLeastOne<Pick<FontData, "fontFamily" | "fontSize">>) => Promise<void>;
+  fontTheme: Pick<FontStyle, "fontFamily" | "fontSize">;
 }
 
-export default function TextFormatPopover({ setTextDisplayTheme, textDisplayTheme }: Props) {
+export default function TextFormatPopover({ handleFontDataChange, fontTheme }: Props) {
   const handleFontSizeChange = (fontSize: FontSize) => {
-    setTextDisplayTheme(prev => ({ ...prev, fontSize }));
+    handleFontDataChange({fontSize});
   };
 
   const handleFontFamilyChange = (fontFamily: FontFamily) => {
-    setTextDisplayTheme(prev => ({ ...prev, fontFamily }));
+    handleFontDataChange({fontFamily});
   };
 
   return(
     <>
-      <FontSizeSelector handleFontSizeChange={handleFontSizeChange} textDisplayTheme={textDisplayTheme} />
+      <FontSizeSelector activeFontSize={fontTheme.fontSize} handleFontSizeChange={handleFontSizeChange} />
       <Divider />
-      <FontFaceSelector handleFontFamilyChange={handleFontFamilyChange} fontFamily={textDisplayTheme.fontFamily} />
+      <FontFaceSelector activeFontFamily={fontTheme.fontFamily} handleFontFamilyChange={handleFontFamilyChange} />
     </>
   );
 }

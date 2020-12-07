@@ -1,21 +1,41 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ThemeProvider } from "@material-ui/core";
 import Settings from "./components/Settings/Settings";
 import TextDisplay from "./components/TextDisplay/TextDisplay";
 import Timer from "./accessories/Timer";
 import { Row } from "./textFunctions/transformTextToSymbolRows";
-
+import getFontData from "./async/getFontData";
 import appTheme from "./styles/themes";
-import importedTextDisplayTheme from "./styles/textDisplayTheme/textDisplayTheme";
+import defaultTextDisplayData from "./styles/textDisplayTheme/textDisplayData";
+import { FontData, RequireAtLeastOne } from "./types/types";
+import loadFont from "./async/loadFont";
 
 export default function App() {
+  const [fontData, setFontData] = useState(defaultTextDisplayData);
   const [text, setText] = useState("");
   const [timer, setTimer] = useState(new Timer());
   const [mistypedWords, setMistypedWords] = useState<Row["words"]>([]);
   const [mistypedSymbols, setMistypedSymbols] = useState<string[]>([]);
-  const [textDisplayTheme, setTextDisplayTheme] = useState(importedTextDisplayTheme);
 
-  // const textDisplayThemeContext = createContext({ textDisplayTheme, setTextDisplayTheme });
+  const handleFontDataChange = async (fieldsToUpdate: RequireAtLeastOne<Pick<FontData, "fontFamily" | "fontSize">>) => {
+    const { fontFamily, fontSize } = { ...fontData, ...fieldsToUpdate };
+    const newFontData = await getFontData(fontFamily, fontSize);
+    if(!newFontData) return;
+    if(newFontData.fontLocation === "local") {
+      setFontData(newFontData);
+    } else {
+      loadFont(newFontData, setFontData);
+    }
+  };
+
+  useEffect(() => {
+    const { fontFamily, fontSize } = fontData;
+    getFontData(fontFamily, fontSize)
+      .then(newFontData => {
+        if(!newFontData) return;
+        handleFontDataChange(newFontData);
+      }); // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     if(mistypedWords.length) {
@@ -35,15 +55,15 @@ export default function App() {
     <ThemeProvider theme={appTheme}>
       <div>
         <Settings
+          fontData={fontData}
+          handleFontDataChange={handleFontDataChange}
           setText={setText}
-          setTextDisplayTheme={setTextDisplayTheme}
-          text={text}
-          textDisplayTheme={textDisplayTheme} />
+          text={text} />
         <p style={{ fontSize: "30px" }}>This is just a test text.</p>
         <TextDisplay
+          fontData={fontData}
           setMistypedWords={setMistypedWords}
           text={text}
-          textDisplayTheme={textDisplayTheme}
           timer={timer} />
       </div>
     </ThemeProvider>

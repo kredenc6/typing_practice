@@ -1,7 +1,7 @@
 {
   "fontFamily": "Roboto Mono",
   "fontSize": "40px",
-  "location": "google",
+  "fontLocation": "google",
   "symbolWidths": {
     "0": 24,
     "1": 24,
