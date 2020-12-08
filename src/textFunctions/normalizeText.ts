@@ -2,7 +2,7 @@ import getFontData from "../async/getFontData";
 
 const FONT_FAMILY = "Bitter";
 const FONT_SIZE = "20px";
-const ALLOWED_SPECIAL_CHARS = [" ", "#"];
+const ALLOWED_SPECIAL_CHARS = [" ", "#", '"'];
 // take advantage of the symbolWidths object - if the property(matched character) exists return true
 const isAllowedChar = (char: string, symbolWidths: { [keyboardChar: string]: number }) => {
   return ALLOWED_SPECIAL_CHARS.includes(char) || (symbolWidths[char] !== undefined);

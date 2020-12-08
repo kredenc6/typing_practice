@@ -6,7 +6,7 @@ interface Props {
   IconComponent: OverridableComponent<SvgIconTypeMap<{}, "svg">>;
   PopoverContent: JSX.Element;
 }
-
+/** Button blurs immediately after focus! */
 export default function ButtonIconPopover({ IconComponent, PopoverContent }: Props) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLButtonElement>(null);
 
@@ -18,7 +18,7 @@ export default function ButtonIconPopover({ IconComponent, PopoverContent }: Pro
 
   return(
     <>
-      <IconButton onClick={handleClick}>
+      <IconButton onClick={handleClick} onFocus={({ target }) => target.blur()}>
         <IconComponent />
       </IconButton>
       <Popover anchorEl={anchorEl} onClose={() => setAnchorEl(null)} open={open}>

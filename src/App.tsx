@@ -59,7 +59,6 @@ export default function App() {
           handleFontDataChange={handleFontDataChange}
           setText={setText}
           text={text} />
-        <p style={{ fontSize: "30px" }}>This is just a test text.</p>
         <TextDisplay
           fontData={fontData}
           setMistypedWords={setMistypedWords}

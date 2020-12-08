@@ -26,3 +26,5 @@ export default function TextFormatPopover({ handleFontDataChange, fontTheme }: P
     </>
   );
 }
+
+// Žump, Žíňka, Život, Žížala

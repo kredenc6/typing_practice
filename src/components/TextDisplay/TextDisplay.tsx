@@ -16,6 +16,7 @@ import { Row, transformTextToSymbolRows } from "../../textFunctions/transformTex
 import Timer from "../../accessories/Timer";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import { FontData } from "../../types/types";
+import { calcTypingPrecision, calcTypingSpeedInKeystrokes, calcTypingSpeedInWPM } from "../../helpFunctions/calcTypigSpeed";
 
 interface Props {
   fontData: FontData;
@@ -50,17 +51,17 @@ export default function TextDisplay({ fontData, setMistypedWords, text, timer }:
   const [wordPosition, setWordPosition] = useState(0);
   const [cursorPosition, setCursorPosition] = useState(0);
   const [enteredSymbol, setEnteredSymbol] = useState("");
-  const [keyPressCount, setKeyPressCount] = useState(0);
+  const [keyStrokeCount, setKeyStrokeCount] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
   const [wordTimer] = useState(new Timer(2));
   
-  const styles = useStyles(fontData);
+  const classes = useStyles(fontData);
   const textDisplayRef: React.MutableRefObject<null | HTMLDivElement> = useRef(null);
   const fontDataAndTextRef: React.MutableRefObject<FontDataAndTextRef> = useRef({ fontData, text });
 
   // (on keypress) check and adjust all the necessary stuff
   useEffect(() => {
-    if(!enteredSymbol || isFinished) return;
+    if(!enteredSymbol || isFinished || !symbolRows.length) return;
     if(cursorPosition === 0 && !timer.isRunning) {
       timer.start();
       if(getWordObject(symbolRows, 0, 0)?.type === "word") {
@@ -74,6 +75,13 @@ export default function TextDisplay({ fontData, setMistypedWords, text, timer }:
 
       const mistypedWords = collectMistypedWords(symbolRows);
       setMistypedWords(mistypedWords);
+
+      const mistakeCount = collectMistypedSymbolPositions(symbolRows).length;
+      const typingSpeed = calcTypingSpeedInKeystrokes(timer.getTime(), keyStrokeCount, mistakeCount);
+      const wpm = calcTypingSpeedInWPM(text, timer.getTime(), mistypedWords.length);
+      console.log(`strokes per minute: ${typingSpeed}`);
+      console.log(`WPM: ${wpm}`);
+      console.log(`${calcTypingPrecision(keyStrokeCount, mistakeCount)}%`);
       return;
     }
 
@@ -97,15 +105,16 @@ export default function TextDisplay({ fontData, setMistypedWords, text, timer }:
     }
     
     setEnteredSymbol(""); // reset typed symbol
-  }, [enteredSymbol, isFinished, setMistypedWords, cursorPosition, timer, text, symbolRows, rowPosition, wordPosition, wordTimer])
+  }, [enteredSymbol, isFinished, setMistypedWords, cursorPosition, keyStrokeCount, timer, text, symbolRows, rowPosition, wordPosition, wordTimer])
 
   // on did mount add keypress event listener
   useEffect(() => {
     const onKeyDown = (key: string) => {
-      if(key.length > 1) return;
-
-      setKeyPressCount(prevCount => prevCount + 1);
-      setEnteredSymbol(key);
+      setKeyStrokeCount(prevCount => prevCount + 1);
+      
+      if(key.length === 1) {
+        setEnteredSymbol(key);
+      }
     };
 
     window.addEventListener("keydown", ({ key }) => onKeyDown(key));
@@ -162,7 +171,7 @@ export default function TextDisplay({ fontData, setMistypedWords, text, timer }:
   });
 
   return(
-    <div className={styles.textWindow} ref={textDisplayRef}>
+    <div className={classes.textWindow} ref={textDisplayRef}>
       {DisplayedRowComponents}
     </div>
   );
