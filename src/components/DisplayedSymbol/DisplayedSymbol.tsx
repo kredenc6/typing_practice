@@ -1,29 +1,24 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core";
+import { SymbolStyle } from "../../types/types";
 
 interface Props {
+  symbolStyle: SymbolStyle;
   symbol: string;
-  relativePosition: number;
-  wasCorrect: boolean;
 }
 
 const useStyles = makeStyles({
   textSymbol: {
-    // color: ({ relativePosition }: Omit<Props, "symbol">) => {
-    //   if(relativePosition > 0) return "grey";
-    // },
-    backgroundColor: ({ relativePosition, wasCorrect }: Omit<Props, "symbol">) => {
-      if(relativePosition > 0) return wasCorrect ? " rgba(40, 149, 40, 0.3)" : "rgb(211, 79, 79, 0.7)";
-      return "inherit";
-    },
-    borderBottom: ({ relativePosition }: Omit<Props, "symbol">) => {
-      return `3px solid ${relativePosition === 0 ? "blue" : "transparent"}`;
-    }
+    backgroundColor: ({ bgcColor }: SymbolStyle) => bgcColor,
+    borderBottom: ({ borderBottomColor }: SymbolStyle) => `3px solid ${borderBottomColor}`,
+    marginRight: ({ symbolOffset }: SymbolStyle) => symbolOffset.marginRight,
+    padding: ({ symbolOffset }: SymbolStyle) => symbolOffset.padding,
+    color: ({ color }: SymbolStyle) => color
   }
 });
 
-const DisplayedSymbol = ({ relativePosition, symbol, wasCorrect }: Props) => {
-  const styles = useStyles({ relativePosition, wasCorrect });
+const DisplayedSymbol = ({ symbol, symbolStyle }: Props) => {
+  const styles = useStyles(symbolStyle);
   return (
     symbol === " " ?
       <span className={styles.textSymbol}> <i></i></span>

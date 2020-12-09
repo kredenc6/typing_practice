@@ -5,13 +5,15 @@ import FontFaceSelector from "./FontFaceSelector/FontFaceSelector";
 import { FontData, FontFamily, FontSize, FontStyle, RequireAtLeastOne } from "../../types/types";
 
 interface Props {
-  handleFontDataChange: (fieldsToUpdate: RequireAtLeastOne<Pick<FontData, "fontFamily" | "fontSize">>) => Promise<void>;
+  handleFontDataChange: (fieldsToUpdate: RequireAtLeastOne<Pick<FontData, "fontFamily" | "fontSize">>, callback?: () => any) => Promise<void>;
+  adjustSymbolRightMargin: (marginRight: string) => void;
   fontTheme: Pick<FontStyle, "fontFamily" | "fontSize">;
 }
 
-export default function TextFormatPopover({ handleFontDataChange, fontTheme }: Props) {
+export default function TextFormatPopover({ handleFontDataChange, adjustSymbolRightMargin, fontTheme }: Props) {
   const handleFontSizeChange = (fontSize: FontSize) => {
-    handleFontDataChange({fontSize});
+    const marginRight = determineRightMargin(fontSize);
+    handleFontDataChange({fontSize}, () => adjustSymbolRightMargin(marginRight));
   };
 
   const handleFontFamilyChange = (fontFamily: FontFamily) => {
@@ -20,11 +22,15 @@ export default function TextFormatPopover({ handleFontDataChange, fontTheme }: P
 
   return(
     <>
-      <FontSizeSelector activeFontSize={fontTheme.fontSize} handleFontSizeChange={handleFontSizeChange} />
+      <FontSizeSelector
+        activeFontSize={fontTheme.fontSize}
+        handleFontSizeChange={handleFontSizeChange} />
       <Divider />
       <FontFaceSelector activeFontFamily={fontTheme.fontFamily} handleFontFamilyChange={handleFontFamilyChange} />
     </>
   );
 }
 
-// Žump, Žíňka, Život, Žížala
+function determineRightMargin(fontSize: FontSize) {
+  return fontSize === "40px" ? "2px" : "1px";
+}

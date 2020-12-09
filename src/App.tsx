@@ -6,25 +6,31 @@ import Timer from "./accessories/Timer";
 import { Row } from "./textFunctions/transformTextToSymbolRows";
 import getFontData from "./async/getFontData";
 import appTheme from "./styles/themes";
-import defaultTextDisplayData from "./styles/textDisplayTheme/textDisplayData";
+import { defaultTextDisplayFontData, defaultTextDisplayTheme } from "./styles/textDisplayTheme/textDisplayData";
 import { FontData, RequireAtLeastOne } from "./types/types";
 import loadFont from "./async/loadFont";
 
 export default function App() {
-  const [fontData, setFontData] = useState(defaultTextDisplayData);
+  const [fontData, setFontData] = useState(defaultTextDisplayFontData);
+  const [textDisplayTheme, setTextDisplayTheme] = useState(defaultTextDisplayTheme);
   const [text, setText] = useState("");
-  const [timer, setTimer] = useState(new Timer());
+  const [timer] = useState(new Timer());
   const [mistypedWords, setMistypedWords] = useState<Row["words"]>([]);
   const [mistypedSymbols, setMistypedSymbols] = useState<string[]>([]);
 
-  const handleFontDataChange = async (fieldsToUpdate: RequireAtLeastOne<Pick<FontData, "fontFamily" | "fontSize">>) => {
+  const handleFontDataChange = async (
+    fieldsToUpdate: RequireAtLeastOne<Pick<FontData, "fontFamily" | "fontSize">>,
+    callback?: () => any
+  ) => {
     const { fontFamily, fontSize } = { ...fontData, ...fieldsToUpdate };
     const newFontData = await getFontData(fontFamily, fontSize);
     if(!newFontData) return;
+    
     if(newFontData.fontLocation === "local") {
       setFontData(newFontData);
+      callback && callback();
     } else {
-      loadFont(newFontData, setFontData);
+      loadFont(newFontData, setFontData, callback);
     }
   };
 
@@ -58,10 +64,13 @@ export default function App() {
           fontData={fontData}
           handleFontDataChange={handleFontDataChange}
           setText={setText}
-          text={text} />
+          setTextDisplayTheme={setTextDisplayTheme}
+          text={text}
+          textDisplayTheme={textDisplayTheme} />
         <TextDisplay
           fontData={fontData}
           setMistypedWords={setMistypedWords}
+          theme={textDisplayTheme}
           text={text}
           timer={timer} />
       </div>

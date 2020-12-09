@@ -20,6 +20,41 @@ export type FontFamilies = {
   location: FontLocation;
 }[]
 
+export interface FontThemeStyle {
+  bgcColor: string;
+  color: string;
+}
+
+interface Offset {
+  display: {
+    margin: string;
+    padding: string;
+  },
+  text: {
+    padding: string;
+    marginRight: string;
+  }
+}
+
+export interface TextDisplayTheme {
+  palette: {
+    text: {
+      default: FontThemeStyle,
+      correct: FontThemeStyle,
+      mistyped: FontThemeStyle
+    },
+    cursorColor: string;
+  }
+  offset: Offset;
+}
+
+export interface SymbolStyle extends FontThemeStyle {
+  borderBottomColor: string;
+  symbolOffset: Offset["text"];
+}
+
+export type RelativePosition = "pending" | "active" | "processed";
+
 export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> =
   Pick<T, Exclude<keyof T, Keys>> 
   & {

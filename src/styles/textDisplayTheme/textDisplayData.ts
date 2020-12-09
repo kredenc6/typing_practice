@@ -1,13 +1,42 @@
-import { FontFamilies, FontSize, FontData } from "../../types/types";
+import appTheme from "../themes";
+import { FontFamilies, FontSize, FontData, TextDisplayTheme } from "../../types/types";
 
-const defaultTextDisplayFontData: FontData = {
+export const defaultTextDisplayFontData: FontData = {
   fontFamily: "Fira Code",
   fontSize: "30px",
   fontLocation: "google",
   symbolWidths: {}
 };
 
-export default defaultTextDisplayFontData;
+export const defaultTextDisplayTheme: TextDisplayTheme = {
+  palette: {
+    cursorColor: appTheme.palette.info.main,
+    text: {
+      default: {
+        bgcColor: "inherit",
+        color: "#757575"
+      },
+      correct: {
+        bgcColor: "#e7fbd3",
+        color: "#0e630e"
+      },
+      mistyped: {
+        bgcColor: "pink",
+        color: "darkred"
+      }
+    }
+  },
+  offset: {
+    display: {
+      margin: "20px auto",
+      padding: "10px 20px"
+    },
+    text: {
+      padding: "0 1px",
+      marginRight: "1px"
+    }
+  }
+};
 
 export const fontFamilies: FontFamilies = [
   {

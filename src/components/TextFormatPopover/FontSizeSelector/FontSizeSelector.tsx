@@ -2,11 +2,11 @@ import React from "react";
 import { ButtonGroup, Grid } from "@material-ui/core";
 import SelectableFontSizeButton from "../SelectableFontSizeButton/SelectableFontSizeButton";
 import { fontSizes } from "../../../styles/textDisplayTheme/textDisplayData";
-import { FontSize, FontStyle } from "../../../types/types";
+import { FontSize, FontStyle, TextDisplayTheme } from "../../../types/types";
 
 interface Props {
-  handleFontSizeChange: (fontSize: FontStyle["fontSize"]) => void;
   activeFontSize: FontSize;
+  handleFontSizeChange: (fontSize: FontStyle["fontSize"]) => void;
 }
 
 interface SelectableFontSizeButtonProps {
@@ -31,7 +31,7 @@ const SELECTABLE_FONT_SIZE_BUTTON_VARIABLES: SelectableFontSizeButtonProps = {
   }
 };
 
-export default function FontSizeSelector({ handleFontSizeChange, activeFontSize }: Props) {
+export default function FontSizeSelector({ activeFontSize, handleFontSizeChange }: Props) {
   const GridButtonComponents = fontSizes.map(fontSize => {
     return (
       <Grid item key={fontSize}>

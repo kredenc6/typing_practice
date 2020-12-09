@@ -11,17 +11,18 @@ import {
   updateWordTime,
   updateSymbolRows
 } from "./helpFunctions";
-import DisplayedRow from "../DisplayedRow/DisplayedRow";
+import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
+import { calcTypingPrecision, calcTypingSpeedInKeystrokes, calcTypingSpeedInWPM } from "../../helpFunctions/calcTypigSpeed";
 import { Row, transformTextToSymbolRows } from "../../textFunctions/transformTextToSymbolRows";
 import Timer from "../../accessories/Timer";
-import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
-import { FontData } from "../../types/types";
-import { calcTypingPrecision, calcTypingSpeedInKeystrokes, calcTypingSpeedInWPM } from "../../helpFunctions/calcTypigSpeed";
+import DisplayedRow from "../DisplayedRow/DisplayedRow";
+import { FontData, TextDisplayTheme } from "../../types/types";
 
 interface Props {
   fontData: FontData;
   setMistypedWords: React.Dispatch<React.SetStateAction<Row["words"]>>;
   text: string;
+  theme: TextDisplayTheme;
   timer: Timer;
 }
 
@@ -35,17 +36,17 @@ const useStyles = makeStyles(({ palette }) => ({
     width: "700px",
     // minWidth: "500px",
     // height: "4rem",
-    margin: "1rem auto",
-    padding: "0.5rem 1rem",
-    fontFamily: ({ fontFamily }: FontData) => fontFamily,
-    fontSize: ({ fontSize }: FontData) => fontSize,
+    margin: ({ offset }: FontData & TextDisplayTheme) => offset.display.margin,
+    padding: ({ offset }: FontData & TextDisplayTheme) => offset.display.padding,
+    fontFamily: ({ fontFamily }: FontData & TextDisplayTheme) => fontFamily,
+    fontSize: ({ fontSize }: FontData & TextDisplayTheme) => fontSize,
     borderTop: `1px solid ${palette.divider}`,
     borderBottom: `1px solid ${palette.divider}`
   }
 }));
 
 //BUG ctrl+v text throws
-export default function TextDisplay({ fontData, setMistypedWords, text, timer }: Props) {
+export default function TextDisplay({ fontData, setMistypedWords, theme, text, timer }: Props) {
   const [symbolRows, setSymbolRows] = useState<Row[]>([]);
   const [rowPosition, setRowPosition] = useState(0);
   const [wordPosition, setWordPosition] = useState(0);
@@ -55,7 +56,7 @@ export default function TextDisplay({ fontData, setMistypedWords, text, timer }:
   const [isFinished, setIsFinished] = useState(false);
   const [wordTimer] = useState(new Timer(2));
   
-  const classes = useStyles(fontData);
+  const classes = useStyles({ ...fontData, ...theme });
   const textDisplayRef: React.MutableRefObject<null | HTMLDivElement> = useRef(null);
   const fontDataAndTextRef: React.MutableRefObject<FontDataAndTextRef> = useRef({ fontData, text });
 
@@ -159,7 +160,7 @@ export default function TextDisplay({ fontData, setMistypedWords, text, timer }:
   }, [symbolRows, rowPosition, wordPosition, wordTimer])
 
   const DisplayedRowComponents = symbolRows.map((row, rowIndex) =>  
-      <DisplayedRow key={rowIndex} row={row} textPosition={cursorPosition} />
+      <DisplayedRow key={rowIndex} row={row} textPosition={cursorPosition} theme={theme} />
     ).filter((_, i) => { // adjust what rows should be displayed
       if(rowPosition < 2) {
         return i < 4;

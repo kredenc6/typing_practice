@@ -1,7 +1,12 @@
+import { callbackify } from "util";
 import WebFont from "webfontloader";
 import { FontData } from "../types/types";
 
-export default function loadFont(fontData: FontData, setFontData: (value: React.SetStateAction<FontData>) => void) {
+export default function loadFont(
+  fontData: FontData,
+  setFontData: (value: React.SetStateAction<FontData>) => void,
+  callback?: () => any
+) {
   const { fontFamily, fontLocation } = fontData;
   WebFont.load({
     [fontLocation]: {
@@ -9,6 +14,9 @@ export default function loadFont(fontData: FontData, setFontData: (value: React.
     },
     fontactive: () => {
       setFontData(fontData);
+      if(callback) {
+        callback()
+      }
     }
   });
 }
