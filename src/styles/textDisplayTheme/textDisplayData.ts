@@ -1,4 +1,3 @@
-import appTheme from "../themes";
 import { FontFamilies, FontSize, FontData, TextDisplayTheme } from "../../types/types";
 
 export const defaultTextDisplayFontData: FontData = {
@@ -10,15 +9,22 @@ export const defaultTextDisplayFontData: FontData = {
 
 export const defaultTextDisplayTheme: TextDisplayTheme = {
   palette: {
-    cursorColor: appTheme.palette.info.main,
     text: {
-      default: {
+      active: {
         bgcColor: "inherit",
         color: "#757575"
       },
       correct: {
         bgcColor: "#e7fbd3",
         color: "#0e630e"
+      },
+      corrected: {
+        bgcColor: "#ffe9b2",
+        color: "green"
+      },
+      default: {
+        bgcColor: "inherit",
+        color: "#757575"
       },
       mistyped: {
         bgcColor: "pink",

@@ -41,7 +41,8 @@ const useStyles = makeStyles(({ palette }) => ({
     fontFamily: ({ fontFamily }: FontData & TextDisplayTheme) => fontFamily,
     fontSize: ({ fontSize }: FontData & TextDisplayTheme) => fontSize,
     borderTop: `1px solid ${palette.divider}`,
-    borderBottom: `1px solid ${palette.divider}`
+    borderBottom: `1px solid ${palette.divider}`,
+    whiteSpace: "nowrap"
   }
 }));
 

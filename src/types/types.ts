@@ -39,17 +39,18 @@ interface Offset {
 export interface TextDisplayTheme {
   palette: {
     text: {
-      default: FontThemeStyle,
+      active: FontThemeStyle,
       correct: FontThemeStyle,
+      corrected: FontThemeStyle,
+      default: FontThemeStyle,
       mistyped: FontThemeStyle
-    },
-    cursorColor: string;
+    }
   }
   offset: Offset;
 }
 
 export interface SymbolStyle extends FontThemeStyle {
-  borderBottomColor: string;
+  cursorColor: string;
   symbolOffset: Offset["text"];
 }
 

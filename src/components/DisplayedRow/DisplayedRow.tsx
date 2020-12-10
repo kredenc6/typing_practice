@@ -1,5 +1,6 @@
 import React from "react";
 import DisplayedSymbol from "../DisplayedSymbol/DisplayedSymbol";
+import TextCursor from "../TextCursor/TextCursor";
 import { Row } from "../../textFunctions/transformTextToSymbolRows";
 import { SymbolStyle, RelativePosition, TextDisplayTheme } from "../../types/types";
 
@@ -16,6 +17,7 @@ export default function DisplayedRow({ row: { words }, textPosition, theme }: Pr
       return (
         <DisplayedSymbol
           key={symbolPosition}
+          TextCursor={relativePosition === "active" ? <TextCursor /> : null}
           symbolStyle={getSymbolStyle(wasCorrect, relativePosition, theme)}
           symbol={symbol} />
       );
@@ -35,9 +37,9 @@ function getRelativePosition(textPosition: number, symbolPosition: number): Rela
 
 function getSymbolStyle(wasCorrect: boolean, relativePosition: RelativePosition, { offset, palette }: TextDisplayTheme): SymbolStyle {
   const symbolStyle: SymbolStyle = {
-    borderBottomColor: "transparent",
     bgcColor: palette.text.default.bgcColor,
     color: palette.text.default.color,
+    cursorColor: "transparent",
     symbolOffset: offset["text"]
   };
 
@@ -50,7 +52,9 @@ function getSymbolStyle(wasCorrect: boolean, relativePosition: RelativePosition,
       symbolStyle.color = palette.text.mistyped.color;
     }
   } else if(relativePosition === "active") {
-    symbolStyle.borderBottomColor = palette.cursorColor;
+    symbolStyle.cursorColor = "#0a6bf9";
+    symbolStyle.bgcColor = palette.text.active.bgcColor;
+    symbolStyle.color = palette.text.active.color;
   } 
   
   return symbolStyle;

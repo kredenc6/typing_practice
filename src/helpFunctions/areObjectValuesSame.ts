@@ -1,6 +1,10 @@
 type GenericObject = Record<string, any>;
 
-export default function areObjectValuesSame(object1: GenericObject, object2: GenericObject, comparedProps?: string[]): boolean {
+export default function areObjectValuesSame(
+  object1: GenericObject | null,
+  object2: GenericObject | null,
+  comparedProps?: string[]
+): boolean {
   if(object1 === null && object2 === null) return true;
   if(object1 === null || object2 === null) return false;
   

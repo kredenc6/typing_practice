@@ -1,7 +1,7 @@
 import React from "react";
 import { IconButton, makeStyles } from "@material-ui/core";
 import TextInput from "../TextInput/TextInput";
-import { Palette, Refresh, TextFormat } from "@material-ui/icons";
+import { FormatSize, Palette, Refresh } from "@material-ui/icons";
 import ButtonIconPopover from "../ButtonIconPopover/ButtonIconPopover";
 import TextFormatPopover from "../TextFormatPopover/TextFormatPopover";
 import { FontData, RequireAtLeastOne, TextDisplayTheme } from "../../types/types";
@@ -42,7 +42,7 @@ export default function Settings(
       <p>Paste the text here:</p>
       <TextInput handleTextChange={handleTextChange} name="textInput" type="text" value={text} />
       <ButtonIconPopover
-        IconComponent={Palette}
+        IconComponent={FormatSize}
         PopoverContent={
           <TextFormatPopover
             handleFontDataChange={handleFontDataChange}
@@ -55,10 +55,6 @@ export default function Settings(
       <IconButton>
         <Palette />
       </IconButton>
-      <IconButton>
-        <TextFormat />
-      </IconButton>
-      <button onClick={() => adjustSymbolRightMargin("4px")}>test</button>
     </div>
   );
 }
