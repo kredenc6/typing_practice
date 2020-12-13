@@ -1,3 +1,4 @@
+import { defaultPalette } from "../textDisplayPalettes";
 import { FontFamilies, FontSize, FontData, TextDisplayTheme } from "../../types/types";
 
 export const defaultTextDisplayFontData: FontData = {
@@ -7,31 +8,8 @@ export const defaultTextDisplayFontData: FontData = {
   symbolWidths: {}
 };
 
-export const defaultTextDisplayTheme: TextDisplayTheme = {
-  palette: {
-    text: {
-      active: {
-        bgcColor: "inherit",
-        color: "#757575"
-      },
-      correct: {
-        bgcColor: "#e7fbd3",
-        color: "#0e630e"
-      },
-      corrected: {
-        bgcColor: "#ffe9b2",
-        color: "green"
-      },
-      default: {
-        bgcColor: "inherit",
-        color: "#757575"
-      },
-      mistyped: {
-        bgcColor: "pink",
-        color: "darkred"
-      }
-    }
-  },
+export const defaultTheme: TextDisplayTheme = {
+  palette: { ...defaultPalette.palette },
   offset: {
     display: {
       margin: "20px auto",

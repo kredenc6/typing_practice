@@ -6,13 +6,13 @@ import Timer from "./accessories/Timer";
 import { Row } from "./textFunctions/transformTextToSymbolRows";
 import getFontData from "./async/getFontData";
 import appTheme from "./styles/appTheme";
-import { defaultTextDisplayFontData, defaultTextDisplayTheme } from "./styles/textDisplayTheme/textDisplayData";
+import { defaultTextDisplayFontData, defaultTheme } from "./styles/textDisplayTheme/textDisplayData";
 import { FontData, RequireAtLeastOne } from "./types/types";
 import loadFont from "./async/loadFont";
 
 export default function App() {
   const [fontData, setFontData] = useState(defaultTextDisplayFontData);
-  const [textDisplayTheme, setTextDisplayTheme] = useState(defaultTextDisplayTheme);
+  const [textDisplayTheme, setTextDisplayTheme] = useState(defaultTheme);
   const [text, setText] = useState("");
   const [timer] = useState(new Timer());
   const [mistypedWords, setMistypedWords] = useState<Row["words"]>([]);

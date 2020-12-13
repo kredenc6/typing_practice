@@ -31,6 +31,12 @@ const compareForRender = (prevProps: Props, nextProps: Props) => {
   if(!areObjectValuesSame(prevProps.symbolStyle, nextProps.symbolStyle)) {
     return false;
   }
+  if(prevProps.TextCursor && nextProps.TextCursor) {
+    if (prevProps.TextCursor.props.height !== nextProps.TextCursor.props.height) { // TextCursor height change
+      return false;
+    }
+  }
+
   return true;
 };
 

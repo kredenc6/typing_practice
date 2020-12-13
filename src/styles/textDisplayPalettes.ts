@@ -1,6 +1,33 @@
 import { TextDisplayTheme } from "../types/types";
 
-export const blue1TextDisplayTheme: TextDisplayTheme = {
+export const defaultPalette: Pick<TextDisplayTheme, "palette"> = {
+  palette: {
+    text: {
+      active: {
+        bgcColor: "inherit",
+        color: "#757575"
+      },
+      correct: {
+        bgcColor: "#e7fbd3",
+        color: "#0e630e"
+      },
+      corrected: {
+        bgcColor: "#ffe9b2",
+        color: "green"
+      },
+      default: {
+        bgcColor: "inherit",
+        color: "#757575"
+      },
+      mistyped: {
+        bgcColor: "pink",
+        color: "darkred"
+      }
+    }
+  }
+};
+
+export const blue1: Pick<TextDisplayTheme, "palette"> = {
   palette: {
     text: {
       active: {
@@ -24,20 +51,10 @@ export const blue1TextDisplayTheme: TextDisplayTheme = {
         color: "darkred"
       }
     }
-  },
-  offset: {
-    display: {
-      margin: "20px auto",
-      padding: "10px 20px"
-    },
-    text: {
-      padding: "0 1px",
-      marginRight: "1px"
-    }
   }
 };
 
-export const blue2TextDisplayTheme: TextDisplayTheme = {
+export const blue2: Pick<TextDisplayTheme, "palette"> = {
   palette: {
     text: {
       active: {
@@ -60,16 +77,6 @@ export const blue2TextDisplayTheme: TextDisplayTheme = {
         bgcColor: "#ed8525",
         color: "#613209"
       }
-    }
-  },
-  offset: {
-    display: {
-      margin: "20px auto",
-      padding: "10px 20px"
-    },
-    text: {
-      padding: "0 1px",
-      marginRight: "1px"
     }
   }
 };

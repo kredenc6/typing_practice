@@ -2,22 +2,23 @@ import React from "react";
 import DisplayedSymbol from "../DisplayedSymbol/DisplayedSymbol";
 import TextCursor from "../TextCursor/TextCursor";
 import { Row } from "../../textFunctions/transformTextToSymbolRows";
-import { SymbolStyle, RelativePosition, TextDisplayTheme } from "../../types/types";
+import { FontSize, SymbolStyle, RelativePosition, TextDisplayTheme } from "../../types/types";
 
 interface Props {
+  fontSize: FontSize;
   row: Row;
   textPosition: number;
   theme: TextDisplayTheme;
 }
 
-export default function DisplayedRow({ row: { words }, textPosition, theme }: Props) {
+export default function DisplayedRow({ fontSize, row: { words }, textPosition, theme }: Props) {
   const DisplayedSymbolsComponents = words.map(({ symbols: wordInSymbols }) => {
     return wordInSymbols.map(({ symbol, symbolPosition, wasCorrect }) => {
       const relativePosition = getRelativePosition(textPosition, symbolPosition);
       return (
         <DisplayedSymbol
           key={symbolPosition}
-          TextCursor={relativePosition === "active" ? <TextCursor /> : null}
+          TextCursor={relativePosition === "active" ? <TextCursor height={fontSize === "20px" ? "2px" : "3px"} /> : null}
           symbolStyle={getSymbolStyle(wasCorrect, relativePosition, theme)}
           symbol={symbol} />
       );

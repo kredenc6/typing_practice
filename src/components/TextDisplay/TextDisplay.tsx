@@ -161,7 +161,7 @@ export default function TextDisplay({ fontData, setMistypedWords, theme, text, t
   }, [symbolRows, rowPosition, wordPosition, wordTimer])
 
   const DisplayedRowComponents = symbolRows.map((row, rowIndex) =>  
-      <DisplayedRow key={rowIndex} row={row} textPosition={cursorPosition} theme={theme} />
+      <DisplayedRow fontSize={fontData.fontSize} key={rowIndex} row={row} textPosition={cursorPosition} theme={theme} />
     ).filter((_, i) => { // adjust what rows should be displayed
       if(rowPosition < 2) {
         return i < 4;

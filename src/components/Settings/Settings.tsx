@@ -4,6 +4,7 @@ import TextInput from "../TextInput/TextInput";
 import { FormatSize, Palette, Refresh } from "@material-ui/icons";
 import ButtonIconPopover from "../ButtonIconPopover/ButtonIconPopover";
 import TextFormatPopover from "../TextFormatPopover/TextFormatPopover";
+import TextThemePopover from "../TextThemePopover/TextThemePopover";
 import { FontData, RequireAtLeastOne, TextDisplayTheme } from "../../types/types";
 import normalizeText from "../../textFunctions/normalizeText";
 
@@ -31,6 +32,11 @@ export default function Settings(
   const handleTextChange = async (text: string) => {
     setText(await normalizeText(text));
   };
+
+  const handleTextDisplayThemeChange = (fieldChanges: Partial<TextDisplayTheme>) => {
+    setTextDisplayTheme(prev => ({ ...prev, ...fieldChanges }));
+  };
+
   const adjustSymbolRightMargin = (marginRight: string) => {
     setTextDisplayTheme(prev => ({ ...prev, offset: { ...prev.offset, text: { ...prev.offset.text, marginRight } } }));
   };
@@ -49,11 +55,14 @@ export default function Settings(
             adjustSymbolRightMargin={adjustSymbolRightMargin}
             fontTheme={{ fontFamily, fontSize }} />
         } />
+      <ButtonIconPopover
+        IconComponent={Palette}
+        PopoverContent={
+          <TextThemePopover
+            handleTextDisplayThemeChange={handleTextDisplayThemeChange}
+            textDisplayTheme={textDisplayTheme} />} />
       <IconButton>
         <Refresh />
-      </IconButton>
-      <IconButton>
-        <Palette />
       </IconButton>
     </div>
   );
