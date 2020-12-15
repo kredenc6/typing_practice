@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, MenuItem, Select, Typography } from "@material-ui/core";
+import { Grid, makeStyles, MenuItem, Select, Typography } from "@material-ui/core";
 import { fontFamilies } from "../../../styles/textDisplayTheme/textDisplayData";
 import { FontFamily } from "../../../types/types";
 
@@ -8,7 +8,17 @@ interface Props {
   handleFontFamilyChange: (fontFamily: FontFamily) => void;
 }
 
+const useStyles = makeStyles({
+  select: {
+    color: "inherit",
+    "& .MuiSelect-icon": {
+      color: "inherit"
+    }
+  }
+});
+
 export default function FontFaceSelector({ handleFontFamilyChange, activeFontFamily }: Props) {
+  const classes = useStyles();
   const MenuItemComponents = fontFamilies.map(({ name }) => {
     return <MenuItem key={name} value={name}>{name}</MenuItem>
   });
@@ -19,7 +29,7 @@ export default function FontFaceSelector({ handleFontFamilyChange, activeFontFam
         <Typography>Font face:</Typography>
       </Grid>
       <Grid item>
-        <Select onChange={e => handleFontFamilyChange(e.target.value as FontFamily)} value={activeFontFamily}>
+        <Select className={classes.select} onChange={e => handleFontFamilyChange(e.target.value as FontFamily)} value={activeFontFamily}>
           {MenuItemComponents}
         </Select>
       </Grid>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ThemeProvider } from "@material-ui/core";
-import Settings from "./components/Settings/Settings";
-import TextDisplay from "./components/TextDisplay/TextDisplay";
+import PlayPage from "./pages/PlayPage/PlayPage";
 import Timer from "./accessories/Timer";
 import { Row } from "./textFunctions/transformTextToSymbolRows";
 import getFontData from "./async/getFontData";
@@ -59,21 +58,15 @@ export default function App() {
 
   return (
     <ThemeProvider theme={appTheme}>
-      <div>
-        <Settings
-          fontData={fontData}
-          handleFontDataChange={handleFontDataChange}
-          setText={setText}
-          setTextDisplayTheme={setTextDisplayTheme}
-          text={text}
-          textDisplayTheme={textDisplayTheme} />
-        <TextDisplay
-          fontData={fontData}
-          setMistypedWords={setMistypedWords}
-          theme={textDisplayTheme}
-          text={text}
-          timer={timer} />
-      </div>
+      <PlayPage 
+        fontData={fontData}
+        handleFontDataChange={handleFontDataChange}
+        setMistypedWords={setMistypedWords}
+        setText={setText}
+        setTextDisplayTheme={setTextDisplayTheme}
+        text={text}
+        textDisplayTheme={textDisplayTheme}
+        timer={timer} />
     </ThemeProvider>
   );
 }

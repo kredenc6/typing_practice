@@ -38,24 +38,24 @@ function getRelativePosition(textPosition: number, symbolPosition: number): Rela
 
 function getSymbolStyle(wasCorrect: boolean, relativePosition: RelativePosition, { offset, palette }: TextDisplayTheme): SymbolStyle {
   const symbolStyle: SymbolStyle = {
-    bgcColor: palette.text.default.bgcColor,
-    color: palette.text.default.color,
+    bgcColor: palette.symbols.default.bgcColor,
+    color: palette.symbols.default.color,
     cursorColor: "transparent",
     symbolOffset: offset["text"]
   };
 
   if(relativePosition === "processed") {
     if(wasCorrect) {
-      symbolStyle.bgcColor = palette.text.correct.bgcColor;
-      symbolStyle.color = palette.text.correct.color;
+      symbolStyle.bgcColor = palette.symbols.correct.bgcColor;
+      symbolStyle.color = palette.symbols.correct.color;
     } else {
-      symbolStyle.bgcColor = palette.text.mistyped.bgcColor;
-      symbolStyle.color = palette.text.mistyped.color;
+      symbolStyle.bgcColor = palette.symbols.mistyped.bgcColor;
+      symbolStyle.color = palette.symbols.mistyped.color;
     }
   } else if(relativePosition === "active") {
     symbolStyle.cursorColor = "#0a6bf9";
-    symbolStyle.bgcColor = palette.text.active.bgcColor;
-    symbolStyle.color = palette.text.active.color;
+    symbolStyle.bgcColor = palette.symbols.active.bgcColor;
+    symbolStyle.color = palette.symbols.active.color;
   } 
   
   return symbolStyle;

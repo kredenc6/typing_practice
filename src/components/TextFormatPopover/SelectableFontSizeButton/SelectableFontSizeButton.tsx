@@ -9,6 +9,7 @@ interface Props extends ButtonProps {
 const useStyles = makeStyles(({ palette }: Theme) => ({
   fontSizeButton: {
     height: "100%",
+    color: "inherit",
     "& .MuiTypography-body1": {
       borderBottom: "2px solid transparent",
     },

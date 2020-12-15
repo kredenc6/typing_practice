@@ -47,6 +47,7 @@ const useStyles = makeStyles(({ palette }) => ({
 }));
 
 //BUG ctrl+v text throws
+//BUG word typing speed resets? on theme change (some words stay at -1 time whend finished)
 export default function TextDisplay({ fontData, setMistypedWords, theme, text, timer }: Props) {
   const [symbolRows, setSymbolRows] = useState<Row[]>([]);
   const [rowPosition, setRowPosition] = useState(0);

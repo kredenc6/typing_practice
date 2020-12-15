@@ -4,7 +4,7 @@ import TextInput from "../TextInput/TextInput";
 import { FormatSize, Palette, Refresh } from "@material-ui/icons";
 import ButtonIconPopover from "../ButtonIconPopover/ButtonIconPopover";
 import TextFormatPopover from "../TextFormatPopover/TextFormatPopover";
-import TextThemePopover from "../TextThemePopover/TextThemePopover";
+import TextDisplayThemeSelector from "../TextDisplayThemeSelector/TextDisplayThemeSelector";
 import { FontData, RequireAtLeastOne, TextDisplayTheme } from "../../types/types";
 import normalizeText from "../../textFunctions/normalizeText";
 
@@ -21,14 +21,15 @@ interface Props {
 const useStyles = makeStyles(({ palette }) => ({
   settingsWrapper: {
     padding: "0.5rem 1rem",
-    border: `1px solid ${palette.divider}`
+    backgroundColor: ({ palette }: TextDisplayTheme) => palette.background.secondary,
+    color: ({ palette }: TextDisplayTheme) => palette.text.secondary
   }
 }));
 
-export default function Settings(
+export default function PlaySettings(
   { fontData, handleFontDataChange, setText, setTextDisplayTheme, text, textDisplayTheme }: Props
 ) {
-  const classes = useStyles();
+  const classes = useStyles(textDisplayTheme);
   const handleTextChange = async (text: string) => {
     setText(await normalizeText(text));
   };
@@ -51,16 +52,20 @@ export default function Settings(
         IconComponent={FormatSize}
         PopoverContent={
           <TextFormatPopover
-            handleFontDataChange={handleFontDataChange}
             adjustSymbolRightMargin={adjustSymbolRightMargin}
-            fontTheme={{ fontFamily, fontSize }} />
-        } />
+            fontTheme={{ fontFamily, fontSize }}
+            handleFontDataChange={handleFontDataChange}
+            textDisplayTheme={textDisplayTheme} />
+        }
+        textDisplayTheme={textDisplayTheme} />
       <ButtonIconPopover
         IconComponent={Palette}
         PopoverContent={
-          <TextThemePopover
+          <TextDisplayThemeSelector
             handleTextDisplayThemeChange={handleTextDisplayThemeChange}
-            textDisplayTheme={textDisplayTheme} />} />
+            textDisplayTheme={textDisplayTheme} />
+        }
+        textDisplayTheme={textDisplayTheme} />
       <IconButton>
         <Refresh />
       </IconButton>

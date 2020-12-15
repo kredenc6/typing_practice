@@ -1,16 +1,25 @@
 import React from "react";
-import { Divider } from "@material-ui/core";
+import { Divider, makeStyles } from "@material-ui/core";
 import FontSizeSelector from "./FontSizeSelector/FontSizeSelector";
 import FontFaceSelector from "./FontFaceSelector/FontFaceSelector";
-import { FontData, FontFamily, FontSize, FontStyle, RequireAtLeastOne } from "../../types/types";
+import { FontData, FontFamily, FontSize, FontStyle, RequireAtLeastOne, TextDisplayTheme } from "../../types/types";
 
 interface Props {
-  handleFontDataChange: (fieldsToUpdate: RequireAtLeastOne<Pick<FontData, "fontFamily" | "fontSize">>, callback?: () => any) => Promise<void>;
   adjustSymbolRightMargin: (marginRight: string) => void;
   fontTheme: Pick<FontStyle, "fontFamily" | "fontSize">;
+  handleFontDataChange: (fieldsToUpdate: RequireAtLeastOne<Pick<FontData, "fontFamily" | "fontSize">>, callback?: () => any) => Promise<void>;
+  textDisplayTheme: TextDisplayTheme;
 }
 
-export default function TextFormatPopover({ handleFontDataChange, adjustSymbolRightMargin, fontTheme }: Props) {
+const useStyles = makeStyles({
+  textFormat: {
+    color: ({ palette }: TextDisplayTheme) => palette.text.secondary
+  }
+});
+
+export default function TextFormatPopover({ adjustSymbolRightMargin, fontTheme, handleFontDataChange, textDisplayTheme }: Props) {
+  const classes = useStyles(textDisplayTheme);
+
   const handleFontSizeChange = (fontSize: FontSize) => {
     const marginRight = determineRightMargin(fontSize);
     handleFontDataChange({fontSize}, () => adjustSymbolRightMargin(marginRight));
@@ -21,13 +30,13 @@ export default function TextFormatPopover({ handleFontDataChange, adjustSymbolRi
   };
 
   return(
-    <>
+    <div className={classes.textFormat}>
       <FontSizeSelector
         activeFontSize={fontTheme.fontSize}
         handleFontSizeChange={handleFontSizeChange} />
       <Divider />
       <FontFaceSelector activeFontFamily={fontTheme.fontFamily} handleFontFamilyChange={handleFontFamilyChange} />
-    </>
+    </div>
   );
 }
 
