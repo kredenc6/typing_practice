@@ -17,7 +17,7 @@ const useStyles = makeStyles({
   }
 });
 
-export default function TextFormatPopover({ adjustSymbolRightMargin, fontTheme, handleFontDataChange, textDisplayTheme }: Props) {
+export default function TextFormatPopper({ adjustSymbolRightMargin, fontTheme, handleFontDataChange, textDisplayTheme }: Props) {
   const classes = useStyles(textDisplayTheme);
 
   const handleFontSizeChange = (fontSize: FontSize) => {
@@ -35,7 +35,10 @@ export default function TextFormatPopover({ adjustSymbolRightMargin, fontTheme, 
         activeFontSize={fontTheme.fontSize}
         handleFontSizeChange={handleFontSizeChange} />
       <Divider />
-      <FontFaceSelector activeFontFamily={fontTheme.fontFamily} handleFontFamilyChange={handleFontFamilyChange} />
+      <FontFaceSelector
+        activeFontFamily={fontTheme.fontFamily}
+        handleFontFamilyChange={handleFontFamilyChange}
+        textDisplayTheme={textDisplayTheme} />
     </div>
   );
 }
