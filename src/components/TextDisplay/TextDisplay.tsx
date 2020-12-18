@@ -8,6 +8,7 @@ import {
   getWordTimeObject,
   getPositions,
   getWordObject,
+  hasGameStarted,
   updateRowWithMistype,
   updateWordTime,
   updateSymbolRows
@@ -32,6 +33,8 @@ interface FontDataAndTextRef {
   text: string;
 }
 
+type GameStatus = "settingUp" | "start" | "playing" | "finished";
+
 const useStyles = makeStyles(({ palette }) => ({
   textWindow: {
     width: "800px",
@@ -54,7 +57,7 @@ export default function TextDisplay({ fontData, setMistypedWords, theme, text, t
   const [cursorPosition, setCursorPosition] = useState(0);
   const [enteredSymbol, setEnteredSymbol] = useState("");
   const [keyStrokeCount, setKeyStrokeCount] = useState(0);
-  const [isFinished, setIsFinished] = useState(false);
+  const [gameStatus, setGameStatus] = useState<GameStatus>("settingUp");
   const [wordTimer] = useState(new Timer(2));
   
   const classes = useStyles({ ...fontData, ...theme });
@@ -63,9 +66,10 @@ export default function TextDisplay({ fontData, setMistypedWords, theme, text, t
 
   // (on keypress) check and adjust all the necessary stuff
   useEffect(() => {
-    if(!enteredSymbol || isFinished || !symbolRows.length) return;
-    if(cursorPosition === 0 && !timer.isRunning) {
+    if(!enteredSymbol || gameStatus === "finished" || !symbolRows.length) return;
+    if(gameStatus === "start") {
       timer.start();
+      setGameStatus("playing");
       if(getWordObject(symbolRows, 0, 0)?.type === "word") {
         wordTimer.start();
       }
@@ -73,7 +77,7 @@ export default function TextDisplay({ fontData, setMistypedWords, theme, text, t
     // if the transcription is completed
     if(cursorPosition >= text.length - 1) {
       timer.stop();
-      setIsFinished(true);
+      setGameStatus("finished");
 
       const mistypedWords = collectMistypedWords(symbolRows);
       setMistypedWords(mistypedWords);
@@ -107,7 +111,7 @@ export default function TextDisplay({ fontData, setMistypedWords, theme, text, t
     }
     
     setEnteredSymbol(""); // reset typed symbol
-  }, [enteredSymbol, isFinished, setMistypedWords, cursorPosition, keyStrokeCount, timer, text, symbolRows, rowPosition, wordPosition, wordTimer])
+  }, [cursorPosition, enteredSymbol, gameStatus, keyStrokeCount, setMistypedWords, symbolRows, rowPosition, text, timer, wordPosition, wordTimer])
 
   // on did mount add keypress event listener
   useEffect(() => {
@@ -132,8 +136,8 @@ export default function TextDisplay({ fontData, setMistypedWords, theme, text, t
     const noSymbolWidths = !Object.keys(fontData.symbolWidths).length;
     if(noSymbolWidths) return;
     
-    // continue with only text or fontData change
-    if(areObjectValuesSame(fontDataAndTextRef.current, { fontData, text })) return;
+    // after setting up continue with only text or fontData change
+    if(gameStatus !== "settingUp" && areObjectValuesSame(fontDataAndTextRef.current, { fontData, text })) return;
     fontDataAndTextRef.current = { fontData, text };
 
     const mistypedSymbolPositions = collectMistypedSymbolPositions(symbolRows);
@@ -149,7 +153,11 @@ export default function TextDisplay({ fontData, setMistypedWords, theme, text, t
     setSymbolRows(newSymbolRows);
     setRowPosition(newRowPosition);
     setWordPosition(newWordPosition);
-  }, [cursorPosition, fontData, symbolRows, text, theme.offset])
+
+    if(gameStatus === "settingUp") {
+      setGameStatus("start");
+    }
+  }, [cursorPosition, fontData, gameStatus, symbolRows, text, theme.offset])
 
   // word timer
   useEffect(() => {

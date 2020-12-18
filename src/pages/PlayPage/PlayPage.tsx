@@ -10,7 +10,6 @@ interface Props {
   fontData: FontData;
   handleFontDataChange: (fieldsToUpdate: Partial<Pick<FontData, "fontFamily" | "fontSize">>) => Promise<void>;
   setMistypedWords: React.Dispatch<React.SetStateAction<Row["words"]>>;
-  setText: React.Dispatch<React.SetStateAction<string>>;
   setTextDisplayTheme: React.Dispatch<React.SetStateAction<TextDisplayTheme>>
   text: string;
   textDisplayTheme: TextDisplayTheme;
@@ -29,7 +28,6 @@ export default function PlayPage({
   fontData,
   handleFontDataChange,
   setMistypedWords,
-  setText,
   setTextDisplayTheme,
   text,
   textDisplayTheme,
@@ -42,9 +40,7 @@ export default function PlayPage({
       <PlaySettings
         fontData={fontData}
         handleFontDataChange={handleFontDataChange}
-        setText={setText}
         setTextDisplayTheme={setTextDisplayTheme}
-        text={text}
         textDisplayTheme={textDisplayTheme} />
       <TextDisplay
         fontData={fontData}

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { ThemeProvider } from "@material-ui/core";
 import PlayPage from "./pages/PlayPage/PlayPage";
+import MainMenu from "./pages/MainMenu/MainMenu";
 import Timer from "./accessories/Timer";
 import { Row } from "./textFunctions/transformTextToSymbolRows";
 import getFontData from "./async/getFontData";
@@ -72,15 +74,23 @@ export default function App() {
 
   return (
     <ThemeProvider theme={appTheme}>
-      <PlayPage 
-        fontData={fontData}
-        handleFontDataChange={handleFontDataChange}
-        setMistypedWords={setMistypedWords}
-        setText={setText}
-        setTextDisplayTheme={setTextDisplayTheme}
-        text={text}
-        textDisplayTheme={textDisplayTheme}
-        timer={timer} />
+      <Router>
+        <Switch>
+          <Route path="/mainMenu">
+            <MainMenu setText={setText} text={text} />
+          </Route>
+          <Route path="/playArea">
+            <PlayPage
+              fontData={fontData}
+              handleFontDataChange={handleFontDataChange}
+              setMistypedWords={setMistypedWords}
+              setTextDisplayTheme={setTextDisplayTheme}
+              text={text}
+              textDisplayTheme={textDisplayTheme}
+              timer={timer} />
+          </Route>
+        </Switch>
+      </Router>
     </ThemeProvider>
   );
 }

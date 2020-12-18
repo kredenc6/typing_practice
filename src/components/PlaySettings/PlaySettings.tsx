@@ -1,26 +1,26 @@
 import React, { useLayoutEffect, useState } from "react";
-import { Box, ClickAwayListener, IconButton, makeStyles } from "@material-ui/core";
-import TextInput from "../TextInput/TextInput";
-import { FormatSize, Palette, Refresh } from "@material-ui/icons";
+import { Link } from "react-router-dom";
+import { ClickAwayListener, IconButton, makeStyles } from "@material-ui/core";
+import { FormatSize, Menu, Palette, Refresh } from "@material-ui/icons";
 import TextFormatPopper from "../TextFormatPoppper/TextFormatPopper";
 import TextDisplayThemeSelector from "../TextDisplayThemeSelector/TextDisplayThemeSelector";
 import PlaySettingsPopper from "./PlaySettingsPopper/PlaySettingsPopper";
 import { FontData, TextDisplayTheme } from "../../types/types";
-import normalizeText from "../../textFunctions/normalizeText";
-
 
 interface Props {
   fontData: FontData;
   handleFontDataChange: (fieldsToUpdate: Partial<Pick<FontData, "fontFamily" | "fontSize">>) => Promise<void>;
-  setText: React.Dispatch<React.SetStateAction<string>>;
   setTextDisplayTheme: React.Dispatch<React.SetStateAction<TextDisplayTheme>>
-  text: string;
   textDisplayTheme: TextDisplayTheme;
 }
 
 const useStyles = makeStyles({
-  settingsWrapper: {
-    padding: "0.5rem 1rem",
+  header: {
+    display: "grid",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gridTemplateColumns: "50px auto",
+    padding: "25px 50px",
     backgroundColor: ({ palette }: TextDisplayTheme) => palette.background.secondary,
     color: ({ palette }: TextDisplayTheme) => palette.text.secondary
   },
@@ -32,18 +32,13 @@ const useStyles = makeStyles({
 export default function PlaySettings({
   fontData,
   handleFontDataChange,
-  setText,
   setTextDisplayTheme,
-  text,
   textDisplayTheme
 }: Props) {
   const classes = useStyles(textDisplayTheme);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [popperOpenedBy, setPopperOpenedBy] = useState("");
   
-  const handleTextChange = async (text: string) => {
-    setText(await normalizeText(text));
-  };
   const handleTextDisplayThemeChange = (fieldsToUpdate: Partial<TextDisplayTheme>) => {
     setTextDisplayTheme(prev => ({ ...prev, ...fieldsToUpdate }));
   };
@@ -78,27 +73,30 @@ export default function PlaySettings({
   }, [])
 
   return(
-    <Box className={classes.settingsWrapper} display="flex" justifyContent="flex-end" px={2}>
-      <p>Paste the text here:</p>
-      <TextInput handleTextChange={handleTextChange} name="textInput" type="text" value={text} />
-      <IconButton className={classes.iconButton}>
-        <Refresh />
-      </IconButton>
-      <ClickAwayListener onClickAway={handleClickAway}>
-        <div id="clickAwayWrapper">
-          <IconButton className={classes.iconButton} id="formatFontBtt" onClick={e => handleClick(e.currentTarget.id)}>
-            <FormatSize />
-          </IconButton>
-          <IconButton className={classes.iconButton} id="fontPaletteBtt" onClick={e => handleClick(e.currentTarget.id)}>
-            <Palette />
-          </IconButton>
-          <PlaySettingsPopper
-            anchorEl={anchorEl}
-            children={popperContent}
-            open={isPopperOpen}
-            textDisplayTheme={textDisplayTheme} />
-        </div>
-      </ClickAwayListener>
-    </Box>
+    <header className={classes.header}>
+      <Link to="/mainMenu">
+        <Menu />
+      </Link>
+      <div>
+        <IconButton className={classes.iconButton}>
+          <Refresh />
+        </IconButton>
+        <ClickAwayListener onClickAway={handleClickAway}>
+          <div id="clickAwayWrapper">
+            <IconButton className={classes.iconButton} id="formatFontBtt" onClick={e => handleClick(e.currentTarget.id)}>
+              <FormatSize />
+            </IconButton>
+            <IconButton className={classes.iconButton} id="fontPaletteBtt" onClick={e => handleClick(e.currentTarget.id)}>
+              <Palette />
+            </IconButton>
+            <PlaySettingsPopper
+              anchorEl={anchorEl}
+              children={popperContent}
+              open={isPopperOpen}
+              textDisplayTheme={textDisplayTheme} />
+          </div>
+        </ClickAwayListener>
+      </div>
+    </header>
   );
 }
