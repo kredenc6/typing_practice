@@ -4,10 +4,11 @@ import PlayPage from "./pages/PlayPage/PlayPage";
 import Timer from "./accessories/Timer";
 import { Row } from "./textFunctions/transformTextToSymbolRows";
 import getFontData from "./async/getFontData";
+import loadFont from "./async/loadFont";
+import transformPixelSizeToNumber from "./helpFunctions/transformPixelSizeToNumber";
 import appTheme from "./styles/appTheme";
 import { defaultTextDisplayFontData, defaultTheme } from "./styles/textDisplayTheme/textDisplayData";
-import { FontData, RequireAtLeastOne } from "./types/types";
-import loadFont from "./async/loadFont";
+import { FontData } from "./types/types";
 
 export default function App() {
   const [fontData, setFontData] = useState(defaultTextDisplayFontData);
@@ -17,20 +18,33 @@ export default function App() {
   const [mistypedWords, setMistypedWords] = useState<Row["words"]>([]);
   const [mistypedSymbols, setMistypedSymbols] = useState<string[]>([]);
 
-  const handleFontDataChange = async (
-    fieldsToUpdate: RequireAtLeastOne<Pick<FontData, "fontFamily" | "fontSize">>,
-    callback?: () => any
-  ) => {
-    const { fontFamily, fontSize } = { ...fontData, ...fieldsToUpdate };
+  const handleFontDataChange = async (fieldToUpdate: Partial<FontData>, callback?: () => any) => {
+    const updatedField = Object.keys(fieldToUpdate) as (keyof FontData)[];
+    const { fontFamily, fontSize } = { ...fontData, ...fieldToUpdate };
     const newFontData = await getFontData(fontFamily, fontSize);
+
     if(!newFontData) return;
-    
-    if(newFontData.fontLocation === "local") {
-      setFontData(newFontData);
-      callback && callback();
-    } else {
-      loadFont(newFontData, setFontData, callback);
+
+    if(updatedField.includes("fontSize")) {
+      setTextDisplayTheme(prev => {
+        const updatedState = { ...prev };
+        const updatedPadding = `10px ${Math.round(transformPixelSizeToNumber(fontSize) * 0.75)}px`;
+        updatedState.offset.display.padding = updatedPadding;
+        return updatedState;
+      });
     }
+
+    if(updatedField.includes("fontFamily")) {
+      if(newFontData.fontLocation === "local") {
+        setFontData(newFontData);
+        callback && callback();
+      } else {
+        loadFont(newFontData, setFontData, callback);
+      }
+      return;
+    }
+
+    setFontData(newFontData);
   };
 
   useEffect(() => {

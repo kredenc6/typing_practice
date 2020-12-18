@@ -2,12 +2,13 @@ import React from "react";
 import { Divider, makeStyles } from "@material-ui/core";
 import FontSizeSelector from "./FontSizeSelector/FontSizeSelector";
 import FontFaceSelector from "./FontFaceSelector/FontFaceSelector";
-import { FontData, FontFamily, FontSize, FontStyle, RequireAtLeastOne, TextDisplayTheme } from "../../types/types";
+import { FontData, FontFamily, FontSize, TextDisplayTheme } from "../../types/types";
 
 interface Props {
+  activeFontFamily: FontFamily;
+  activeFontSize: FontSize;
   adjustSymbolRightMargin: (marginRight: string) => void;
-  fontTheme: Pick<FontStyle, "fontFamily" | "fontSize">;
-  handleFontDataChange: (fieldsToUpdate: RequireAtLeastOne<Pick<FontData, "fontFamily" | "fontSize">>, callback?: () => any) => Promise<void>;
+  handleFontDataChange: (fieldsToUpdate: Partial<Pick<FontData, "fontFamily" | "fontSize">>, callback?: () => any) => Promise<void>;
   textDisplayTheme: TextDisplayTheme;
 }
 
@@ -17,26 +18,32 @@ const useStyles = makeStyles({
   }
 });
 
-export default function TextFormatPopper({ adjustSymbolRightMargin, fontTheme, handleFontDataChange, textDisplayTheme }: Props) {
+export default function TextFormatPopper({
+  activeFontFamily,
+  activeFontSize,
+  adjustSymbolRightMargin,
+  handleFontDataChange,
+  textDisplayTheme
+}: Props) {
   const classes = useStyles(textDisplayTheme);
 
   const handleFontSizeChange = (fontSize: FontSize) => {
     const marginRight = determineRightMargin(fontSize);
-    handleFontDataChange({fontSize}, () => adjustSymbolRightMargin(marginRight));
+    handleFontDataChange({ fontSize }, () => adjustSymbolRightMargin(marginRight));
   };
 
   const handleFontFamilyChange = (fontFamily: FontFamily) => {
-    handleFontDataChange({fontFamily});
+    handleFontDataChange({ fontFamily });
   };
 
   return(
     <div className={classes.textFormat}>
       <FontSizeSelector
-        activeFontSize={fontTheme.fontSize}
+        activeFontSize={activeFontSize}
         handleFontSizeChange={handleFontSizeChange} />
       <Divider />
       <FontFaceSelector
-        activeFontFamily={fontTheme.fontFamily}
+        activeFontFamily={activeFontFamily}
         handleFontFamilyChange={handleFontFamilyChange}
         textDisplayTheme={textDisplayTheme} />
     </div>

@@ -13,10 +13,11 @@ export const defaultTheme: TextDisplayTheme = {
   offset: {
     display: {
       margin: "20px auto",
-      padding: "10px 20px"
+      padding: "10px 23px"
     },
     text: {
-      padding: "0 1px",
+      paddingLeft: "1px",
+      paddingRight: "1px",
       marginRight: "1px"
     }
   }

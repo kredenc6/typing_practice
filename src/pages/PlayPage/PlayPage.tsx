@@ -2,13 +2,13 @@ import React from "react";
 import { Box, makeStyles } from "@material-ui/core";
 import PlaySettings from "../../components/PlaySettings/PlaySettings";
 import TextDisplay from "../../components/TextDisplay/TextDisplay";
-import { FontData, RequireAtLeastOne, TextDisplayTheme } from "../../types/types";
+import { FontData, TextDisplayTheme } from "../../types/types";
 import { Row } from "../../textFunctions/transformTextToSymbolRows";
 import Timer from "../../accessories/Timer";
 
 interface Props {
   fontData: FontData;
-  handleFontDataChange: (fieldsToUpdate: RequireAtLeastOne<Pick<FontData, "fontFamily" | "fontSize">>) => Promise<void>;
+  handleFontDataChange: (fieldsToUpdate: Partial<Pick<FontData, "fontFamily" | "fontSize">>) => Promise<void>;
   setMistypedWords: React.Dispatch<React.SetStateAction<Row["words"]>>;
   setText: React.Dispatch<React.SetStateAction<string>>;
   setTextDisplayTheme: React.Dispatch<React.SetStateAction<TextDisplayTheme>>

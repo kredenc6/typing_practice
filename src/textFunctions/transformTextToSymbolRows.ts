@@ -23,49 +23,59 @@ export type Row = {
   words: WordObject[];
 };
 
+export type SymbolWidths = {
+  widths: FontData["symbolWidths"];
+  marginX: number;
+  paddingX: number;
+};
+
 const splitterRegexp = /[0-9\p{L}]+|\s+|[^0-9\p{L}\s+]/giu; // numbers or letters | whitespace | nothing of the previous
 const lineEndersRegexp = /[ .,!?;:)\]}']|\n+/;
 
 
-const sortTextToRows = (text: string, lineLength: number, symbolWidths: FontData["symbolWidths"]) => {
+const sortTextToRows = (text: string, maxLineLength: number, symbolWidths: SymbolWidths) => {
   const splittedText = text.match(splitterRegexp) as string[];
+  const spaceLength = calcWordLength(" ", symbolWidths);
   
+  let currentTextLineLength = 0;
   const rows = splittedText.reduce((textLines, unsortedWord) => {
     const currentTextLineNumber = textLines.length - 1;
-    const currentTextLine = textLines[currentTextLineNumber];
-    const currentTextLineLength = currentTextLine.reduce((textLineLength, word) =>
-      textLineLength + calcWordLength(word, symbolWidths), 0);
+    const unsortedWordLength = calcWordLength(unsortedWord, symbolWidths);
 
     // If the next word fits into the line length or if it is a line ender...
     if(
-      currentTextLineLength + calcWordLength(unsortedWord, symbolWidths) < lineLength ||
+      currentTextLineLength + unsortedWordLength + spaceLength < maxLineLength ||
       lineEndersRegexp.test(unsortedWord)) {
 
       return textLines.map((textLine, i) => { // ...put it in to the line...
         if(i === currentTextLineNumber) {
+          currentTextLineLength += unsortedWordLength;
           return [...textLine, unsortedWord];
         }
         return textLine;
       });
     }
 
+    currentTextLineLength = unsortedWordLength;
     return [...textLines, [unsortedWord]]; // ...otherwise create a new line with the word.
   }, [[]] as Array<string[]>);
   
   return rows;
 };
 
-function calcWordLength(word: string, symbolWidths: FontData["symbolWidths"]) {
+function calcWordLength(word: string, symbolWidths: SymbolWidths) {
+  const { marginX, paddingX, widths } = symbolWidths;
   let wordLength = 0;
+
   for(const symbol of word) {
     if(symbol === " ") {
-      wordLength += symbolWidths["space"];
+      wordLength += widths["space"] + marginX + paddingX;
     } else if(symbol === "#") {
-      wordLength += symbolWidths["hash"];
+      wordLength += widths["hash"] + marginX + paddingX;
     } else if(symbol === `"`) {
-      wordLength += symbolWidths["doubleQuote"];
+      wordLength += widths["doubleQuote"] + marginX + paddingX;
     } else {
-      wordLength += symbolWidths[symbol];
+      wordLength += widths[symbol] + marginX + paddingX;
     }
   }
   return wordLength;
@@ -75,7 +85,7 @@ export const transformTextToSymbolRows =
 (
   text: string,
   lineLength: number,
-  symbolWidths: FontData["symbolWidths"],
+  symbolWidths: SymbolWidths,
   mistypedSymbols = [] as number[]
 ) => {
   if(!text) return [];

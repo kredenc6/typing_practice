@@ -25,13 +25,14 @@ export interface FontThemeStyle {
   color: string;
 }
 
-interface Offset {
+export interface Offset {
   display: {
     margin: string;
     padding: string;
   },
   text: {
-    padding: string;
+    paddingLeft: string;
+    paddingRight: string;
     marginRight: string;
   }
 }
@@ -63,7 +64,7 @@ export interface SymbolStyle extends FontThemeStyle {
   symbolOffset: Offset["text"];
 }
 
-export type RelativePosition = "pending" | "active" | "processed";
+export type RelativeSymbolPosition = "pending" | "active" | "processed";
 
 export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> =
   Pick<T, Exclude<keyof T, Keys>> 

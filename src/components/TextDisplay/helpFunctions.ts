@@ -1,6 +1,7 @@
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
-import { Row } from "../../textFunctions/transformTextToSymbolRows";
+import { Row, SymbolWidths } from "../../textFunctions/transformTextToSymbolRows";
 import Timer from "../../accessories/Timer";
+import { FontData, Offset } from "../../types/types";
 
 interface WordTimeObject {
   rowPosition: number;
@@ -83,12 +84,11 @@ export const collectMistypedSymbolPositions = (symbolRows: Row[]) => {
 };
 
 export const calculateDisplayTextInnerWidth = (width: string, paddingLeft: string, paddingRight: string) => {
-  const OVERREACH_REDUNDANCY_MULTIPLIER = 2;
-
-  return transformPixelSizeToNumber(width) -
+  return (
+    transformPixelSizeToNumber(width) -
     transformPixelSizeToNumber(paddingLeft) -
-    // line-enders like comas or dots and spaces after them are allowed to overreach the inner width
-    transformPixelSizeToNumber(paddingRight) * OVERREACH_REDUNDANCY_MULTIPLIER;
+    transformPixelSizeToNumber(paddingRight)
+  );
 };
 
 export const getPositions = (cursorPosition: number, symbolRows: Row[], rowStartPosition = 0) => {
@@ -166,3 +166,16 @@ export const updateWordTime =
   const updatedRow = updateRowWithWordTime(symbolRows[rowPosition], wordPosition, wordTime);
   updateSymbolRows(setSymbolRows, updatedRow, rowPosition);
 }
+
+export const createSymbolWidthsObject = (
+  symbolOffset: Offset["text"],
+  symbolWidths: FontData["symbolWidths"]
+): SymbolWidths => {
+  const { marginRight, paddingLeft, paddingRight } = symbolOffset;
+
+  return {
+    marginX: transformPixelSizeToNumber(marginRight), // left margin is not used atm
+    paddingX: transformPixelSizeToNumber(paddingLeft) + transformPixelSizeToNumber(paddingRight),
+    widths: symbolWidths
+  }
+};

@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { makeStyles } from "@material-ui/core";
 import {
   calculateDisplayTextInnerWidth,
   collectMistypedSymbolPositions,
   collectMistypedWords,
+  createSymbolWidthsObject,
   getWordTimeObject,
   getPositions,
   getWordObject,
@@ -33,9 +34,7 @@ interface FontDataAndTextRef {
 
 const useStyles = makeStyles(({ palette }) => ({
   textWindow: {
-    width: "700px",
-    // minWidth: "500px",
-    // height: "4rem",
+    width: "800px",
     margin: ({ offset }: FontData & TextDisplayTheme) => offset.display.margin,
     padding: ({ offset }: FontData & TextDisplayTheme) => offset.display.padding,
     fontFamily: ({ fontFamily }: FontData & TextDisplayTheme) => fontFamily,
@@ -125,7 +124,7 @@ export default function TextDisplay({ fontData, setMistypedWords, theme, text, t
   }, [])
 
   // on pasted text or changed font
-  useEffect(() => {
+  useLayoutEffect(() => {
     // return on null values
     if(!fontData || !textDisplayRef.current) return;
     
@@ -140,7 +139,8 @@ export default function TextDisplay({ fontData, setMistypedWords, theme, text, t
     const mistypedSymbolPositions = collectMistypedSymbolPositions(symbolRows);
     const { paddingLeft, paddingRight, width } = getComputedStyle(textDisplayRef.current); // example: 1234.56px
     const displayTextInnerWidth = calculateDisplayTextInnerWidth(width, paddingLeft, paddingRight);
-    const newSymbolRows = transformTextToSymbolRows(text, displayTextInnerWidth, fontData.symbolWidths, mistypedSymbolPositions);
+    const symbolWidhtsObject = createSymbolWidthsObject(theme.offset["text"], fontData.symbolWidths);
+    const newSymbolRows = transformTextToSymbolRows(text, displayTextInnerWidth, symbolWidhtsObject, mistypedSymbolPositions);
     const {
       rowPosition: newRowPosition,
       wordPosition: newWordPosition
@@ -149,7 +149,7 @@ export default function TextDisplay({ fontData, setMistypedWords, theme, text, t
     setSymbolRows(newSymbolRows);
     setRowPosition(newRowPosition);
     setWordPosition(newWordPosition);
-  }, [cursorPosition, fontData, symbolRows, text])
+  }, [cursorPosition, fontData, symbolRows, text, theme.offset])
 
   // word timer
   useEffect(() => {

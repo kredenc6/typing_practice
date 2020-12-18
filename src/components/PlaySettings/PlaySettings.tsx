@@ -4,21 +4,21 @@ import TextInput from "../TextInput/TextInput";
 import { FormatSize, Palette, Refresh } from "@material-ui/icons";
 import TextFormatPopper from "../TextFormatPoppper/TextFormatPopper";
 import TextDisplayThemeSelector from "../TextDisplayThemeSelector/TextDisplayThemeSelector";
-import { FontData, RequireAtLeastOne, TextDisplayTheme } from "../../types/types";
+import PlaySettingsPopper from "./PlaySettingsPopper/PlaySettingsPopper";
+import { FontData, TextDisplayTheme } from "../../types/types";
 import normalizeText from "../../textFunctions/normalizeText";
 
-import PlaySettingsPopper from "./PlaySettingsPopper/PlaySettingsPopper";
 
 interface Props {
   fontData: FontData;
-  handleFontDataChange: (fieldsToUpdate: RequireAtLeastOne<Pick<FontData, "fontFamily" | "fontSize">>) => Promise<void>;
+  handleFontDataChange: (fieldsToUpdate: Partial<Pick<FontData, "fontFamily" | "fontSize">>) => Promise<void>;
   setText: React.Dispatch<React.SetStateAction<string>>;
   setTextDisplayTheme: React.Dispatch<React.SetStateAction<TextDisplayTheme>>
   text: string;
   textDisplayTheme: TextDisplayTheme;
 }
 
-const useStyles = makeStyles(({ palette }) => ({
+const useStyles = makeStyles({
   settingsWrapper: {
     padding: "0.5rem 1rem",
     backgroundColor: ({ palette }: TextDisplayTheme) => palette.background.secondary,
@@ -27,7 +27,7 @@ const useStyles = makeStyles(({ palette }) => ({
   iconButton: {
     color: ({ palette }: TextDisplayTheme) => palette.text.secondary
   }
-}));
+});
 
 export default function PlaySettings({
   fontData,
@@ -44,8 +44,8 @@ export default function PlaySettings({
   const handleTextChange = async (text: string) => {
     setText(await normalizeText(text));
   };
-  const handleTextDisplayThemeChange = (fieldChanges: Partial<TextDisplayTheme>) => {
-    setTextDisplayTheme(prev => ({ ...prev, ...fieldChanges }));
+  const handleTextDisplayThemeChange = (fieldsToUpdate: Partial<TextDisplayTheme>) => {
+    setTextDisplayTheme(prev => ({ ...prev, ...fieldsToUpdate }));
   };
   const adjustSymbolRightMargin = (marginRight: string) => {
     setTextDisplayTheme(prev => ({ ...prev, offset: { ...prev.offset, text: { ...prev.offset.text, marginRight } } }));
@@ -62,8 +62,9 @@ export default function PlaySettings({
   const isPopperOpen = Boolean(popperOpenedBy);
   const popperContent = isPopperOpen && popperOpenedBy === "formatFontBtt" ?
     <TextFormatPopper
+      activeFontFamily={ fontFamily }
+      activeFontSize={ fontSize }
       adjustSymbolRightMargin={adjustSymbolRightMargin}
-      fontTheme={{ fontFamily, fontSize }}
       handleFontDataChange={handleFontDataChange}
       textDisplayTheme={textDisplayTheme} />
     :

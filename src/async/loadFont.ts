@@ -1,4 +1,3 @@
-import { callbackify } from "util";
 import WebFont from "webfontloader";
 import { FontData } from "../types/types";
 
@@ -15,7 +14,7 @@ export default function loadFont(
     fontactive: () => {
       setFontData(fontData);
       if(callback) {
-        callback()
+        callback();
       }
     }
   });

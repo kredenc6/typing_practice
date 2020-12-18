@@ -2,7 +2,7 @@ import React from "react";
 import DisplayedSymbol from "../DisplayedSymbol/DisplayedSymbol";
 import TextCursor from "../TextCursor/TextCursor";
 import { Row } from "../../textFunctions/transformTextToSymbolRows";
-import { FontSize, SymbolStyle, RelativePosition, TextDisplayTheme } from "../../types/types";
+import { FontSize, SymbolStyle, RelativeSymbolPosition, TextDisplayTheme } from "../../types/types";
 
 interface Props {
   fontSize: FontSize;
@@ -30,13 +30,13 @@ export default function DisplayedRow({ fontSize, row: { words }, textPosition, t
   );
 }
 
-function getRelativePosition(textPosition: number, symbolPosition: number): RelativePosition {
+function getRelativePosition(textPosition: number, symbolPosition: number): RelativeSymbolPosition {
   if(textPosition === symbolPosition) return "active";
   if(textPosition < symbolPosition) return "pending";
   return "processed";
 }
 
-function getSymbolStyle(wasCorrect: boolean, relativePosition: RelativePosition, { offset, palette }: TextDisplayTheme): SymbolStyle {
+function getSymbolStyle(wasCorrect: boolean, relativePosition: RelativeSymbolPosition, { offset, palette }: TextDisplayTheme): SymbolStyle {
   const symbolStyle: SymbolStyle = {
     bgcColor: palette.symbols.default.bgcColor,
     color: palette.symbols.default.color,
