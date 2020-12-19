@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, makeStyles } from "@material-ui/core";
 import PlaySettings from "../../components/PlaySettings/PlaySettings";
 import TextDisplay from "../../components/TextDisplay/TextDisplay";
@@ -34,17 +34,22 @@ export default function PlayPage({
   timer
 }: Props) {
   const classes = useStyles(textDisplayTheme);
+  const [restart , setRestart] = useState(false);
 
   return (
     <Box className={classes.playPage}>
       <PlaySettings
         fontData={fontData}
         handleFontDataChange={handleFontDataChange}
+        restart={restart}
+        setRestart={setRestart}
         setTextDisplayTheme={setTextDisplayTheme}
         textDisplayTheme={textDisplayTheme} />
       <TextDisplay
         fontData={fontData}
+        restart={restart}
         setMistypedWords={setMistypedWords}
+        setRestart={setRestart}
         text={text}
         theme={textDisplayTheme}
         timer={timer} />

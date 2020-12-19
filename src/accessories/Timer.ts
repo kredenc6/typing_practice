@@ -13,6 +13,12 @@ export default class Timer {
     this.time = 0;
   }
 
+  reset() {
+    this.isRunning = false;
+    this.startTime = 0;
+    this.time = 0;
+  }
+
   start() {
     this.time = 0;
     this.startTime = new Date().getTime();

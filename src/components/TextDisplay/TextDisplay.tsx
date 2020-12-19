@@ -8,7 +8,6 @@ import {
   getWordTimeObject,
   getPositions,
   getWordObject,
-  hasGameStarted,
   updateRowWithMistype,
   updateWordTime,
   updateSymbolRows
@@ -22,7 +21,9 @@ import { FontData, TextDisplayTheme } from "../../types/types";
 
 interface Props {
   fontData: FontData;
+  restart: boolean;
   setMistypedWords: React.Dispatch<React.SetStateAction<Row["words"]>>;
+  setRestart: React.Dispatch<React.SetStateAction<boolean>>;
   text: string;
   theme: TextDisplayTheme;
   timer: Timer;
@@ -50,7 +51,7 @@ const useStyles = makeStyles(({ palette }) => ({
 
 //BUG ctrl+v text throws
 //BUG word typing speed resets? on theme change (some words stay at -1 time whend finished)
-export default function TextDisplay({ fontData, setMistypedWords, theme, text, timer }: Props) {
+export default function TextDisplay({ fontData, restart, setMistypedWords, setRestart, theme, text, timer }: Props) {
   const [symbolRows, setSymbolRows] = useState<Row[]>([]);
   const [rowPosition, setRowPosition] = useState(0);
   const [wordPosition, setWordPosition] = useState(0);
@@ -168,6 +169,19 @@ export default function TextDisplay({ fontData, setMistypedWords, theme, text, t
 
     updateWordTime(symbolRows, setSymbolRows, wordTimeObject);
   }, [symbolRows, rowPosition, wordPosition, wordTimer])
+
+  // restart
+  useEffect(() => {
+    if(!restart) return;
+    timer.reset();
+    setCursorPosition(0);
+    setWordPosition(0);
+    setRowPosition(0);
+    setKeyStrokeCount(0);
+    setSymbolRows([]);
+    setGameStatus("settingUp");
+    setRestart(false);
+  }, [restart, setRestart, timer])
 
   const DisplayedRowComponents = symbolRows.map((row, rowIndex) =>  
       <DisplayedRow fontSize={fontData.fontSize} key={rowIndex} row={row} textPosition={cursorPosition} theme={theme} />

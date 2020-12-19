@@ -10,6 +10,8 @@ import { FontData, TextDisplayTheme } from "../../types/types";
 interface Props {
   fontData: FontData;
   handleFontDataChange: (fieldsToUpdate: Partial<Pick<FontData, "fontFamily" | "fontSize">>) => Promise<void>;
+  restart: boolean;
+  setRestart: React.Dispatch<React.SetStateAction<boolean>>;
   setTextDisplayTheme: React.Dispatch<React.SetStateAction<TextDisplayTheme>>
   textDisplayTheme: TextDisplayTheme;
 }
@@ -36,6 +38,8 @@ const useStyles = makeStyles({
 export default function PlaySettings({
   fontData,
   handleFontDataChange,
+  restart,
+  setRestart,
   setTextDisplayTheme,
   textDisplayTheme
 }: Props) {
@@ -82,7 +86,7 @@ export default function PlaySettings({
         <Menu className={classes.iconButton} />
       </Link>
       <div>
-        <IconButton className={classes.iconButton}>
+        <IconButton className={classes.iconButton} disabled={restart} onClick={() => setRestart(true)}>
           <Refresh />
         </IconButton>
         <ClickAwayListener onClickAway={handleClickAway}>

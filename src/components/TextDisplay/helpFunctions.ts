@@ -179,7 +179,3 @@ export const createSymbolWidthsObject = (
     widths: symbolWidths
   }
 };
-
-export const hasGameStarted = (timer: Timer) => {
-  return !(!timer.isRunning && timer.getTime() === 0); // there's a logic in this
-}
