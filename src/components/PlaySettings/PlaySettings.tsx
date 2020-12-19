@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ClickAwayListener, IconButton, makeStyles } from "@material-ui/core";
 import { FormatSize, Menu, Palette, Refresh } from "@material-ui/icons";
-import TextFormatPopper from "../TextFormatPoppper/TextFormatPopper";
+import TextFormatSelector from "../TextFormatSelector/TextFormatSelector";
 import TextDisplayThemeSelector from "../TextDisplayThemeSelector/TextDisplayThemeSelector";
 import PlaySettingsPopper from "./PlaySettingsPopper/PlaySettingsPopper";
 import { FontData, TextDisplayTheme } from "../../types/types";
@@ -20,12 +20,16 @@ const useStyles = makeStyles({
     justifyContent: "space-between",
     alignItems: "center",
     gridTemplateColumns: "50px auto",
-    padding: "25px 50px",
+    padding: "10px 50px",
     backgroundColor: ({ palette }: TextDisplayTheme) => palette.background.secondary,
-    color: ({ palette }: TextDisplayTheme) => palette.text.secondary
+    color: ({ palette }: TextDisplayTheme) => palette.text.secondary,
+    borderBottom: ({ palette }: TextDisplayTheme) => `1px solid ${palette.text.secondary}`
   },
   iconButton: {
     color: ({ palette }: TextDisplayTheme) => palette.text.secondary
+  },
+  clickAwayWrapper: {
+    display: "inline-block"
   }
 });
 
@@ -56,7 +60,7 @@ export default function PlaySettings({
   const { fontFamily, fontSize } = fontData;
   const isPopperOpen = Boolean(popperOpenedBy);
   const popperContent = isPopperOpen && popperOpenedBy === "formatFontBtt" ?
-    <TextFormatPopper
+    <TextFormatSelector
       activeFontFamily={ fontFamily }
       activeFontSize={ fontSize }
       adjustSymbolRightMargin={adjustSymbolRightMargin}
@@ -68,21 +72,21 @@ export default function PlaySettings({
       textDisplayTheme={textDisplayTheme} />;
   
   useLayoutEffect(() => {
-    const popperAnchor = document.getElementById("formatFontBtt");
+    const popperAnchor = document.getElementById("playSettingsHeader");
     setAnchorEl(popperAnchor);
   }, [])
 
   return(
-    <header className={classes.header}>
+    <header className={classes.header} id="playSettingsHeader">
       <Link to="/mainMenu">
-        <Menu />
+        <Menu className={classes.iconButton} />
       </Link>
       <div>
         <IconButton className={classes.iconButton}>
           <Refresh />
         </IconButton>
         <ClickAwayListener onClickAway={handleClickAway}>
-          <div id="clickAwayWrapper">
+          <div className={classes.clickAwayWrapper} id="clickAwayWrapper">
             <IconButton className={classes.iconButton} id="formatFontBtt" onClick={e => handleClick(e.currentTarget.id)}>
               <FormatSize />
             </IconButton>

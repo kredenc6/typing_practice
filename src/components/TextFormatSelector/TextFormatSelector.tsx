@@ -18,7 +18,7 @@ const useStyles = makeStyles({
   }
 });
 
-export default function TextFormatPopper({
+export default function TextFormatSelector({
   activeFontFamily,
   activeFontSize,
   adjustSymbolRightMargin,

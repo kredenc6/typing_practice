@@ -13,7 +13,8 @@ const useStyles = makeStyles({
   themeSelector: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
-    gap: "10px",
+    gap: "1.5rem",
+    padding: "1rem",
     backgroungColor: ({ palette }: TextDisplayTheme) => palette.background.secondary
   }
 })

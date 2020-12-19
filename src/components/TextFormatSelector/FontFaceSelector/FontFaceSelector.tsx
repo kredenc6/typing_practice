@@ -20,14 +20,15 @@ const useStyles = makeStyles(({ palette, typography }) => ({
   },
   popper: {
     display: "grid",
-    gap: "10px 15px",
+    gap: "1rem 1.5rem",
     gridTemplateColumns: "1fr 1fr 1fr",
-    padding: "15px",
-    backgroundColor: ({ palette }: TextDisplayTheme) => palette.background.secondary
+    padding: "1rem",
+    backgroundColor: "white",
+    border: ({ palette }: TextDisplayTheme) => `1px solid ${palette.text.secondary}`
   },
   fontFamilyItem: {
-    padding: "5px",
-    color: ({ palette }: TextDisplayTheme) => palette.text.secondary,
+    padding: "0.5rem",
+    color: "#555",
     fontFamily: typography.fontFamily,
     borderBottom: "1px solid transparent",
     transition: "all 0.2s",
@@ -38,10 +39,13 @@ const useStyles = makeStyles(({ palette, typography }) => ({
     }
   },
   selectedFontFamilyItem: {
-    padding: "5px",
+    padding: "0.5rem",
     color: palette.info.main,
     fontFamily: typography.fontFamily,
     borderBottom: `1px solid ${palette.info.main}`,
+    cursor: "default"
+  },
+  selectDescription: {
     cursor: "default"
   }
 }));
@@ -86,7 +90,7 @@ export default function FontFaceSelector({ activeFontFamily, handleFontFamilyCha
   return(
     <Grid alignItems="center" justify="space-around" container>
       <Grid item>
-        <Typography>Font face:</Typography>
+        <Typography className={classes.selectDescription}>Font face:</Typography>
       </Grid>
       <Grid item>
         <ClickAwayListener onClickAway={() => handleClickaway(isPopperOpen)}>
