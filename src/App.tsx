@@ -14,6 +14,7 @@ import { FontData } from "./types/types";
 
 export default function App() {
   const [fontData, setFontData] = useState(defaultTextDisplayFontData);
+  const [isFontDataLoading, setIsFontDataLoading] = useState(false);
   const [textDisplayTheme, setTextDisplayTheme] = useState(defaultTheme);
   const [text, setText] = useState("");
   const [timer] = useState(new Timer());
@@ -26,22 +27,28 @@ export default function App() {
     const newFontData = await getFontData(fontFamily, fontSize);
 
     if(!newFontData) return;
-
+    setIsFontDataLoading(true);
+    
     if(updatedField.includes("fontSize")) {
       setTextDisplayTheme(prev => {
         const updatedState = { ...prev };
-        const updatedPadding = `10px ${Math.round(transformPixelSizeToNumber(fontSize) * 0.75)}px`;
+        const updatedPadding = `0.5rem ${transformPixelSizeToNumber(fontSize) / 20}rem`;
         updatedState.offset.display.padding = updatedPadding;
         return updatedState;
       });
+      setIsFontDataLoading(false);
     }
-
+    
     if(updatedField.includes("fontFamily")) {
       if(newFontData.fontLocation === "local") {
         setFontData(newFontData);
         callback && callback();
+        setIsFontDataLoading(false);
       } else {
-        loadFont(newFontData, setFontData, callback);
+        loadFont(newFontData, setFontData, () => {
+          callback && callback();
+          setIsFontDataLoading(false);
+        });
       }
       return;
     }
@@ -72,6 +79,10 @@ export default function App() {
     }
   }, [mistypedWords, timer])
 
+  useEffect(() => {
+    console.log(`loading font data: ${isFontDataLoading}`);
+  },[isFontDataLoading])
+
   return (
     <ThemeProvider theme={appTheme}>
       <Router>
@@ -83,6 +94,7 @@ export default function App() {
             <PlayPage
               fontData={fontData}
               handleFontDataChange={handleFontDataChange}
+              isFontDataLoading={isFontDataLoading}
               setMistypedWords={setMistypedWords}
               setTextDisplayTheme={setTextDisplayTheme}
               text={text}

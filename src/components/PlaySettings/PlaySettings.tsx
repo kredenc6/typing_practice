@@ -10,6 +10,7 @@ import { FontData, TextDisplayTheme } from "../../types/types";
 interface Props {
   fontData: FontData;
   handleFontDataChange: (fieldsToUpdate: Partial<Pick<FontData, "fontFamily" | "fontSize">>) => Promise<void>;
+  isFontDataLoading: boolean;
   restart: boolean;
   setRestart: React.Dispatch<React.SetStateAction<boolean>>;
   setTextDisplayTheme: React.Dispatch<React.SetStateAction<TextDisplayTheme>>
@@ -21,8 +22,8 @@ const useStyles = makeStyles({
     display: "grid",
     justifyContent: "space-between",
     alignItems: "center",
-    gridTemplateColumns: "50px auto",
-    padding: "10px 50px",
+    gridTemplateColumns: "auto auto",
+    padding: "0.5rem 4rem",
     backgroundColor: ({ palette }: TextDisplayTheme) => palette.background.secondary,
     color: ({ palette }: TextDisplayTheme) => palette.text.secondary,
     borderBottom: ({ palette }: TextDisplayTheme) => `1px solid ${palette.text.secondary}`
@@ -38,6 +39,7 @@ const useStyles = makeStyles({
 export default function PlaySettings({
   fontData,
   handleFontDataChange,
+  isFontDataLoading,
   restart,
   setRestart,
   setTextDisplayTheme,
@@ -69,6 +71,7 @@ export default function PlaySettings({
       activeFontSize={ fontSize }
       adjustSymbolRightMargin={adjustSymbolRightMargin}
       handleFontDataChange={handleFontDataChange}
+      isFontDataLoading={isFontDataLoading}
       textDisplayTheme={textDisplayTheme} />
     :
     <TextDisplayThemeSelector

@@ -3,7 +3,7 @@ import { makeStyles, Popper, PopperProps } from "@material-ui/core";
 import { TextDisplayTheme } from "../../../types/types";
 
 interface Props extends PopperProps {
-  textDisplayTheme: TextDisplayTheme
+  textDisplayTheme: TextDisplayTheme;
 }
 
 const useStyles = makeStyles({

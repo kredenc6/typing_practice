@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useState } from "react";
 import { ClickAwayListener, Grid, makeStyles, Popper, Typography } from "@material-ui/core";
+import Spinner from "../../Spinner/Spinner";
 import { fontFamilies } from "../../../styles/textDisplayTheme/textDisplayData";
 import { FontFamily, TextDisplayTheme } from "../../../types/types";
 
@@ -8,6 +9,7 @@ import FakeSelect from "../../FakeSelect/FakeSelect";
 interface Props {
   activeFontFamily: FontFamily;
   handleFontFamilyChange: (fontFamily: FontFamily) => void;
+  isFontDataLoading: boolean;
   textDisplayTheme: TextDisplayTheme;
 }
 
@@ -50,7 +52,7 @@ const useStyles = makeStyles(({ palette, typography }) => ({
   }
 }));
 
-export default function FontFaceSelector({ activeFontFamily, handleFontFamilyChange, textDisplayTheme }: Props) {
+export default function FontFaceSelector({ activeFontFamily, handleFontFamilyChange, isFontDataLoading, textDisplayTheme }: Props) {
   const classes = useStyles(textDisplayTheme);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [isPopperOpen, setIsPopperOpen] = useState(false);
@@ -106,8 +108,10 @@ export default function FontFaceSelector({ activeFontFamily, handleFontFamilyCha
               className={classes.popper}
               modifiers={{ offset: { enabled: true, offset: "-100%p + 100%, 5" } }}
               open={isPopperOpen}
-              placement="bottom-start">
+              placement="bottom-start"
+            >
               {FontFamilyComponents}
+              <Spinner isLoading={isFontDataLoading} />
             </Popper>
           </div>
         </ClickAwayListener>

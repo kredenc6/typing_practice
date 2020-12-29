@@ -9,6 +9,7 @@ interface Props {
   activeFontSize: FontSize;
   adjustSymbolRightMargin: (marginRight: string) => void;
   handleFontDataChange: (fieldsToUpdate: Partial<Pick<FontData, "fontFamily" | "fontSize">>, callback?: () => any) => Promise<void>;
+  isFontDataLoading: boolean;
   textDisplayTheme: TextDisplayTheme;
 }
 
@@ -23,6 +24,7 @@ export default function TextFormatSelector({
   activeFontSize,
   adjustSymbolRightMargin,
   handleFontDataChange,
+  isFontDataLoading,
   textDisplayTheme
 }: Props) {
   const classes = useStyles(textDisplayTheme);
@@ -45,6 +47,7 @@ export default function TextFormatSelector({
       <FontFaceSelector
         activeFontFamily={activeFontFamily}
         handleFontFamilyChange={handleFontFamilyChange}
+        isFontDataLoading={isFontDataLoading}
         textDisplayTheme={textDisplayTheme} />
     </div>
   );

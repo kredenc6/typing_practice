@@ -9,6 +9,7 @@ import Timer from "../../accessories/Timer";
 interface Props {
   fontData: FontData;
   handleFontDataChange: (fieldsToUpdate: Partial<Pick<FontData, "fontFamily" | "fontSize">>) => Promise<void>;
+  isFontDataLoading: boolean;
   setMistypedWords: React.Dispatch<React.SetStateAction<Row["words"]>>;
   setTextDisplayTheme: React.Dispatch<React.SetStateAction<TextDisplayTheme>>
   text: string;
@@ -27,6 +28,7 @@ const useStyles = makeStyles({
 export default function PlayPage({
   fontData,
   handleFontDataChange,
+  isFontDataLoading,
   setMistypedWords,
   setTextDisplayTheme,
   text,
@@ -41,6 +43,7 @@ export default function PlayPage({
       <PlaySettings
         fontData={fontData}
         handleFontDataChange={handleFontDataChange}
+        isFontDataLoading={isFontDataLoading}
         restart={restart}
         setRestart={setRestart}
         setTextDisplayTheme={setTextDisplayTheme}

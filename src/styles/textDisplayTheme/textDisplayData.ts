@@ -12,8 +12,8 @@ export const defaultTheme: TextDisplayTheme = {
   palette: { ...defaultPalette.palette },
   offset: {
     display: {
-      margin: "20px auto",
-      padding: "10px 23px"
+      margin: "1rem auto",
+      padding: "0.5rem 1.5rem"
     },
     text: {
       paddingLeft: "1px",
