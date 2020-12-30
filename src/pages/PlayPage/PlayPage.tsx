@@ -11,7 +11,7 @@ interface Props {
   handleFontDataChange: (fieldsToUpdate: Partial<Pick<FontData, "fontFamily" | "fontSize">>) => Promise<void>;
   isFontDataLoading: boolean;
   setMistypedWords: React.Dispatch<React.SetStateAction<Row["words"]>>;
-  setTextDisplayTheme: React.Dispatch<React.SetStateAction<TextDisplayTheme>>
+  setTextDisplayTheme: React.Dispatch<React.SetStateAction<TextDisplayTheme>>;
   text: string;
   textDisplayTheme: TextDisplayTheme;
   timer: Timer;

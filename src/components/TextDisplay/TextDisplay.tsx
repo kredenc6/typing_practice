@@ -50,7 +50,6 @@ const useStyles = makeStyles(({ palette }) => ({
   }
 }));
 
-//BUG word typing speed resets? on theme change (some words stay at -1 time whend finished)
 export default function TextDisplay({ fontData, restart, setMistypedWords, setRestart, theme, text, timer }: Props) {
   const [symbolRows, setSymbolRows] = useState<Row[]>([]);
   const [rowPosition, setRowPosition] = useState(0);
@@ -59,21 +58,21 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
   const [enteredSymbol, setEnteredSymbol] = useState("");
   const [keyStrokeCount, setKeyStrokeCount] = useState(0);
   const [gameStatus, setGameStatus] = useState<GameStatus>("settingUp");
-  const [wordTimer] = useState(new Timer(2));
   
   const classes = useStyles({ ...fontData, ...theme });
+  const wordTimer = useRef(new Timer(2));
   const textDisplayRef: React.MutableRefObject<null | HTMLDivElement> = useRef(null);
   const fontDataAndTextRef: React.MutableRefObject<FontDataAndTextRef> = useRef({ fontData, text });
 
-  // (on keypress) check and adjust all the necessary stuff
+  // (on keypress === truthy enteredSymbol) check and adjust all the necessary stuff
   useEffect(() => {
     if(!enteredSymbol || gameStatus === "finished" || !symbolRows.length) return;
-    if(gameStatus === "start") {
+    if(gameStatus === "start") { // on first keypress
       timer.start();
-      setGameStatus("playing");
       if(getWordObject(symbolRows, 0, 0)?.type === "word") {
-        wordTimer.start();
+        wordTimer.current.start();
       }
+      setGameStatus("playing");
     }
     // if the transcription is completed
     if(cursorPosition >= text.length - 1) {
@@ -112,7 +111,7 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
     }
     
     setEnteredSymbol(""); // reset typed symbol
-  }, [cursorPosition, enteredSymbol, gameStatus, keyStrokeCount, setMistypedWords, symbolRows, rowPosition, text, timer, wordPosition, wordTimer])
+  }, [cursorPosition, enteredSymbol, gameStatus, keyStrokeCount, setMistypedWords, symbolRows, rowPosition, text, timer, wordPosition])
 
   // on did mount add keypress event listener
   useEffect(() => {
@@ -128,7 +127,7 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
     return () => window.removeEventListener("keydown", ({ key }) => onKeyDown(key));
   }, [])
 
-  // on pasted text or changed font
+  // on pasted text, restart or changed font
   useLayoutEffect(() => {
     // return on null values
     if(!fontData || !textDisplayRef.current) return;
@@ -147,7 +146,6 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
     
     let newSymbolRows: Row[] = [];
     if(gameStatus !== "settingUp") {
-      console.log("lsdkfjslkdfj");
       newSymbolRows = adjustRowsToNewFontData(symbolRows, displayTextInnerWidth, symbolWidhtsObject);
     } else {
       newSymbolRows = transformTextToSymbolRows(text, displayTextInnerWidth, symbolWidhtsObject);
@@ -169,24 +167,26 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
 
   // word timer
   useEffect(() => {
-    if(!symbolRows.length) return;
+    if(!symbolRows.length || gameStatus !== "playing") return;
     
-    const wordTimeObject = getWordTimeObject(wordTimer, symbolRows, rowPosition, wordPosition);
+    const wordTimeObject = getWordTimeObject(wordTimer.current, symbolRows, rowPosition, wordPosition);
     if(!wordTimeObject) return;
 
     updateWordTime(symbolRows, setSymbolRows, wordTimeObject);
-  }, [symbolRows, rowPosition, wordPosition, wordTimer])
+  }, [gameStatus, symbolRows, rowPosition, wordPosition])
 
   // restart
   useEffect(() => {
     if(!restart) return;
     timer.reset();
+    wordTimer.current.reset();
     setCursorPosition(0);
     setWordPosition(0);
     setRowPosition(0);
     setKeyStrokeCount(0);
     setSymbolRows([]);
     setGameStatus("settingUp");
+    setEnteredSymbol("");
     setRestart(false);
   }, [restart, setRestart, timer])
 

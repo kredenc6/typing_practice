@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { ThemeProvider } from "@material-ui/core";
 import PlayPage from "./pages/PlayPage/PlayPage";
@@ -17,9 +17,11 @@ export default function App() {
   const [isFontDataLoading, setIsFontDataLoading] = useState(false);
   const [textDisplayTheme, setTextDisplayTheme] = useState(defaultTheme);
   const [text, setText] = useState("");
-  const [timer] = useState(new Timer());
+  // const [timer, setTimer] = useState(new Timer());
   const [mistypedWords, setMistypedWords] = useState<Row["words"]>([]);
   const [mistypedSymbols, setMistypedSymbols] = useState<string[]>([]);
+
+  const timer = useRef(new Timer());
 
   const handleFontDataChange = async (fieldToUpdate: Partial<FontData>, callback?: () => any) => {
     const updatedField = Object.keys(fieldToUpdate) as (keyof FontData)[];
@@ -67,7 +69,7 @@ export default function App() {
 
   useEffect(() => {
     if(mistypedWords.length) {
-      const time = timer.getTime();
+      const time = timer.current.getTime();
       // const wordCount = symbolRows.reduce((wordCount, { words }) => wordCount + words.length, 0);
       console.log(`Time: ${time}s`);
       // console.log(`Typing speed:
@@ -95,7 +97,7 @@ export default function App() {
               setTextDisplayTheme={setTextDisplayTheme}
               text={text}
               textDisplayTheme={textDisplayTheme}
-              timer={timer} />
+              timer={timer.current} />
           </Route>
         </Switch>
       </Router>
