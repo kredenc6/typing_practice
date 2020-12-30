@@ -17,9 +17,8 @@ export default function App() {
   const [isFontDataLoading, setIsFontDataLoading] = useState(false);
   const [textDisplayTheme, setTextDisplayTheme] = useState(defaultTheme);
   const [text, setText] = useState("");
-  // const [timer, setTimer] = useState(new Timer());
   const [mistypedWords, setMistypedWords] = useState<Row["words"]>([]);
-  const [mistypedSymbols, setMistypedSymbols] = useState<string[]>([]);
+  // const [mistypedSymbols, setMistypedSymbols] = useState<string[]>([]);
 
   const timer = useRef(new Timer());
 
