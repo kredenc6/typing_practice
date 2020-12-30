@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Redirect, Route, Switch } from "react-router-dom";
 import { ThemeProvider } from "@material-ui/core";
 import PlayPage from "./pages/PlayPage/PlayPage";
 import MainMenu from "./pages/MainMenu/MainMenu";
@@ -84,6 +84,9 @@ export default function App() {
     <ThemeProvider theme={appTheme}>
       <Router>
         <Switch>
+          <Route exact path="/">
+            <Redirect to="/mainMenu" />
+          </Route>
           <Route path="/mainMenu">
             <MainMenu setText={setText} text={text} />
           </Route>
