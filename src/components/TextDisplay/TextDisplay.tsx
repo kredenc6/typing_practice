@@ -15,6 +15,7 @@ import {
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import { calcTypingPrecision, calcTypingSpeedInKeystrokes, calcTypingSpeedInWPM } from "../../helpFunctions/calcTypigSpeed";
 import { Row, transformTextToSymbolRows } from "../../textFunctions/transformTextToSymbolRows";
+import adjustRowsToNewFontData from "../../textFunctions/adjustRowsToNewFontData";
 import Timer from "../../accessories/Timer";
 import DisplayedRow from "../DisplayedRow/DisplayedRow";
 import { FontData, TextDisplayTheme } from "../../types/types";
@@ -49,7 +50,6 @@ const useStyles = makeStyles(({ palette }) => ({
   }
 }));
 
-//BUG ctrl+v text throws
 //BUG word typing speed resets? on theme change (some words stay at -1 time whend finished)
 export default function TextDisplay({ fontData, restart, setMistypedWords, setRestart, theme, text, timer }: Props) {
   const [symbolRows, setSymbolRows] = useState<Row[]>([]);
@@ -141,11 +141,18 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
     if(gameStatus !== "settingUp" && areObjectValuesSame(fontDataAndTextRef.current, { fontData, text })) return;
     fontDataAndTextRef.current = { fontData, text };
 
-    const mistypedSymbolPositions = collectMistypedSymbolPositions(symbolRows);
     const { paddingLeft, paddingRight, width } = getComputedStyle(textDisplayRef.current); // example: 1234.56px
     const displayTextInnerWidth = calculateDisplayTextInnerWidth(width, paddingLeft, paddingRight);
     const symbolWidhtsObject = createSymbolWidthsObject(theme.offset["text"], fontData.symbolWidths);
-    const newSymbolRows = transformTextToSymbolRows(text, displayTextInnerWidth, symbolWidhtsObject, mistypedSymbolPositions);
+    
+    let newSymbolRows: Row[] = [];
+    if(gameStatus !== "settingUp") {
+      console.log("lsdkfjslkdfj");
+      newSymbolRows = adjustRowsToNewFontData(symbolRows, displayTextInnerWidth, symbolWidhtsObject);
+    } else {
+      newSymbolRows = transformTextToSymbolRows(text, displayTextInnerWidth, symbolWidhtsObject);
+    }
+    
     const {
       rowPosition: newRowPosition,
       wordPosition: newWordPosition

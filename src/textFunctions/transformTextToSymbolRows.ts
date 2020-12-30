@@ -8,7 +8,7 @@ export type SymbolObject = {
   wasCorrect: boolean;
 };
 
-type WordObject = {
+export type WordObject = {
   string: string;
   symbols: SymbolObject[];
   type: WordType;
@@ -30,7 +30,7 @@ export type SymbolWidths = {
 };
 
 const splitterRegexp = /[0-9\p{L}]+|\s+|[^0-9\p{L}\s+]/giu; // numbers or letters | whitespace | nothing of the previous
-const lineEndersRegexp = /[ .,!?;:)\]}']|\n+/;
+export const lineEndersRegexp = /[ .,!?;:)\]}']|\n+/;
 
 
 const sortTextToRows = (text: string, maxLineLength: number, symbolWidths: SymbolWidths) => {
@@ -58,12 +58,12 @@ const sortTextToRows = (text: string, maxLineLength: number, symbolWidths: Symbo
 
     currentTextLineLength = unsortedWordLength;
     return [...textLines, [unsortedWord]]; // ...otherwise create a new line with the word.
-  }, [[]] as Array<string[]>);
+  }, [[]] as string[][]);
   
   return rows;
 };
 
-function calcWordLength(word: string, symbolWidths: SymbolWidths) {
+export const calcWordLength = (word: string, symbolWidths: SymbolWidths) => {
   const { marginX, paddingX, widths } = symbolWidths;
   let wordLength = 0;
 
@@ -79,14 +79,13 @@ function calcWordLength(word: string, symbolWidths: SymbolWidths) {
     }
   }
   return wordLength;
-}
+};
 
 export const transformTextToSymbolRows =
 (
   text: string,
   lineLength: number,
-  symbolWidths: SymbolWidths,
-  mistypedSymbols = [] as number[]
+  symbolWidths: SymbolWidths
 ) => {
   if(!text) return [];
   const rowArray: Row[] = [];
@@ -100,23 +99,16 @@ export const transformTextToSymbolRows =
     
     for(const word of row) {
       let wordInSymbolObjects: SymbolObject[] = [];
-      let wasWordCorrect = true;
       
       for(const symbol of word) {
-        const wasSymbolCorrect = !mistypedSymbols.includes(symbolPosition);
-        
         wordInSymbolObjects.push({
           symbol,
           symbolPosition: symbolPosition,
-          wasCorrect: wasSymbolCorrect
+          wasCorrect: true
         });
         
         symbolPosition++;
         symbolsInRowCount++;
-
-        if(!wasSymbolCorrect) {
-          wasWordCorrect = false;
-        }
       }
 
       const wordObject: WordObject = {
@@ -125,7 +117,7 @@ export const transformTextToSymbolRows =
         symbols: wordInSymbolObjects,
         wordPosition,
         typedSpeed: -1,
-        wasCorrect: wasWordCorrect
+        wasCorrect: true
       };
 
       words.push(wordObject);
@@ -142,7 +134,7 @@ export const transformTextToSymbolRows =
 };
 
 
-function determineWordType(word: string): WordType {
+const determineWordType = (word: string): WordType => {
   if(/\s+/.test(word)) {
     return "whitespace";
   }
@@ -150,4 +142,4 @@ function determineWordType(word: string): WordType {
     return "word";
   }
   return "other";
-}
+};

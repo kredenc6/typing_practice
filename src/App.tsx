@@ -79,10 +79,6 @@ export default function App() {
     }
   }, [mistypedWords, timer])
 
-  useEffect(() => {
-    console.log(`loading font data: ${isFontDataLoading}`);
-  },[isFontDataLoading])
-
   return (
     <ThemeProvider theme={appTheme}>
       <Router>
@@ -113,3 +109,5 @@ export default function App() {
 //  - continue to the next character
 //  - allow backspace
 // TODO add $nbsp; after prepositions
+
+// TODO handle failed font fetch
