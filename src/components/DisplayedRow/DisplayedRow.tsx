@@ -1,17 +1,45 @@
-import React from "react";
+import React, { useLayoutEffect, useRef } from "react";
+import classNames from "classnames";
+import { makeStyles } from "@material-ui/core";
 import DisplayedSymbol from "../DisplayedSymbol/DisplayedSymbol";
 import TextCursor from "../TextCursor/TextCursor";
+import { getRelativePosition, getSymbolStyle } from "./helpFunctions";
 import { Row } from "../../textFunctions/transformTextToSymbolRows";
-import { FontSize, SymbolStyle, RelativeSymbolPosition, TextDisplayTheme } from "../../types/types";
+import { FontSize, TextDisplayTheme } from "../../types/types";
 
-interface Props {
+interface Props extends React.HTMLProps<HTMLPreElement> {
   fontSize: FontSize;
   row: Row;
+  setRowHeight?: React.Dispatch<React.SetStateAction<string>>;
   textPosition: number;
   theme: TextDisplayTheme;
 }
 
-export default function DisplayedRow({ fontSize, row: { words }, textPosition, theme }: Props) {
+const useStyles = makeStyles({
+  row: {
+    transition: "margin-top 500ms"
+  }
+});
+
+export default function DisplayedRow({
+  className,
+  fontSize,
+  row: { words },
+  setRowHeight,
+  textPosition,
+  theme,
+  ...preProps
+}: Props) {
+  const classes = useStyles();
+  const preRef: React.MutableRefObject<null | HTMLPreElement> = useRef(null);
+
+  useLayoutEffect(() => {
+    if(preRef.current && setRowHeight) {
+        const rowHeight = getComputedStyle(preRef.current!).height;
+        setRowHeight(rowHeight);
+    }
+  })
+
   const DisplayedSymbolsComponents = words.map(({ symbols: wordInSymbols }) => {
     return wordInSymbols.map(({ symbol, symbolPosition, wasCorrect }) => {
       const relativePosition = getRelativePosition(textPosition, symbolPosition);
@@ -23,40 +51,14 @@ export default function DisplayedRow({ fontSize, row: { words }, textPosition, t
           symbol={symbol} />
       );
     });
-});
+  });
 
   return (
-    <pre>{DisplayedSymbolsComponents}</pre>
+    <pre
+      className={classNames(classes.row, className)} {...preProps}
+      ref={preRef}
+    >
+      {DisplayedSymbolsComponents}
+    </pre>
   );
-}
-
-function getRelativePosition(textPosition: number, symbolPosition: number): RelativeSymbolPosition {
-  if(textPosition === symbolPosition) return "active";
-  if(textPosition < symbolPosition) return "pending";
-  return "processed";
-}
-
-function getSymbolStyle(wasCorrect: boolean, relativePosition: RelativeSymbolPosition, { offset, palette }: TextDisplayTheme): SymbolStyle {
-  const symbolStyle: SymbolStyle = {
-    bgcColor: palette.symbols.default.bgcColor,
-    color: palette.symbols.default.color,
-    cursorColor: "transparent",
-    symbolOffset: offset["text"]
-  };
-
-  if(relativePosition === "processed") {
-    if(wasCorrect) {
-      symbolStyle.bgcColor = palette.symbols.correct.bgcColor;
-      symbolStyle.color = palette.symbols.correct.color;
-    } else {
-      symbolStyle.bgcColor = palette.symbols.mistyped.bgcColor;
-      symbolStyle.color = palette.symbols.mistyped.color;
-    }
-  } else if(relativePosition === "active") {
-    symbolStyle.cursorColor = "#0a6bf9";
-    symbolStyle.bgcColor = palette.symbols.active.bgcColor;
-    symbolStyle.color = palette.symbols.active.color;
-  } 
-  
-  return symbolStyle;
-}
+};

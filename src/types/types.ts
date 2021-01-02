@@ -30,7 +30,7 @@ export interface Offset {
     margin: string;
     padding: string;
   },
-  text: {
+  symbol: {
     paddingLeft: string;
     paddingRight: string;
     marginRight: string;
@@ -61,7 +61,7 @@ export interface TextDisplayTheme {
 
 export interface SymbolStyle extends FontThemeStyle {
   cursorColor: string;
-  symbolOffset: Offset["text"];
+  symbolOffset: Offset["symbol"];
 }
 
 export type RelativeSymbolPosition = "pending" | "active" | "processed";

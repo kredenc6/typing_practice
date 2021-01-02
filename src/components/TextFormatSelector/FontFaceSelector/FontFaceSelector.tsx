@@ -67,7 +67,7 @@ export default function FontFaceSelector({ activeFontFamily, handleFontFamilyCha
   };
   const FontFamilyComponents = fontFamilies.map(({ name }) => {
     return (
-      <div>
+      <div key={name}>
         {
           activeFontFamily === name ?
             <span className={classes.selectedFontFamilyItem} key={name}>{name}</span>

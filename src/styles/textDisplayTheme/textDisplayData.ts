@@ -15,7 +15,7 @@ export const defaultTheme: TextDisplayTheme = {
       margin: "1rem auto",
       padding: "0.5rem 1.5rem"
     },
-    text: {
+    symbol: {
       paddingLeft: "1px",
       paddingRight: "1px",
       marginRight: "1px"

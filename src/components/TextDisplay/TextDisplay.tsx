@@ -1,4 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import classNames from "classnames";
 import { makeStyles } from "@material-ui/core";
 import {
   calculateDisplayTextInnerWidth,
@@ -12,6 +13,7 @@ import {
   updateWordTime,
   updateSymbolRows
 } from "./helpFunctions";
+import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import { calcTypingPrecision, calcTypingSpeedInKeystrokes, calcTypingSpeedInWPM } from "../../helpFunctions/calcTypigSpeed";
 import { Row, transformTextToSymbolRows } from "../../textFunctions/transformTextToSymbolRows";
@@ -37,18 +39,35 @@ interface FontDataAndTextRef {
 
 type GameStatus = "settingUp" | "start" | "playing" | "finished";
 
-const useStyles = makeStyles(({ palette }) => ({
+interface MakeStylesProps {
+  fontData: FontData;
+  lineCount: number;
+  rowHeight: string;
+  theme: TextDisplayTheme;
+}
+
+const TRANSITION_DURATION = 500;
+
+
+// TODO try dynamic width?
+const useStyles = makeStyles({
   textWindow: {
+    boxSizing: "content-box",
     width: "800px",
-    margin: ({ offset }: FontData & TextDisplayTheme) => offset.display.margin,
-    padding: ({ offset }: FontData & TextDisplayTheme) => offset.display.padding,
-    fontFamily: ({ fontFamily }: FontData & TextDisplayTheme) => fontFamily,
-    fontSize: ({ fontSize }: FontData & TextDisplayTheme) => fontSize,
-    borderTop: `1px solid ${palette.divider}`,
-    borderBottom: `1px solid ${palette.divider}`,
-    whiteSpace: "nowrap"
+    height: ({ lineCount, rowHeight }: MakeStylesProps) => `${transformPixelSizeToNumber(rowHeight) * lineCount}px`,
+    margin: ({ theme }: MakeStylesProps) => theme.offset.display.margin,
+    padding: ({ theme }: MakeStylesProps) => theme.offset.display.padding,
+    fontFamily: ({ fontData }: MakeStylesProps) => fontData.fontFamily,
+    fontSize: ({ fontData }: MakeStylesProps) => fontData.fontSize,
+    borderTop: ({ theme }: MakeStylesProps) => `1px solid ${theme.palette.background.secondary}`,
+    borderBottom: ({ theme }: MakeStylesProps) => `1px solid ${theme.palette.background.secondary}`,
+    whiteSpace: "nowrap",
+    overflow: "hidden"
+  },
+  rowMovingUp: {
+    marginTop: ({ rowHeight }: MakeStylesProps) => `-${rowHeight}`
   }
-}));
+});
 
 export default function TextDisplay({ fontData, restart, setMistypedWords, setRestart, theme, text, timer }: Props) {
   const [symbolRows, setSymbolRows] = useState<Row[]>([]);
@@ -57,9 +76,12 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
   const [cursorPosition, setCursorPosition] = useState(0);
   const [enteredSymbol, setEnteredSymbol] = useState("");
   const [keyStrokeCount, setKeyStrokeCount] = useState(0);
+  const [lineCount, setLineCount] = useState(0);
+  const [rowHeight, setRowHeight] = useState("50px");
   const [gameStatus, setGameStatus] = useState<GameStatus>("settingUp");
+  const [isRowInTransition, setIsRowInTransition] = useState(false);
   
-  const classes = useStyles({ ...fontData, ...theme });
+  const classes = useStyles({ fontData, lineCount, rowHeight, theme });
   const wordTimer = useRef(new Timer(2));
   const textDisplayRef: React.MutableRefObject<null | HTMLDivElement> = useRef(null);
   const fontDataAndTextRef: React.MutableRefObject<FontDataAndTextRef> = useRef({ fontData, text });
@@ -105,7 +127,10 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
         wordPosition: newWordPosition
       } = getPositions(newCursorPosition, symbolRows, rowPosition);
       
-      setRowPosition(newRowPosition);
+      if(newRowPosition > rowPosition) {
+        setIsRowInTransition(true);
+        setRowPosition(newRowPosition);
+      }
       setWordPosition(newWordPosition);
       setCursorPosition(newCursorPosition);
     }
@@ -142,7 +167,7 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
 
     const { paddingLeft, paddingRight, width } = getComputedStyle(textDisplayRef.current); // example: 1234.56px
     const displayTextInnerWidth = calculateDisplayTextInnerWidth(width, paddingLeft, paddingRight);
-    const symbolWidhtsObject = createSymbolWidthsObject(theme.offset["text"], fontData.symbolWidths);
+    const symbolWidhtsObject = createSymbolWidthsObject(theme.offset["symbol"], fontData.symbolWidths);
     
     let newSymbolRows: Row[] = [];
     if(gameStatus !== "settingUp") {
@@ -156,16 +181,17 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
       wordPosition: newWordPosition
     } = getPositions(cursorPosition, newSymbolRows);
     
-    setSymbolRows(newSymbolRows);
     setRowPosition(newRowPosition);
+    setSymbolRows(newSymbolRows);
     setWordPosition(newWordPosition);
+    setLineCount(fontData.fontSize === "20px" ? 5 : 4); // 1 line is hidden in overflow
 
     if(gameStatus === "settingUp") {
       setGameStatus("start");
     }
   }, [cursorPosition, fontData, gameStatus, symbolRows, text, theme.offset])
 
-  // word timer
+  // on changed wordPosition adjust word timer
   useEffect(() => {
     if(!symbolRows.length || gameStatus !== "playing") return;
     
@@ -175,7 +201,7 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
     updateWordTime(symbolRows, setSymbolRows, wordTimeObject);
   }, [gameStatus, symbolRows, rowPosition, wordPosition])
 
-  // restart
+  // on restart
   useEffect(() => {
     if(!restart) return;
     timer.reset();
@@ -190,17 +216,45 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
     setRestart(false);
   }, [restart, setRestart, timer])
 
-  const DisplayedRowComponents = symbolRows.map((row, rowIndex) =>  
-      <DisplayedRow fontSize={fontData.fontSize} key={rowIndex} row={row} textPosition={cursorPosition} theme={theme} />
-    ).filter((_, i) => { // adjust what rows should be displayed
-      if(rowPosition < 2) {
-        return i < 4;
+  useEffect(() => {
+    if(isRowInTransition) {
+      setTimeout(() => setIsRowInTransition(false), TRANSITION_DURATION);
+    }
+  }, [isRowInTransition])
+
+  const DisplayedRowComponents = symbolRows
+    .filter((_, i) => { // adjust what rows should be displayed
+      if(rowPosition < 2) { // when first or second row is active
+        return i < lineCount;
+      }
+      return ( // when other rows are active
+        i >= (rowPosition - 1 - Number(isRowInTransition)) && // show 1 previous line(or 2 when in transition)...
+        i < (rowPosition + lineCount - 1) // ...then next lines based on lineCount(need to deduct 1 previous line)
+      );
+    })
+    .map((row, rowIndex) => {
+      if(rowIndex === 0) {
+        return (
+          <DisplayedRow
+            className={classNames((rowPosition > 1 && isRowInTransition) && classes.rowMovingUp)}
+            fontSize={fontData.fontSize}
+            key={row.highestSymbolPosition}
+            row={row}
+            setRowHeight={setRowHeight}
+            textPosition={cursorPosition}
+            theme={theme} />
+        );
       }
       return (
-        (rowPosition - 1) <= i &&
-        (rowPosition + 2) >= i
+        <DisplayedRow
+          fontSize={fontData.fontSize}
+          key={row.highestSymbolPosition}
+          row={row}
+          textPosition={cursorPosition}
+          theme={theme} />
       );
-  });
+    }
+  );
 
   return(
     <div className={classes.textWindow} ref={textDisplayRef}>

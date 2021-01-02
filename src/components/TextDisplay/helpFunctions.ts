@@ -168,7 +168,7 @@ export const updateWordTime =
 }
 
 export const createSymbolWidthsObject = (
-  symbolOffset: Offset["text"],
+  symbolOffset: Offset["symbol"],
   symbolWidths: FontData["symbolWidths"]
 ): SymbolWidths => {
   const { marginRight, paddingLeft, paddingRight } = symbolOffset;

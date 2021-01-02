@@ -53,7 +53,7 @@ export default function PlaySettings({
     setTextDisplayTheme(prev => ({ ...prev, ...fieldsToUpdate }));
   };
   const adjustSymbolRightMargin = (marginRight: string) => {
-    setTextDisplayTheme(prev => ({ ...prev, offset: { ...prev.offset, text: { ...prev.offset.text, marginRight } } }));
+    setTextDisplayTheme(prev => ({ ...prev, offset: { ...prev.offset, text: { ...prev.offset.symbol, marginRight } } }));
   };
   const handleClick = (buttonId: string) => {
     const openedBy = buttonId !== popperOpenedBy ? buttonId : "";
