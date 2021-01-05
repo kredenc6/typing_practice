@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, makeStyles } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core";
 import PlaySettings from "../../components/PlaySettings/PlaySettings";
 import TextDisplay from "../../components/TextDisplay/TextDisplay";
 import { FontData, TextDisplayTheme } from "../../types/types";
@@ -39,7 +39,7 @@ export default function PlayPage({
   const [restart , setRestart] = useState(false);
 
   return (
-    <Box className={classes.playPage}>
+    <div className={classes.playPage}>
       <PlaySettings
         fontData={fontData}
         handleFontDataChange={handleFontDataChange}
@@ -56,6 +56,6 @@ export default function PlayPage({
         text={text}
         theme={textDisplayTheme}
         timer={timer} />
-    </Box>
+    </div>
   );
 }

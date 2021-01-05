@@ -29,8 +29,8 @@ export type SymbolWidths = {
   paddingX: number;
 };
 
-const splitterRegexp = /[0-9\p{L}]+|\s+|[^0-9\p{L}\s+]/giu; // numbers or letters | whitespace | nothing of the previous
-export const lineEndersRegexp = /[ .,!?;:)\]}']|\n+/;
+const splitterRegexp = /[0-9\p{L}']+|\s+|[^0-9\p{L}'\s+]/giu; // numbers, letters or apostrophe | whitespace | nothing of the previous
+export const lineEndersRegexp = /[ .,!?;:)\]}]|\n+/;
 
 
 const sortTextToRows = (text: string, maxLineLength: number, symbolWidths: SymbolWidths) => {
@@ -138,7 +138,7 @@ const determineWordType = (word: string): WordType => {
   if(/\s+/.test(word)) {
     return "whitespace";
   }
-  if(/[0-9\p{L}]+/giu.test(word)) {
+  if(/[0-9\p{L}']+/giu.test(word)) {
     return "word";
   }
   return "other";
