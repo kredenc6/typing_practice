@@ -1,4 +1,4 @@
-const SQUARE_BRACKETS_LINKS_REGEXP = /\[.*]/g;
+const SQUARE_BRACKETS_LINKS_REGEXP = /\[.*?]/g;
 
 export default function normalizeTextFromWiki(text: string) {
   return text
