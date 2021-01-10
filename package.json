@@ -1,6 +1,6 @@
 {
   "name": "typing_practice",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.0",
@@ -9,6 +9,7 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "@types/classnames": "^2.2.11",
+    "@types/express": "^4.17.9",
     "@types/jest": "^26.0.13",
     "@types/node": "^14.6.4",
     "@types/react": "^16.9.49",
@@ -17,17 +18,23 @@
     "@types/react-transition-group": "^4.4.0",
     "axios": "^0.21.1",
     "classnames": "^2.2.6",
+    "express": "^4.17.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
     "react-spinners": "^0.9.0",
+    "serverless-http": "^2.6.0",
     "typescript": "^4.0.2",
     "webfontloader": "^1.6.28"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-scripts build",
+    "start": "run-p start:**",
+    "start:app": "react-scripts start",
+    "start:proxy": "netlify-lambda serve src/lambda",
+    "build": "run-p build:**",
+    "build:app": "react-scripts build",
+    "build:proxy": "netlify-lambda build src/lambda",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -47,9 +54,16 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-transform-object-assign": "^7.12.1",
+    "@babel/plugin-transform-runtime": "^7.12.10",
+    "@babel/preset-typescript": "^7.12.7",
+    "@types/aws-lambda": "^8.10.70",
     "@types/webfontloader": "^1.6.32",
+    "babel-loader": "^8.1.0",
     "customize-cra": "^1.0.0",
     "http-proxy-middleware": "^1.0.6",
+    "netlify-lambda": "^2.0.2",
+    "npm-run-all": "^4.1.5",
     "react-app-rewired": "^2.1.6"
   }
 }

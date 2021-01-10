@@ -4,6 +4,8 @@ import { Button, makeStyles } from "@material-ui/core";
 import TextInput from "../../components/TextInput/TextInput";
 import TextNormalizeSwitches from "./TextNormalizeSwitches/TextNormalizeSwitches";
 import { normalizeText } from "./helpFunctions";
+import getWikiArticle from "../../async/getWikiArticle";
+import transformWikiHtmlToText from "../../helpFunctions/wikipedia/transformWikiHtmlToText";
 
 const TEXT_NORMALIZE_DELAY = 2000;
 
@@ -59,6 +61,11 @@ export default function MainMenu({ setText, text }: Props) {
     setTextInput(adjustedText);
   };
 
+  const handleLoadWiki = async (relativePath: string) => {
+    const wikiHtml = await getWikiArticle(relativePath);
+    const wikiArticleParagraphs = transformWikiHtmlToText(wikiHtml);
+    setTextInput(wikiArticleParagraphs.join(" "));
+  }
 
   useEffect(() => {
     if(textInput === text) return;
@@ -78,6 +85,8 @@ export default function MainMenu({ setText, text }: Props) {
   return (
     <div className={classes.mainMenu}>
       <Link id="link-to-playArea" style={{ display: "none" }} to="playArea"></Link>
+      <Button onClick={() => handleLoadWiki("/randomWiki")}>Load random wiki</Button>
+      <Button onClick={() => handleLoadWiki("/wikiArticleOfTheWeek")}>Load week wiki</Button>
       <div className={classes.textSettingsWrapper}>
         <TextInput handleInputChange={handleInputChange} id="text-input" name="textInput" value={textInput} variant="outlined" />
         <TextNormalizeSwitches
