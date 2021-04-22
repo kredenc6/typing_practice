@@ -23,10 +23,8 @@ export const getRidOfUnknownCharacters = async (text: string) => {
   return text.replace(/[\s\S]{1}/g, replacer);
 };
 
-export const normalizeWhitespace = (text: string) => text.trim().replace(/\s+/g, " ");
+export const normalizeWhitespace = (text: string) => text.replace(/\s+/g, " ").trim();
 
 export default async function normalizeTextGeneral(text: string) {
-  return normalizeWhitespace(
-    await getRidOfUnknownCharacters(text)
-  );
+  return await getRidOfUnknownCharacters( normalizeWhitespace(text) );
 };
