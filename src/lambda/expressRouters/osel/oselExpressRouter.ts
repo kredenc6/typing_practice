@@ -21,18 +21,14 @@ const router = express.Router();
 
 router.get("/oselLastArticle", async (_, res) => {
   try {
-    axios({
+    const { data: rawOselHtml } = await axios({
       method: "GET",
       responseType: "text",
       url: await getLastOselArticleLink()
-    })
-      .then(({ data: rawOselHtml }) => {
-        const cutHtml = cutOselHtml(rawOselHtml);
-        res.send(cutHtml);
-      })
-      .catch(err => {
-        res.send(paragraphError(err));
-      });
+    });
+
+    const cutHtml = cutOselHtml(rawOselHtml);
+    res.send(cutHtml);
   } catch(err) {
     res.send(paragraphError(err));
   }
