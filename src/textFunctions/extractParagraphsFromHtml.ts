@@ -1,6 +1,6 @@
 const MIN_PARAGRAPH_TEXT_LENGTH = 25;
 
-export default function transformWikiHtmlToText(html: string) {
+export default function extractParagraphsFromHtml(html: string) {
   const rawHtmlParagraphArr = filterInParagraphs(html);
   const paragraphArr = rawHtmlParagraphArr
     .map(rawHtmlParagraph => {

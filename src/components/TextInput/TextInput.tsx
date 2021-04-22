@@ -20,7 +20,7 @@ const useStyles = makeStyles({
 
 export default function TextInput({ handleInputChange, ...textFieldProps }: Props) {
   const classes = useStyles();
-  return(
+  return (
     <div className={classes.textFieldWrapper}>
         <TextField
           className={classes.textField}
@@ -31,5 +31,5 @@ export default function TextInput({ handleInputChange, ...textFieldProps }: Prop
           rowsMax={7}
           {...textFieldProps} />
     </div>
-  )
+  );
 }

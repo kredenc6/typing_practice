@@ -115,3 +115,5 @@ export default function App() {
 // TODO add $nbsp; after prepositions
 
 // TODO handle failed font fetch
+
+// TODO make links and comments for used sources like wiki and osel(here I should probably ask for permision)

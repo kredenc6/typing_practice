@@ -31,10 +31,10 @@
   "scripts": {
     "start": "run-p start:**",
     "start:app": "react-scripts start",
-    "start:proxy": "netlify-lambda serve src/lambda",
+    "start:proxy": "netlify-lambda serve src/lambda/functions",
     "build": "run-p build:**",
     "build:app": "react-scripts build",
-    "build:proxy": "netlify-lambda build src/lambda",
+    "build:proxy": "netlify-lambda build src/lambda/functions",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

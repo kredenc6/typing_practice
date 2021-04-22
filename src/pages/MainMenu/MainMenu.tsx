@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import { Button, makeStyles } from "@material-ui/core";
 import TextInput from "../../components/TextInput/TextInput";
 import TextNormalizeSwitches from "./TextNormalizeSwitches/TextNormalizeSwitches";
-import { normalizeText } from "./helpFunctions";
-import getWikiArticle from "../../async/getWikiArticle";
-import transformWikiHtmlToText from "../../helpFunctions/wikipedia/transformWikiHtmlToText";
+import normalizeText from "../../textFunctions/normalizeText";
+import normalizeParagraphTexts from "../../textFunctions/normalizeParagraphTexts";
+import getArticle from "../../async/getArticle";
+import extractParagraphsFromHtml from "../../textFunctions/extractParagraphsFromHtml";
+import adjustLoadedTextLength from "../../textFunctions/adjustLoadedTextLength";
 
 const TEXT_NORMALIZE_DELAY = 2000;
 
@@ -43,6 +45,7 @@ export default function MainMenu({ setText, text }: Props) {
   const [generalNormalize] = useState(true);
   const [wikiNormalize, setWikiNormalize] = useState(true);
   const [czechKeyboardNormalize, setCzechKeyboardNormalize] = useState(true);
+  const [loadedParagraphs, setLoadedParagraphs] = useState<string []>([]);
   const timeoutIdRef = useRef(-1);
   const handleInputChange = (text: string) => {
     setTextInput(text);
@@ -61,11 +64,20 @@ export default function MainMenu({ setText, text }: Props) {
     setTextInput(adjustedText);
   };
 
-  const handleLoadWiki = async (relativePath: string) => {
-    const wikiHtml = await getWikiArticle(relativePath);
-    const wikiArticleParagraphs = transformWikiHtmlToText(wikiHtml);
-    setTextInput(wikiArticleParagraphs.join(" "));
-  }
+  const handleLoadArcticle = async (relativePath: string) => {
+    const html = await getArticle(relativePath);
+    const articleParagraphs = extractParagraphsFromHtml(html);
+    const normalizedParagraphs = await normalizeParagraphTexts( // TODO add spaces to start and end of the text + the standart normalize is still triggered
+      articleParagraphs,
+      wikiNormalize,
+      czechKeyboardNormalize
+    );
+    
+    setLoadedParagraphs(normalizedParagraphs);
+    
+    const finalText = adjustLoadedTextLength(normalizedParagraphs, 1000); // TODO make this user adjustable
+    setTextInput(finalText);
+  };
 
   useEffect(() => {
     if(textInput === text) return;
@@ -85,10 +97,15 @@ export default function MainMenu({ setText, text }: Props) {
   return (
     <div className={classes.mainMenu}>
       <Link id="link-to-playArea" style={{ display: "none" }} to="playArea"></Link>
-      <Button onClick={() => handleLoadWiki("/randomWiki")}>Load random wiki</Button>
-      <Button onClick={() => handleLoadWiki("/wikiArticleOfTheWeek")}>Load week wiki</Button>
+      <Button onClick={() => handleLoadArcticle("/randomWiki")}>Load random wiki</Button>
+      <Button onClick={() => handleLoadArcticle("/wikiArticleOfTheWeek")}>Load week wiki</Button>
+      <Button onClick={() => handleLoadArcticle("/oselLastArticle")}>Load last Osel</Button>
       <div className={classes.textSettingsWrapper}>
-        <TextInput handleInputChange={handleInputChange} id="text-input" name="textInput" value={textInput} variant="outlined" />
+        <TextInput
+          handleInputChange={handleInputChange}
+          id="text-input"
+          name="textInput"
+          value={textInput} variant="outlined" />
         <TextNormalizeSwitches
           czechKeyboardNormalize={czechKeyboardNormalize}
           generalNormalize={generalNormalize}
