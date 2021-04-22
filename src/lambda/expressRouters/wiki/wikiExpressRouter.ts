@@ -1,8 +1,6 @@
 import express from "express";
-import serverless from "serverless-http";
 import axios from "axios";
 
-const app = express();
 const router = express.Router();
 
 router.get("/randomWiki", (_, res) => {
@@ -31,20 +29,18 @@ router.get("/wikiArticleOfTheWeek", async (_, res) => {
   }
 });
 
-app.use("/.netlify/functions/proxy", router);
 
-export const handler = serverless(app);
+export default router;
 
-/** @returns relative path for https://cs.wikipedia.org or empty string on failure  */
+/** @returns relative path for https://cs.wikipedia.org  */
 function extractLinkOfTheWikiArticleOfTheWeek(html: string) {
   const articleOfTheWeekRegExp = /<b><a href=(".+?").*<\/a><\/b>/g;
   const regexpResult = articleOfTheWeekRegExp.exec(html);
   if(regexpResult) {
-    console.log(`relative link: ${regexpResult[1].slice(1, -1)}`)
-    return regexpResult[1].slice(1, -1); // link should be in the second position in double quotes
+    return regexpResult[1] // link is in the second index position
+      .slice(1, -1); // get rid of the double quotes
   }
-  console.log("No link extracted!");
-  return "";
+  throw new Error("Regular expression found no link.");
 }
 
 function getHtmlWithArticleOfTheWeekLink(): Promise<string> {
