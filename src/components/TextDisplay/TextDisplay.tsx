@@ -21,6 +21,9 @@ import adjustRowsToNewFontData from "../../textFunctions/adjustRowsToNewFontData
 import Timer from "../../accessories/Timer";
 import DisplayedRow from "../DisplayedRow/DisplayedRow";
 import { FontData, TextDisplayTheme } from "../../types/types";
+import InvalidSymbol from "./InvalidSymbol/InvalidSymbol";
+import { getSymbolStyle } from "../DisplayedRow/helpFunctions";
+import FadeAway from "../transitions/FadeAway/FadeAway";
 
 interface Props {
   fontData: FontData;
@@ -52,6 +55,7 @@ const TRANSITION_DURATION = 500;
 // TODO try dynamic width?
 const useStyles = makeStyles({
   textWindow: {
+    positon: "relative",
     boxSizing: "content-box",
     width: "800px",
     height: ({ lineCount, rowHeight }: MakeStylesProps) => `${transformPixelSizeToNumber(rowHeight) * lineCount}px`,
@@ -66,6 +70,9 @@ const useStyles = makeStyles({
   },
   rowMovingUp: {
     marginTop: ({ rowHeight }: MakeStylesProps) => `-${rowHeight}`
+  },
+  test: {
+    position: "absolute"
   }
 });
 
@@ -242,7 +249,8 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
             row={row}
             setRowHeight={setRowHeight}
             textPosition={cursorPosition}
-            theme={theme} />
+            theme={theme}
+            enteredSymbol={enteredSymbol} />
         );
       }
       return (
@@ -251,7 +259,8 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
           key={row.highestSymbolPosition}
           row={row}
           textPosition={cursorPosition}
-          theme={theme} />
+          theme={theme}
+          enteredSymbol={enteredSymbol} />
       );
     }
   );

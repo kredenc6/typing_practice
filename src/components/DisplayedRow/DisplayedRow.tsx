@@ -6,6 +6,7 @@ import TextCursor from "../TextCursor/TextCursor";
 import { getRelativePosition, getSymbolStyle } from "./helpFunctions";
 import { Row } from "../../textFunctions/transformTextToSymbolRows";
 import { FontSize, TextDisplayTheme } from "../../types/types";
+import InvalidSymbol from "../TextDisplay/InvalidSymbol/InvalidSymbol";
 
 interface Props extends React.HTMLProps<HTMLPreElement> {
   fontSize: FontSize;
@@ -13,6 +14,7 @@ interface Props extends React.HTMLProps<HTMLPreElement> {
   setRowHeight?: React.Dispatch<React.SetStateAction<string>>;
   textPosition: number;
   theme: TextDisplayTheme;
+  enteredSymbol: string;
 }
 
 const useStyles = makeStyles({
@@ -28,6 +30,7 @@ export default function DisplayedRow({
   setRowHeight,
   textPosition,
   theme,
+  enteredSymbol,
   ...preProps
 }: Props) {
   const classes = useStyles();
@@ -43,12 +46,24 @@ export default function DisplayedRow({
   const DisplayedSymbolsComponents = words.map(({ symbols: wordInSymbols }) => {
     return wordInSymbols.map(({ symbol, symbolPosition, wasCorrect }) => {
       const relativePosition = getRelativePosition(textPosition, symbolPosition);
+      // let invalidSymbol;
+      // if(enteredSymbol && enteredSymbol !== symbol && relativePosition === "active") {
+      //   invalidSymbol = enteredSymbol;
+      // }
+      const InvalidSymbolComponent =
+        enteredSymbol && enteredSymbol !== symbol && relativePosition === "active" ?
+        <InvalidSymbol
+          symbol={enteredSymbol}
+          symbolStyle={getSymbolStyle(false, "processed", theme)} />
+        :
+        null;
       return (
         <DisplayedSymbol
           key={symbolPosition}
           TextCursor={relativePosition === "active" ? <TextCursor height={fontSize === "20px" ? "2px" : "3px"} /> : null}
           symbolStyle={getSymbolStyle(wasCorrect, relativePosition, theme)}
-          symbol={symbol} />
+          symbol={symbol}
+          InvalidSymbol={InvalidSymbolComponent} />
       );
     });
   });

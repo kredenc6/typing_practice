@@ -50,6 +50,7 @@ export interface TextDisplayTheme {
       corrected: FontThemeStyle;
       default: FontThemeStyle;
       mistyped: FontThemeStyle;
+      invalid: FontThemeStyle;
     },
     text: {
       main: string;

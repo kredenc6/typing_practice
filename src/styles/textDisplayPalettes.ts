@@ -27,6 +27,10 @@ export const defaultPalette: Pick<TextDisplayTheme, "palette"> = {
       mistyped: {
         bgcColor: "pink",
         color: "darkred"
+      },
+      invalid: {
+        bgcColor: "pink",
+        color: "darkred"
       }
     },
     text: {
@@ -61,6 +65,10 @@ export const blue1: Pick<TextDisplayTheme, "palette"> = {
         color: "#555"
       },
       mistyped: {
+        bgcColor: "pink",
+        color: "darkred"
+      },
+      invalid: {
         bgcColor: "pink",
         color: "darkred"
       }
@@ -99,6 +107,10 @@ export const blue2: Pick<TextDisplayTheme, "palette"> = {
       mistyped: {
         bgcColor: "#ed8525",
         color: "#613209"
+      },
+      invalid: {
+        bgcColor: "pink",
+        color: "darkred"
       }
     },
     text: {
@@ -135,6 +147,10 @@ export const black1: Pick<TextDisplayTheme, "palette"> = {
       mistyped: {
         bgcColor: "#bd9292",
         color: "#6d0000"
+      },
+      invalid: {
+        bgcColor: "pink",
+        color: "darkred"
       }
     },
     text: {
