@@ -1,14 +1,9 @@
 import React from "react";
 import { Button, ButtonProps, makeStyles } from "@material-ui/core";
-import { TextDisplayTheme } from "../../../types/types";
 
-interface Props {
-  textDisplayThemePalette: TextDisplayTheme["palette"];
-}
-
-const useStyles = makeStyles(({ palette }) => ({
+const useStyles = makeStyles(({ palette, textDisplayTheme }) => ({
   paletteButton: {
-    backgroundColor: ({ background }: TextDisplayTheme["palette"]) => background.main,
+    backgroundColor: textDisplayTheme.background.main,
     border: "2px solid transparent",
     "&.Mui-disabled": {
       border: `2px solid ${palette.info.dark}`
@@ -18,16 +13,16 @@ const useStyles = makeStyles(({ palette }) => ({
     }
   },
   correct: {
-    color: ({ symbols }: TextDisplayTheme["palette"]) => symbols.correct.color,
-    backgroundColor: ({ symbols }: TextDisplayTheme["palette"]) => symbols.correct.bgcColor
+    color: textDisplayTheme.symbols.correct.color,
+    backgroundColor: textDisplayTheme.symbols.correct.bgcColor
   },
   corrected: {
-    color: ({ symbols }: TextDisplayTheme["palette"]) => symbols.corrected.color,
-    backgroundColor: ({ symbols }: TextDisplayTheme["palette"]) => symbols.corrected.bgcColor
+    color: textDisplayTheme.symbols.corrected.color,
+    backgroundColor: textDisplayTheme.symbols.corrected.bgcColor
   },
   mistyped: {
-    color: ({ symbols }: TextDisplayTheme["palette"]) => symbols.mistyped.color,
-    backgroundColor: ({ symbols }: TextDisplayTheme["palette"]) => symbols.mistyped.bgcColor
+    color: textDisplayTheme.symbols.mistyped.color,
+    backgroundColor: textDisplayTheme.symbols.mistyped.bgcColor
   },
   symbol: {
     marginRight: "1px",
@@ -36,8 +31,8 @@ const useStyles = makeStyles(({ palette }) => ({
   }
 }));
 
-export default function SelectTextDisplayThemeButton({ textDisplayThemePalette, ...buttonProps}: Props & ButtonProps) {
-  const classes = useStyles(textDisplayThemePalette);
+export default function SelectTextDisplayThemeButton(buttonProps: ButtonProps) {
+  const classes = useStyles();
 
   return (
     <Button className={classes.paletteButton} {...buttonProps}>

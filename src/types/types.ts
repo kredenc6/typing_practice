@@ -60,6 +60,23 @@ export interface TextDisplayTheme {
   offset: Offset;
 }
 
+export interface NewTextDisplayTheme {
+  name: string;
+  background: {
+    main: string;
+    secondary: string;
+  },
+  symbols: {
+    active: FontThemeStyle;
+    correct: FontThemeStyle;
+    corrected: FontThemeStyle;
+    default: FontThemeStyle;
+    mistyped: FontThemeStyle;
+    invalid: FontThemeStyle;
+  },
+  offset: Offset;
+}
+
 export interface SymbolStyle extends FontThemeStyle {
   cursorColor: string;
   symbolOffset: Offset["symbol"];

@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { BrowserRouter as Router, Redirect, Route, Switch } from "react-router-dom";
-import { ThemeProvider } from "@material-ui/core";
+import { ThemeProvider as MuiThemeProvider } from "@material-ui/core";
 import PlayPage from "./pages/PlayPage/PlayPage";
 import MainMenu from "./pages/MainMenu/MainMenu";
 import Timer from "./accessories/Timer";
@@ -8,19 +8,28 @@ import { Row } from "./textFunctions/transformTextToSymbolRows";
 import getFontData from "./async/getFontData";
 import loadFont from "./async/loadFont";
 import transformPixelSizeToNumber from "./helpFunctions/transformPixelSizeToNumber";
-import appTheme from "./styles/appTheme";
-import { defaultTextDisplayFontData, defaultTheme } from "./styles/textDisplayTheme/textDisplayData";
+import { defaultTextDisplayFontData, defaultTextDisplayTheme } from "./styles/textDisplayTheme/textDisplayData";
 import { FontData } from "./types/types";
+import { ThemeContext } from "./styles/themeContext";
 
 export default function App() {
   const [fontData, setFontData] = useState(defaultTextDisplayFontData);
   const [isFontDataLoading, setIsFontDataLoading] = useState(false);
-  const [textDisplayTheme, setTextDisplayTheme] = useState(defaultTheme);
+  const [textDisplayTheme, setTextDisplayTheme] = useState(defaultTextDisplayTheme);
   const [text, setText] = useState("");
   const [mistypedWords, setMistypedWords] = useState<Row["words"]>([]);
+  const { state: theme } = useContext(ThemeContext);
+  // const [theme, setTheme] = useState(appTheme)
   // const [mistypedSymbols, setMistypedSymbols] = useState<string[]>([]);
+  console.log(theme)
+
+  useEffect(() => {
+    console.log("theme update:")
+    console.dir(theme)
+  },[theme])
 
   const timer = useRef(new Timer());
+
 
   const handleFontDataChange = async (fieldToUpdate: Partial<FontData>, callback?: () => any) => {
     const updatedField = Object.keys(fieldToUpdate) as (keyof FontData)[];
@@ -81,7 +90,7 @@ export default function App() {
   }, [mistypedWords, timer])
 
   return (
-    <ThemeProvider theme={appTheme}>
+    <MuiThemeProvider theme={theme}>
       <Router>
         <Switch>
           <Route exact path="/">
@@ -96,14 +105,14 @@ export default function App() {
               handleFontDataChange={handleFontDataChange}
               isFontDataLoading={isFontDataLoading}
               setMistypedWords={setMistypedWords}
-              setTextDisplayTheme={setTextDisplayTheme}
+              // setTextDisplayTheme={setTextDisplayTheme}
               text={text}
-              textDisplayTheme={textDisplayTheme}
+              // textDisplayTheme={textDisplayTheme}
               timer={timer.current} />
           </Route>
         </Switch>
       </Router>
-    </ThemeProvider>
+    </MuiThemeProvider>
   );
 }
 

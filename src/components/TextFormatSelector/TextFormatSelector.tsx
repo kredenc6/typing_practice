@@ -2,7 +2,7 @@ import React from "react";
 import { Divider, makeStyles } from "@material-ui/core";
 import FontSizeSelector from "./FontSizeSelector/FontSizeSelector";
 import FontFaceSelector from "./FontFaceSelector/FontFaceSelector";
-import { FontData, FontFamily, FontSize, TextDisplayTheme } from "../../types/types";
+import { FontData, FontFamily, FontSize } from "../../types/types";
 
 interface Props {
   activeFontFamily: FontFamily;
@@ -10,24 +10,22 @@ interface Props {
   adjustSymbolRightMargin: (marginRight: string) => void;
   handleFontDataChange: (fieldsToUpdate: Partial<Pick<FontData, "fontFamily" | "fontSize">>, callback?: () => any) => Promise<void>;
   isFontDataLoading: boolean;
-  textDisplayTheme: TextDisplayTheme;
 }
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ palette }) => ({
   textFormat: {
-    color: ({ palette }: TextDisplayTheme) => palette.text.secondary
+    color: palette.secondary.contrastText
   }
-});
+}));
 
 export default function TextFormatSelector({
   activeFontFamily,
   activeFontSize,
   adjustSymbolRightMargin,
   handleFontDataChange,
-  isFontDataLoading,
-  textDisplayTheme
+  isFontDataLoading
 }: Props) {
-  const classes = useStyles(textDisplayTheme);
+  const classes = useStyles();
 
   const handleFontSizeChange = (fontSize: FontSize) => {
     const marginRight = determineRightMargin(fontSize);
@@ -47,8 +45,7 @@ export default function TextFormatSelector({
       <FontFaceSelector
         activeFontFamily={activeFontFamily}
         handleFontFamilyChange={handleFontFamilyChange}
-        isFontDataLoading={isFontDataLoading}
-        textDisplayTheme={textDisplayTheme} />
+        isFontDataLoading={isFontDataLoading} />
     </div>
   );
 }

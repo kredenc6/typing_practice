@@ -1,5 +1,5 @@
-import { defaultPalette } from "../textDisplayPalettes";
-import { FontFamilies, FontSize, FontData, TextDisplayTheme } from "../../types/types";
+import { defaultPalette } from "../textDisplayThemes";
+import { FontFamilies, FontSize, FontData, NewTextDisplayTheme } from "../../types/types";
 
 export const defaultTextDisplayFontData: FontData = {
   fontFamily: "Fira Code",
@@ -8,8 +8,8 @@ export const defaultTextDisplayFontData: FontData = {
   symbolWidths: {}
 };
 
-export const defaultTheme: TextDisplayTheme = {
-  palette: { ...defaultPalette.palette },
+export const defaultTextDisplayTheme: NewTextDisplayTheme = {
+  ...defaultPalette,
   offset: {
     display: {
       margin: "1rem auto",

@@ -1,11 +1,13 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useContext, useLayoutEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ClickAwayListener, IconButton, makeStyles } from "@material-ui/core";
 import { FormatSize, Menu, Palette, Refresh } from "@material-ui/icons";
 import TextFormatSelector from "../TextFormatSelector/TextFormatSelector";
 import TextDisplayThemeSelector from "../TextDisplayThemeSelector/TextDisplayThemeSelector";
 import PlaySettingsPopper from "./PlaySettingsPopper/PlaySettingsPopper";
-import { FontData, TextDisplayTheme } from "../../types/types";
+import { FontData, NewTextDisplayTheme, TextDisplayTheme } from "../../types/types";
+import { ThemeContext } from "../../styles/themeContext";
+import { createUpdatedAppTheme } from "../../styles/appTheme";
 
 interface Props {
   fontData: FontData;
@@ -13,28 +15,28 @@ interface Props {
   isFontDataLoading: boolean;
   restart: boolean;
   setRestart: React.Dispatch<React.SetStateAction<boolean>>;
-  setTextDisplayTheme: React.Dispatch<React.SetStateAction<TextDisplayTheme>>
-  textDisplayTheme: TextDisplayTheme;
+  // setTextDisplayTheme: React.Dispatch<React.SetStateAction<TextDisplayTheme>>
+  // textDisplayTheme: TextDisplayTheme;
 }
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ textDisplayTheme, palette }) => ({
   header: {
     display: "grid",
     justifyContent: "space-between",
     alignItems: "center",
     gridTemplateColumns: "auto auto",
     padding: "0.5rem 4rem",
-    backgroundColor: ({ palette }: TextDisplayTheme) => palette.background.secondary,
-    color: ({ palette }: TextDisplayTheme) => palette.text.secondary,
-    borderBottom: ({ palette }: TextDisplayTheme) => `1px solid ${palette.text.secondary}`
+    backgroundColor: textDisplayTheme.background.secondary,
+    color: palette.secondary.contrastText,
+    borderBottom: `1px solid ${palette.secondary.contrastText}`
   },
   iconButton: {
-    color: ({ palette }: TextDisplayTheme) => palette.text.secondary
+    color: palette.secondary.contrastText
   },
   clickAwayWrapper: {
     display: "inline-block"
   }
-});
+}));
 
 export default function PlaySettings({
   fontData,
@@ -42,19 +44,32 @@ export default function PlaySettings({
   isFontDataLoading,
   restart,
   setRestart,
-  setTextDisplayTheme,
-  textDisplayTheme
+  // setTextDisplayTheme,
+  // textDisplayTheme
 }: Props) {
-  const classes = useStyles(textDisplayTheme);
+  const classes = useStyles();
+  const { state: theme, update: updateTheme } = useContext(ThemeContext);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [popperOpenedBy, setPopperOpenedBy] = useState("");
   
-  const handleTextDisplayThemeChange = (fieldsToUpdate: Partial<TextDisplayTheme>) => {
-    setTextDisplayTheme(prev => ({ ...prev, ...fieldsToUpdate }));
+  const handleTextDisplayThemeChange = (newTheme: Omit<NewTextDisplayTheme, "offset">) => {
+    const updatedTextDisplaytheme = { ...theme.textDisplayTheme, ...newTheme };
+    const updatedAppTheme = createUpdatedAppTheme({ textDisplayTheme: updatedTextDisplaytheme });
+    updateTheme(updatedAppTheme);
   };
+  // const handleTextDisplayThemeChange = (fieldsToUpdate: Partial<TextDisplayTheme>) => {
+  //   setTextDisplayTheme(prev => ({ ...prev, ...fieldsToUpdate }));
+  // };
   const adjustSymbolRightMargin = (marginRight: string) => {
-    setTextDisplayTheme(prev => ({ ...prev, offset: { ...prev.offset, text: { ...prev.offset.symbol, marginRight } } }));
+    const updatedTextDisplaytheme = { ...theme.textDisplayTheme };
+    updatedTextDisplaytheme.offset.symbol.marginRight = marginRight;
+    
+    const updatedAppTheme = createUpdatedAppTheme({ textDisplayTheme: updatedTextDisplaytheme });
+    updateTheme(updatedAppTheme);
   };
+  // const adjustSymbolRightMargin = (marginRight: string) => {
+  //   setTextDisplayTheme(prev => ({ ...prev, offset: { ...prev.offset, text: { ...prev.offset.symbol, marginRight } } }));
+  // };
   const handleClick = (buttonId: string) => {
     const openedBy = buttonId !== popperOpenedBy ? buttonId : "";
     setPopperOpenedBy(openedBy);
@@ -71,12 +86,11 @@ export default function PlaySettings({
       activeFontSize={ fontSize }
       adjustSymbolRightMargin={adjustSymbolRightMargin}
       handleFontDataChange={handleFontDataChange}
-      isFontDataLoading={isFontDataLoading}
-      textDisplayTheme={textDisplayTheme} />
+      isFontDataLoading={isFontDataLoading} />
     :
     <TextDisplayThemeSelector
       handleTextDisplayThemeChange={handleTextDisplayThemeChange}
-      textDisplayTheme={textDisplayTheme} />;
+      textDisplayTheme={theme.textDisplayTheme} />;
   
   useLayoutEffect(() => {
     const popperAnchor = document.getElementById("playSettingsHeader");
@@ -103,8 +117,7 @@ export default function PlaySettings({
             <PlaySettingsPopper
               anchorEl={anchorEl}
               children={popperContent}
-              open={isPopperOpen}
-              textDisplayTheme={textDisplayTheme} />
+              open={isPopperOpen} />
           </div>
         </ClickAwayListener>
       </div>

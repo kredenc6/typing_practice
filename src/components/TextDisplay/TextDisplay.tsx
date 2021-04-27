@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import classNames from "classnames";
 import { makeStyles } from "@material-ui/core";
 import {
@@ -24,6 +24,7 @@ import { FontData, TextDisplayTheme } from "../../types/types";
 import InvalidSymbol from "./InvalidSymbol/InvalidSymbol";
 import { getSymbolStyle } from "../DisplayedRow/helpFunctions";
 import FadeAway from "../transitions/FadeAway/FadeAway";
+import { ThemeContext } from "../../styles/themeContext";
 
 interface Props {
   fontData: FontData;
@@ -31,7 +32,6 @@ interface Props {
   setMistypedWords: React.Dispatch<React.SetStateAction<Row["words"]>>;
   setRestart: React.Dispatch<React.SetStateAction<boolean>>;
   text: string;
-  theme: TextDisplayTheme;
   timer: Timer;
 }
 
@@ -46,25 +46,24 @@ interface MakeStylesProps {
   fontData: FontData;
   lineCount: number;
   rowHeight: string;
-  theme: TextDisplayTheme;
 }
 
 const TRANSITION_DURATION = 500;
 
 
 // TODO try dynamic width?
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ textDisplayTheme }) => ({
   textWindow: {
     positon: "relative",
     boxSizing: "content-box",
     width: "800px",
     height: ({ lineCount, rowHeight }: MakeStylesProps) => `${transformPixelSizeToNumber(rowHeight) * lineCount}px`,
-    margin: ({ theme }: MakeStylesProps) => theme.offset.display.margin,
-    padding: ({ theme }: MakeStylesProps) => theme.offset.display.padding,
+    margin: textDisplayTheme.offset.display.margin,
+    padding: textDisplayTheme.offset.display.padding,
     fontFamily: ({ fontData }: MakeStylesProps) => fontData.fontFamily,
     fontSize: ({ fontData }: MakeStylesProps) => fontData.fontSize,
-    borderTop: ({ theme }: MakeStylesProps) => `1px solid ${theme.palette.background.secondary}`,
-    borderBottom: ({ theme }: MakeStylesProps) => `1px solid ${theme.palette.background.secondary}`,
+    borderTop: `1px solid ${textDisplayTheme.background.secondary}`,
+    borderBottom: `1px solid ${textDisplayTheme.background.secondary}`,
     whiteSpace: "nowrap",
     overflow: "hidden"
   },
@@ -74,9 +73,9 @@ const useStyles = makeStyles({
   test: {
     position: "absolute"
   }
-});
+}));
 
-export default function TextDisplay({ fontData, restart, setMistypedWords, setRestart, theme, text, timer }: Props) {
+export default function TextDisplay({ fontData, restart, setMistypedWords, setRestart, text, timer }: Props) {
   const [symbolRows, setSymbolRows] = useState<Row[]>([]);
   const [rowPosition, setRowPosition] = useState(0);
   const [wordPosition, setWordPosition] = useState(0);
@@ -88,7 +87,8 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
   const [gameStatus, setGameStatus] = useState<GameStatus>("settingUp");
   const [isRowInTransition, setIsRowInTransition] = useState(false);
   
-  const classes = useStyles({ fontData, lineCount, rowHeight, theme });
+  const classes = useStyles({ fontData, lineCount, rowHeight });
+  const { state: { textDisplayTheme } } = useContext(ThemeContext);
   const wordTimer = useRef(new Timer(2));
   const textDisplayRef: React.MutableRefObject<null | HTMLDivElement> = useRef(null);
   const fontDataAndTextRef: React.MutableRefObject<FontDataAndTextRef> = useRef({ fontData, text });
@@ -174,7 +174,7 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
 
     const { paddingLeft, paddingRight, width } = getComputedStyle(textDisplayRef.current); // example: 1234.56px
     const displayTextInnerWidth = calculateDisplayTextInnerWidth(width, paddingLeft, paddingRight);
-    const symbolWidhtsObject = createSymbolWidthsObject(theme.offset["symbol"], fontData.symbolWidths);
+    const symbolWidhtsObject = createSymbolWidthsObject(textDisplayTheme.offset["symbol"], fontData.symbolWidths);
     
     let newSymbolRows: Row[] = [];
     if(gameStatus !== "settingUp") {
@@ -196,7 +196,7 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
     if(gameStatus === "settingUp") {
       setGameStatus("start");
     }
-  }, [cursorPosition, fontData, gameStatus, symbolRows, text, theme.offset])
+  }, [cursorPosition, fontData, gameStatus, symbolRows, text, textDisplayTheme.offset])
 
   // on changed wordPosition adjust word timer
   useEffect(() => {
@@ -249,7 +249,7 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
             row={row}
             setRowHeight={setRowHeight}
             textPosition={cursorPosition}
-            theme={theme}
+            theme={textDisplayTheme}
             enteredSymbol={enteredSymbol} />
         );
       }
@@ -259,7 +259,7 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
           key={row.highestSymbolPosition}
           row={row}
           textPosition={cursorPosition}
-          theme={theme}
+          theme={textDisplayTheme}
           enteredSymbol={enteredSymbol} />
       );
     }

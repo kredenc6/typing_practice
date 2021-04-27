@@ -1,11 +1,11 @@
 import React, { useLayoutEffect, useRef } from "react";
 import classNames from "classnames";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, useTheme } from "@material-ui/core";
 import DisplayedSymbol from "../DisplayedSymbol/DisplayedSymbol";
 import TextCursor from "../TextCursor/TextCursor";
 import { getRelativePosition, getSymbolStyle } from "./helpFunctions";
 import { Row } from "../../textFunctions/transformTextToSymbolRows";
-import { FontSize, TextDisplayTheme } from "../../types/types";
+import { FontSize, NewTextDisplayTheme } from "../../types/types";
 import InvalidSymbol from "../TextDisplay/InvalidSymbol/InvalidSymbol";
 
 interface Props extends React.HTMLProps<HTMLPreElement> {
@@ -13,7 +13,7 @@ interface Props extends React.HTMLProps<HTMLPreElement> {
   row: Row;
   setRowHeight?: React.Dispatch<React.SetStateAction<string>>;
   textPosition: number;
-  theme: TextDisplayTheme;
+  theme: NewTextDisplayTheme;
   enteredSymbol: string;
 }
 

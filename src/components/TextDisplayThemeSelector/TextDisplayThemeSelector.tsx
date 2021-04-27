@@ -1,36 +1,35 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core";
 import SelectTextDisplayThemeButton from "./SelectTextDisplayThemeButton/SelectTextDisplayThemeButton";
-import * as availableTextDisplayPalettes from "../../styles/textDisplayPalettes";
-import { TextDisplayTheme } from "../../types/types";
+import * as availableTextDisplayPalettes from "../../styles/textDisplayThemes";
+import { NewTextDisplayTheme } from "../../types/types";
 
 interface Props {
-  handleTextDisplayThemeChange: (fieldChanges: Partial<TextDisplayTheme>) => void;
-  textDisplayTheme: TextDisplayTheme
+  handleTextDisplayThemeChange: (fieldChanges: Omit<NewTextDisplayTheme, "offset">) => void;
+  textDisplayTheme: NewTextDisplayTheme
 }
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ textDisplayTheme }) => ({
   themeSelector: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
     gap: "1.5rem",
     padding: "1rem",
-    backgroungColor: ({ palette }: TextDisplayTheme) => palette.background.secondary
+    backgroungColor: textDisplayTheme.background.secondary
   }
-})
+}));
 
 export default function TextDisplayThemeSelector({ handleTextDisplayThemeChange, textDisplayTheme }: Props) {
-  const classes = useStyles(textDisplayTheme);
-  const handleClick = (palette: Pick<TextDisplayTheme, "palette">) => {
+  const classes = useStyles();
+  const handleClick = (palette: Omit<NewTextDisplayTheme, "offset">) => {
     handleTextDisplayThemeChange(palette);
   };
 
   const ThemeButtonComponents = Object.keys(availableTextDisplayPalettes).map(paletteName => (
     <SelectTextDisplayThemeButton
-      disabled={paletteName === textDisplayTheme.palette.name}
+      disabled={paletteName === textDisplayTheme.name}
       key={paletteName}
-      onClick={() => handleClick(availableTextDisplayPalettes[paletteName as keyof typeof availableTextDisplayPalettes])}
-      textDisplayThemePalette={availableTextDisplayPalettes[paletteName as keyof typeof availableTextDisplayPalettes].palette} />
+      onClick={() => handleClick(availableTextDisplayPalettes[paletteName as keyof typeof availableTextDisplayPalettes])} />
   ));
 
   return (

@@ -2,10 +2,8 @@ import React, { HTMLProps } from "react";
 import classNames from "classnames";
 import { makeStyles } from "@material-ui/core";
 import { ArrowDropDown } from "@material-ui/icons";
-import { TextDisplayTheme } from "../../types/types";
 
 interface Props extends HTMLProps<HTMLDivElement> {
-  textDisplayTheme: TextDisplayTheme;
   value: string;
 }
 
@@ -19,7 +17,7 @@ const useStyles = makeStyles( ({ palette, typography }) => ({
     padding: "3px 5px",
     fontFamily: typography.fontFamily,
     fontSize: typography.fontSize,
-    borderBottom: ({ palette }: TextDisplayTheme) => `2px solid ${palette.text.secondary}`,
+    borderBottom: `2px solid ${palette.secondary.contrastText}`,
     overflow: "hidden",
     transition: "all 0.2s",
     "&:hover": {
@@ -30,8 +28,8 @@ const useStyles = makeStyles( ({ palette, typography }) => ({
   }
 }));
 
-export default function FakeSelect({ className, textDisplayTheme, value, ...divProps }: Props) {
-  const classes = useStyles(textDisplayTheme);
+export default function FakeSelect({ className, value, ...divProps }: Props) {
+  const classes = useStyles();
 
   return (
     <div className={classNames(classes.fakeSelect, className)} {...divProps}>

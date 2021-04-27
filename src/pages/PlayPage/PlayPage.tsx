@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core";
 import PlaySettings from "../../components/PlaySettings/PlaySettings";
 import TextDisplay from "../../components/TextDisplay/TextDisplay";
-import { FontData, TextDisplayTheme } from "../../types/types";
+import { FontData } from "../../types/types";
 import { Row } from "../../textFunctions/transformTextToSymbolRows";
 import Timer from "../../accessories/Timer";
 
@@ -11,31 +11,31 @@ interface Props {
   handleFontDataChange: (fieldsToUpdate: Partial<Pick<FontData, "fontFamily" | "fontSize">>) => Promise<void>;
   isFontDataLoading: boolean;
   setMistypedWords: React.Dispatch<React.SetStateAction<Row["words"]>>;
-  setTextDisplayTheme: React.Dispatch<React.SetStateAction<TextDisplayTheme>>;
+  // setTextDisplayTheme: React.Dispatch<React.SetStateAction<TextDisplayTheme>>;
   text: string;
-  textDisplayTheme: TextDisplayTheme;
+  // textDisplayTheme: TextDisplayTheme;
   timer: Timer;
 }
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ textDisplayTheme }) => ({
   playPage: {
     height: "100vh",
     overflow: "hidden",
-    backgroundColor: (({ palette }: TextDisplayTheme) => palette.background.main)
+    backgroundColor: textDisplayTheme.background.main
   }
-});
+}));
 
 export default function PlayPage({
   fontData,
   handleFontDataChange,
   isFontDataLoading,
   setMistypedWords,
-  setTextDisplayTheme,
+  // setTextDisplayTheme,
   text,
-  textDisplayTheme,
+  // textDisplayTheme,
   timer
 }: Props) {
-  const classes = useStyles(textDisplayTheme);
+  const classes = useStyles();
   const [restart , setRestart] = useState(false);
 
   return (
@@ -45,16 +45,13 @@ export default function PlayPage({
         handleFontDataChange={handleFontDataChange}
         isFontDataLoading={isFontDataLoading}
         restart={restart}
-        setRestart={setRestart}
-        setTextDisplayTheme={setTextDisplayTheme}
-        textDisplayTheme={textDisplayTheme} />
+        setRestart={setRestart} />
       <TextDisplay
         fontData={fontData}
         restart={restart}
         setMistypedWords={setMistypedWords}
         setRestart={setRestart}
         text={text}
-        theme={textDisplayTheme}
         timer={timer} />
     </div>
   );

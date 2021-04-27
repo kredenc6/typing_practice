@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useState } from "react";
 import { ClickAwayListener, Grid, makeStyles, Popper, Typography } from "@material-ui/core";
 import Spinner from "../../Spinner/Spinner";
 import { fontFamilies } from "../../../styles/textDisplayTheme/textDisplayData";
-import { FontFamily, TextDisplayTheme } from "../../../types/types";
+import { FontFamily } from "../../../types/types";
 
 import FakeSelect from "../../FakeSelect/FakeSelect";
 
@@ -10,7 +10,6 @@ interface Props {
   activeFontFamily: FontFamily;
   handleFontFamilyChange: (fontFamily: FontFamily) => void;
   isFontDataLoading: boolean;
-  textDisplayTheme: TextDisplayTheme;
 }
 
 const useStyles = makeStyles(({ palette, typography }) => ({
@@ -26,7 +25,7 @@ const useStyles = makeStyles(({ palette, typography }) => ({
     gridTemplateColumns: "1fr 1fr 1fr",
     padding: "1rem",
     backgroundColor: "white",
-    border: ({ palette }: TextDisplayTheme) => `1px solid ${palette.text.secondary}`
+    border: `1px solid ${palette.secondary.contrastText}`
   },
   fontFamilyItem: {
     padding: "0.5rem",
@@ -52,8 +51,10 @@ const useStyles = makeStyles(({ palette, typography }) => ({
   }
 }));
 
-export default function FontFaceSelector({ activeFontFamily, handleFontFamilyChange, isFontDataLoading, textDisplayTheme }: Props) {
-  const classes = useStyles(textDisplayTheme);
+export default function FontFaceSelector({
+  activeFontFamily, handleFontFamilyChange, isFontDataLoading
+}: Props) {
+  const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [isPopperOpen, setIsPopperOpen] = useState(false);
 
@@ -101,7 +102,6 @@ export default function FontFaceSelector({ activeFontFamily, handleFontFamilyCha
               className={classes.select}
               id="faceSelectorPopperAnchor"
               onClick={handleClick}
-              textDisplayTheme={textDisplayTheme}
               value={activeFontFamily} />
             <Popper
               anchorEl={anchorEl}
