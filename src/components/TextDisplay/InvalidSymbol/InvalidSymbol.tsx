@@ -9,8 +9,7 @@ interface Props {
 
 const useStyles = makeStyles({
   mistypedSymbol: {
-    paddingLeft: ({ symbolOffset }: SymbolStyle) => symbolOffset.paddingLeft,
-    paddingRight: ({ symbolOffset }: SymbolStyle) => symbolOffset.paddingRight,
+    // paddingRight: ({ symbolOffset }: SymbolStyle) => symbolOffset.paddingRight,
     color: ({ color }: SymbolStyle) => color,
     backgroundColor: ({ bgcColor }: SymbolStyle) => bgcColor,
     borderRadius: "3px"

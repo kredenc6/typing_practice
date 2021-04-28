@@ -8,7 +8,8 @@ interface Props {
 const useStyles = makeStyles(({ palette }) => ({
   textCursor: {
     position: "absolute",
-    top: "1px",
+    bottom: 0,
+    // top: "1px",
     left: 0,
     width: "100%",
     height: "100%",

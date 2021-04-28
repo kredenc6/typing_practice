@@ -1,4 +1,4 @@
-import { createMuiTheme, responsiveFontSizes } from "@material-ui/core";
+import { createMuiTheme, responsiveFontSizes, ThemeOptions } from "@material-ui/core";
 import { defaultTextDisplayTheme } from "./textDisplayTheme/textDisplayData";
 
 const settings = {
@@ -16,7 +16,7 @@ appTheme = responsiveFontSizes(appTheme);
 
 export default appTheme;
 
-export const createUpdatedAppTheme = (update: any) => {
+export const createUpdatedAppTheme = (update: ThemeOptions) => {
   const settings = {
     props: {
       MuiButtonBase: {

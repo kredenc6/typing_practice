@@ -5,7 +5,7 @@ import { FormatSize, Menu, Palette, Refresh } from "@material-ui/icons";
 import TextFormatSelector from "../TextFormatSelector/TextFormatSelector";
 import TextDisplayThemeSelector from "../TextDisplayThemeSelector/TextDisplayThemeSelector";
 import PlaySettingsPopper from "./PlaySettingsPopper/PlaySettingsPopper";
-import { FontData, NewTextDisplayTheme, TextDisplayTheme } from "../../types/types";
+import { FontData, NewTextDisplayTheme } from "../../types/types";
 import { ThemeContext } from "../../styles/themeContext";
 import { createUpdatedAppTheme } from "../../styles/appTheme";
 
@@ -15,8 +15,6 @@ interface Props {
   isFontDataLoading: boolean;
   restart: boolean;
   setRestart: React.Dispatch<React.SetStateAction<boolean>>;
-  // setTextDisplayTheme: React.Dispatch<React.SetStateAction<TextDisplayTheme>>
-  // textDisplayTheme: TextDisplayTheme;
 }
 
 const useStyles = makeStyles(({ textDisplayTheme, palette }) => ({
@@ -44,8 +42,6 @@ export default function PlaySettings({
   isFontDataLoading,
   restart,
   setRestart,
-  // setTextDisplayTheme,
-  // textDisplayTheme
 }: Props) {
   const classes = useStyles();
   const { state: theme, update: updateTheme } = useContext(ThemeContext);
@@ -57,9 +53,7 @@ export default function PlaySettings({
     const updatedAppTheme = createUpdatedAppTheme({ textDisplayTheme: updatedTextDisplaytheme });
     updateTheme(updatedAppTheme);
   };
-  // const handleTextDisplayThemeChange = (fieldsToUpdate: Partial<TextDisplayTheme>) => {
-  //   setTextDisplayTheme(prev => ({ ...prev, ...fieldsToUpdate }));
-  // };
+
   const adjustSymbolRightMargin = (marginRight: string) => {
     const updatedTextDisplaytheme = { ...theme.textDisplayTheme };
     updatedTextDisplaytheme.offset.symbol.marginRight = marginRight;
@@ -67,13 +61,12 @@ export default function PlaySettings({
     const updatedAppTheme = createUpdatedAppTheme({ textDisplayTheme: updatedTextDisplaytheme });
     updateTheme(updatedAppTheme);
   };
-  // const adjustSymbolRightMargin = (marginRight: string) => {
-  //   setTextDisplayTheme(prev => ({ ...prev, offset: { ...prev.offset, text: { ...prev.offset.symbol, marginRight } } }));
-  // };
+
   const handleClick = (buttonId: string) => {
     const openedBy = buttonId !== popperOpenedBy ? buttonId : "";
     setPopperOpenedBy(openedBy);
   };
+
   const handleClickAway = () => {
     setPopperOpenedBy("");
   };

@@ -12,26 +12,22 @@ interface Props {
 }
 
 const defaultStyle = (duration: number) => ({
-  transition: `all ${duration}ms ease-in-out`,
+  transition: `all ${duration}ms ease-in`,
   opacity: 0
 });
 
 const transitionStyles = {
   entering: {
     opacity: 1,
-    // transform: "translateY(0)",
   },
   entered:  {
     opacity: 1,
-    // transform: "translateY(0)",
   },
   exiting:  {
     opacity: 0,
-    // transform: "translateY(-100%)",
   },
   exited:  {
     opacity: 1,
-    // transform: "translateY(0)"
   },
 };
 
@@ -39,12 +35,12 @@ export default function FadeAway({ inProp, children, className }: Props) {
   const { transitions } = useTheme();
   
   return (
-    <Transition in={inProp} timeout={transitions.duration.standard} unmountOnExit>
+    <Transition in={inProp} timeout={transitions.duration.complex} unmountOnExit>
       {(phase: transitionPhase) => (
           <div
             className={classnames(className)}
             style={{
-              ...defaultStyle(transitions.duration.standard),
+              ...defaultStyle(transitions.duration.complex),
               ...transitionStyles[phase]
             }}
           >
