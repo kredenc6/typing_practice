@@ -1,4 +1,4 @@
-import { SymbolStyle, RelativeSymbolPosition, NewTextDisplayTheme } from "../../types/types";
+import { SymbolStyle, RelativeSymbolPosition, TextDisplayTheme } from "../../types/types";
 
 export const getRelativePosition = (textPosition: number, symbolPosition: number): RelativeSymbolPosition => {
   if(textPosition === symbolPosition) return "active";
@@ -9,7 +9,7 @@ export const getRelativePosition = (textPosition: number, symbolPosition: number
 export const getSymbolStyle = (
   wasCorrect: boolean,
   relativePosition: RelativeSymbolPosition,
-  { offset, symbols }: NewTextDisplayTheme
+  { offset, symbols }: TextDisplayTheme
 ): SymbolStyle => {
   const symbolStyle: SymbolStyle = {
     bgcColor: symbols.default.bgcColor,

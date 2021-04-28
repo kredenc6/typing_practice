@@ -38,29 +38,6 @@ export interface Offset {
 }
 
 export interface TextDisplayTheme {
-  palette: {
-    background: {
-      main: string;
-      secondary: string;
-    },
-    name: string;
-    symbols: {
-      active: FontThemeStyle;
-      correct: FontThemeStyle;
-      corrected: FontThemeStyle;
-      default: FontThemeStyle;
-      mistyped: FontThemeStyle;
-      invalid: FontThemeStyle;
-    },
-    text: {
-      main: string;
-      secondary: string;
-    }
-  },
-  offset: Offset;
-}
-
-export interface NewTextDisplayTheme {
   name: string;
   background: {
     main: string;

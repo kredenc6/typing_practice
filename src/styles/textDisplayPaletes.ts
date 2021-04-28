@@ -1,6 +1,6 @@
-import { NewTextDisplayTheme } from "../types/types";
+import { TextDisplayTheme } from "../types/types";
 
-export const defaultPalette: Omit<NewTextDisplayTheme, "offset"> = {
+export const defaultPalette: Omit<TextDisplayTheme, "offset"> = {
   name: "defaultPalette",
   background: {
     main: "#fff",
@@ -34,7 +34,7 @@ export const defaultPalette: Omit<NewTextDisplayTheme, "offset"> = {
   }
 };
 
-export const blue1: Omit<NewTextDisplayTheme, "offset"> = {
+export const blue1: Omit<TextDisplayTheme, "offset"> = {
   name: "blue1",
   background: {
     main: "#fff",
@@ -68,7 +68,7 @@ export const blue1: Omit<NewTextDisplayTheme, "offset"> = {
   }
 };
 
-export const blue2: Omit<NewTextDisplayTheme, "offset"> = {
+export const blue2: Omit<TextDisplayTheme, "offset"> = {
   name: "blue2",
   background: {
     main: "#fff",
@@ -102,7 +102,7 @@ export const blue2: Omit<NewTextDisplayTheme, "offset"> = {
   }
 };
 
-export const black1: Omit<NewTextDisplayTheme, "offset"> = {
+export const black1: Omit<TextDisplayTheme, "offset"> = {
   name: "black1",
   background: {
     main: "#272822",

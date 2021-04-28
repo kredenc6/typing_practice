@@ -1,9 +1,9 @@
 // import { Theme as OriginalMuiTheme, ThemeOptions } from "@material-ui/core";
-import { NewTextDisplayTheme } from "./types/types";
+import { TextDisplayTheme } from "./types/types";
 
 declare module "@material-ui/core" {
   export interface Theme {
-    textDisplayTheme: NewTextDisplayTheme
+    textDisplayTheme: TextDisplayTheme
   }
 }
 
@@ -11,6 +11,6 @@ declare module "@material-ui/core" {
 // TODO later on textDisplayTheme could have separate updates? - see ThemeOptions in createMuiTheme.d.ts
 declare module "@material-ui/core" {
   export interface ThemeOptions {
-    textDisplayTheme?: NewTextDisplayTheme
+    textDisplayTheme?: TextDisplayTheme
   }
 }

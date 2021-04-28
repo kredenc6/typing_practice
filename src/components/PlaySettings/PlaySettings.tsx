@@ -5,7 +5,7 @@ import { FormatSize, Menu, Palette, Refresh } from "@material-ui/icons";
 import TextFormatSelector from "../TextFormatSelector/TextFormatSelector";
 import TextDisplayThemeSelector from "../TextDisplayThemeSelector/TextDisplayThemeSelector";
 import PlaySettingsPopper from "./PlaySettingsPopper/PlaySettingsPopper";
-import { FontData, NewTextDisplayTheme } from "../../types/types";
+import { FontData, TextDisplayTheme } from "../../types/types";
 import { ThemeContext } from "../../styles/themeContext";
 import { createUpdatedAppTheme } from "../../styles/appTheme";
 
@@ -48,7 +48,7 @@ export default function PlaySettings({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [popperOpenedBy, setPopperOpenedBy] = useState("");
   
-  const handleTextDisplayThemeChange = (newTheme: Omit<NewTextDisplayTheme, "offset">) => {
+  const handleTextDisplayThemeChange = (newTheme: Omit<TextDisplayTheme, "offset">) => {
     const updatedTextDisplaytheme = { ...theme.textDisplayTheme, ...newTheme };
     const updatedAppTheme = createUpdatedAppTheme({ textDisplayTheme: updatedTextDisplaytheme });
     updateTheme(updatedAppTheme);

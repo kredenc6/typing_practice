@@ -1,12 +1,12 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core";
 import SelectTextDisplayThemeButton from "./SelectTextDisplayThemeButton/SelectTextDisplayThemeButton";
-import * as availableTextDisplayPalettes from "../../styles/textDisplayThemes";
-import { NewTextDisplayTheme } from "../../types/types";
+import * as availableTextDisplayPalettes from "../../styles/textDisplayPaletes";
+import { TextDisplayTheme } from "../../types/types";
 
 interface Props {
-  handleTextDisplayThemeChange: (fieldChanges: Omit<NewTextDisplayTheme, "offset">) => void;
-  textDisplayTheme: NewTextDisplayTheme
+  handleTextDisplayThemeChange: (fieldChanges: Omit<TextDisplayTheme, "offset">) => void;
+  textDisplayTheme: TextDisplayTheme
 }
 
 const useStyles = makeStyles(({ textDisplayTheme }) => ({
@@ -21,7 +21,7 @@ const useStyles = makeStyles(({ textDisplayTheme }) => ({
 
 export default function TextDisplayThemeSelector({ handleTextDisplayThemeChange, textDisplayTheme }: Props) {
   const classes = useStyles();
-  const handleClick = (palette: Omit<NewTextDisplayTheme, "offset">) => {
+  const handleClick = (palette: Omit<TextDisplayTheme, "offset">) => {
     handleTextDisplayThemeChange(palette);
   };
 

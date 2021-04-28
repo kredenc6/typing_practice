@@ -1,9 +1,9 @@
 import React from "react";
 import { Button, ButtonProps, makeStyles } from "@material-ui/core";
-import { NewTextDisplayTheme } from "../../../types/types";
+import { TextDisplayTheme } from "../../../types/types";
 
 interface Props extends ButtonProps {
-  themeToSelect: Omit<NewTextDisplayTheme, "offset">;
+  themeToSelect: Omit<TextDisplayTheme, "offset">;
 }
 
 interface UseStylesProps {

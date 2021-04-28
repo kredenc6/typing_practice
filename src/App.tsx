@@ -8,48 +8,39 @@ import { Row } from "./textFunctions/transformTextToSymbolRows";
 import getFontData from "./async/getFontData";
 import loadFont from "./async/loadFont";
 import transformPixelSizeToNumber from "./helpFunctions/transformPixelSizeToNumber";
-import { defaultTextDisplayFontData, defaultTextDisplayTheme } from "./styles/textDisplayTheme/textDisplayData";
+import { defaultTextDisplayFontData } from "./styles/textDisplayTheme/textDisplayData";
 import { FontData } from "./types/types";
 import { ThemeContext } from "./styles/themeContext";
+import { createUpdatedAppTheme } from "./styles/appTheme";
 
 export default function App() {
   const [fontData, setFontData] = useState(defaultTextDisplayFontData);
   const [isFontDataLoading, setIsFontDataLoading] = useState(false);
-  const [textDisplayTheme, setTextDisplayTheme] = useState(defaultTextDisplayTheme);
   const [text, setText] = useState("");
   const [mistypedWords, setMistypedWords] = useState<Row["words"]>([]);
   const { state: theme } = useContext(ThemeContext);
   // const [theme, setTheme] = useState(appTheme)
   // const [mistypedSymbols, setMistypedSymbols] = useState<string[]>([]);
-  console.log(theme)
-
-  useEffect(() => {
-    console.log("theme update:")
-    console.dir(theme)
-  },[theme])
 
   const timer = useRef(new Timer());
 
-
   const handleFontDataChange = async (fieldToUpdate: Partial<FontData>, callback?: () => any) => {
-    const updatedField = Object.keys(fieldToUpdate) as (keyof FontData)[];
+    const updatedFields = Object.keys(fieldToUpdate) as (keyof FontData)[];
     const { fontFamily, fontSize } = { ...fontData, ...fieldToUpdate };
     const newFontData = await getFontData(fontFamily, fontSize);
 
     if(!newFontData) return;
     setIsFontDataLoading(true);
     
-    if(updatedField.includes("fontSize")) {
-      setTextDisplayTheme(prev => {
-        const updatedState = { ...prev };
-        const updatedPadding = `0.5rem ${transformPixelSizeToNumber(fontSize) / 20}rem`;
-        updatedState.offset.display.padding = updatedPadding;
-        return updatedState;
-      });
+    if(updatedFields.includes("fontSize")) {
+      const updatedPadding = `0.5rem ${transformPixelSizeToNumber(fontSize) / 20}rem`;
+      const updatedTextDisplayTheme = { ...theme.textDisplayTheme };
+      updatedTextDisplayTheme.offset.display.padding = updatedPadding;
+      createUpdatedAppTheme({ textDisplayTheme: updatedTextDisplayTheme });
       setIsFontDataLoading(false);
     }
     
-    if(updatedField.includes("fontFamily")) {
+    if(updatedFields.includes("fontFamily")) {
       if(newFontData.fontLocation === "local") {
         setFontData(newFontData);
         callback && callback();
@@ -105,9 +96,7 @@ export default function App() {
               handleFontDataChange={handleFontDataChange}
               isFontDataLoading={isFontDataLoading}
               setMistypedWords={setMistypedWords}
-              // setTextDisplayTheme={setTextDisplayTheme}
               text={text}
-              // textDisplayTheme={textDisplayTheme}
               timer={timer.current} />
           </Route>
         </Switch>
