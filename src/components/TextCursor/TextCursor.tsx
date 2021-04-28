@@ -9,7 +9,6 @@ const useStyles = makeStyles(({ palette }) => ({
   textCursor: {
     position: "absolute",
     bottom: 0,
-    // top: "1px",
     left: 0,
     width: "100%",
     height: "100%",

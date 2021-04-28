@@ -13,11 +13,11 @@ interface Props {
 
 const useStyles = makeStyles({
   displayedSymbolWrapper: {
+    position: "relative",
     display: "inline-box",
     whiteSpace: "pre"
   },
   symbol: {
-    position: "relative",
     
   },
   invalidSymbol: {
@@ -47,13 +47,11 @@ function DisplayedSymbolWrapper(
 
   return(
     <div className={classes.displayedSymbolWrapper}>
-      <div className={classes.symbol}>
-        {DisplayedSymbol}
-        <FadeAway inProp={displayInvalid} className={classes.invalidSymbol}>
-          {InvalidSymbol}
-        </FadeAway>
-        {TextCursor}
-      </div>
+      {DisplayedSymbol}
+      <FadeAway inProp={displayInvalid} className={classes.invalidSymbol}>
+        {InvalidSymbol}
+      </FadeAway>
+      {TextCursor}
     </div>
   );
 }
