@@ -1,9 +1,18 @@
 import React from "react";
 import { Button, ButtonProps, makeStyles } from "@material-ui/core";
+import { NewTextDisplayTheme } from "../../../types/types";
 
-const useStyles = makeStyles(({ palette, textDisplayTheme }) => ({
+interface Props extends ButtonProps {
+  themeToSelect: Omit<NewTextDisplayTheme, "offset">;
+}
+
+interface UseStylesProps {
+  themeToSelect: Props["themeToSelect"];
+}
+
+const useStyles = makeStyles(({ palette }) => ({
   paletteButton: {
-    backgroundColor: textDisplayTheme.background.main,
+    backgroundColor: ({ themeToSelect }: UseStylesProps) => themeToSelect.background.main,
     border: "2px solid transparent",
     "&.Mui-disabled": {
       border: `2px solid ${palette.info.dark}`
@@ -13,16 +22,16 @@ const useStyles = makeStyles(({ palette, textDisplayTheme }) => ({
     }
   },
   correct: {
-    color: textDisplayTheme.symbols.correct.color,
-    backgroundColor: textDisplayTheme.symbols.correct.bgcColor
+    color: ({ themeToSelect }: UseStylesProps) => themeToSelect.symbols.correct.color,
+    backgroundColor: ({ themeToSelect }: UseStylesProps) => themeToSelect.symbols.correct.bgcColor
   },
   corrected: {
-    color: textDisplayTheme.symbols.corrected.color,
-    backgroundColor: textDisplayTheme.symbols.corrected.bgcColor
+    color: ({ themeToSelect }: UseStylesProps) => themeToSelect.symbols.corrected.color,
+    backgroundColor: ({ themeToSelect }: UseStylesProps) => themeToSelect.symbols.corrected.bgcColor
   },
   mistyped: {
-    color: textDisplayTheme.symbols.mistyped.color,
-    backgroundColor: textDisplayTheme.symbols.mistyped.bgcColor
+    color: ({ themeToSelect }: UseStylesProps) => themeToSelect.symbols.mistyped.color,
+    backgroundColor: ({ themeToSelect }: UseStylesProps) => themeToSelect.symbols.mistyped.bgcColor
   },
   symbol: {
     marginRight: "1px",
@@ -31,8 +40,10 @@ const useStyles = makeStyles(({ palette, textDisplayTheme }) => ({
   }
 }));
 
-export default function SelectTextDisplayThemeButton(buttonProps: ButtonProps) {
-  const classes = useStyles();
+export default function SelectTextDisplayThemeButton(
+  { themeToSelect: availableTextDisplayTheme, ...buttonProps }: Props)
+{
+  const classes = useStyles({ themeToSelect: availableTextDisplayTheme });
 
   return (
     <Button className={classes.paletteButton} {...buttonProps}>

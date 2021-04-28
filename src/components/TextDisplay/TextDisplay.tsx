@@ -20,10 +20,7 @@ import { Row, transformTextToSymbolRows } from "../../textFunctions/transformTex
 import adjustRowsToNewFontData from "../../textFunctions/adjustRowsToNewFontData";
 import Timer from "../../accessories/Timer";
 import DisplayedRow from "../DisplayedRow/DisplayedRow";
-import { FontData, TextDisplayTheme } from "../../types/types";
-import InvalidSymbol from "./InvalidSymbol/InvalidSymbol";
-import { getSymbolStyle } from "../DisplayedRow/helpFunctions";
-import FadeAway from "../transitions/FadeAway/FadeAway";
+import { FontData } from "../../types/types";
 import { ThemeContext } from "../../styles/themeContext";
 
 interface Props {

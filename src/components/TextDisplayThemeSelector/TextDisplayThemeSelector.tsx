@@ -29,7 +29,8 @@ export default function TextDisplayThemeSelector({ handleTextDisplayThemeChange,
     <SelectTextDisplayThemeButton
       disabled={paletteName === textDisplayTheme.name}
       key={paletteName}
-      onClick={() => handleClick(availableTextDisplayPalettes[paletteName as keyof typeof availableTextDisplayPalettes])} />
+      onClick={() => handleClick(availableTextDisplayPalettes[paletteName as keyof typeof availableTextDisplayPalettes])}
+      themeToSelect={availableTextDisplayPalettes[paletteName as keyof typeof availableTextDisplayPalettes]} />
   ));
 
   return (

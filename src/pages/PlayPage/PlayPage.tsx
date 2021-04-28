@@ -11,9 +11,7 @@ interface Props {
   handleFontDataChange: (fieldsToUpdate: Partial<Pick<FontData, "fontFamily" | "fontSize">>) => Promise<void>;
   isFontDataLoading: boolean;
   setMistypedWords: React.Dispatch<React.SetStateAction<Row["words"]>>;
-  // setTextDisplayTheme: React.Dispatch<React.SetStateAction<TextDisplayTheme>>;
   text: string;
-  // textDisplayTheme: TextDisplayTheme;
   timer: Timer;
 }
 
@@ -30,9 +28,7 @@ export default function PlayPage({
   handleFontDataChange,
   isFontDataLoading,
   setMistypedWords,
-  // setTextDisplayTheme,
   text,
-  // textDisplayTheme,
   timer
 }: Props) {
   const classes = useStyles();
