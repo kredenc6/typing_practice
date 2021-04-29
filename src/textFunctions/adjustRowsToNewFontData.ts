@@ -1,4 +1,5 @@
-import { calcWordLength, lineEndersRegexp, Row, SymbolWidths } from "./transformTextToSymbolRows";
+import { calcWordLength, lineEndersRegexp } from "./transformTextToSymbolRows";
+import { Row, SymbolWidths } from "../types/symbolTypes";
 
 export default function adjustRowsToNewFontData(
   previousRows: Row[],

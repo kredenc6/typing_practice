@@ -1,4 +1,5 @@
-import { SymbolStyle, RelativeSymbolPosition, TextDisplayTheme } from "../../types/types";
+import { SymbolStyle, TextDisplayTheme } from "../../types/themeTypes";
+import { SymbolCorrectness, RelativeSymbolPosition } from "../../types/symbolTypes";
 
 export const getRelativePosition = (textPosition: number, symbolPosition: number): RelativeSymbolPosition => {
   if(textPosition === symbolPosition) return "active";
@@ -7,7 +8,7 @@ export const getRelativePosition = (textPosition: number, symbolPosition: number
 };
 
 export const getSymbolStyle = (
-  wasCorrect: boolean,
+  correctness: SymbolCorrectness,
   relativePosition: RelativeSymbolPosition,
   { offset, symbols }: TextDisplayTheme
 ): SymbolStyle => {
@@ -19,12 +20,15 @@ export const getSymbolStyle = (
   };
 
   if(relativePosition === "processed") {
-    if(wasCorrect) {
+    if(correctness === "correct") {
       symbolStyle.bgcColor = symbols.correct.bgcColor;
       symbolStyle.color = symbols.correct.color;
-    } else {
+    } else if(correctness === "mistyped") {
       symbolStyle.bgcColor = symbols.mistyped.bgcColor;
       symbolStyle.color = symbols.mistyped.color;
+    } else if(correctness === "corrected") {
+      symbolStyle.bgcColor = symbols.corrected.bgcColor;
+      symbolStyle.color = symbols.corrected.color;
     }
   } else if(relativePosition === "active") {
     symbolStyle.cursorColor = "#0a6bf9";

@@ -5,7 +5,7 @@ import { FormatSize, Menu, Palette, Refresh } from "@material-ui/icons";
 import TextFormatSelector from "../TextFormatSelector/TextFormatSelector";
 import TextDisplayThemeSelector from "../TextDisplayThemeSelector/TextDisplayThemeSelector";
 import PlaySettingsPopper from "./PlaySettingsPopper/PlaySettingsPopper";
-import { FontData, TextDisplayTheme } from "../../types/types";
+import { FontData, TextDisplayTheme } from "../../types/themeTypes";
 import { ThemeContext } from "../../styles/themeContext";
 import { createUpdatedAppTheme } from "../../styles/appTheme";
 

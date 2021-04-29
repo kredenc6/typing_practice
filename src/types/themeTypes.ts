@@ -64,8 +64,6 @@ export interface AnimateMistyped {
   symbolPosition: number;
 }
 
-export type RelativeSymbolPosition = "pending" | "active" | "processed";
-
 export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> =
   Pick<T, Exclude<keyof T, Keys>> 
   & {

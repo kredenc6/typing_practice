@@ -1,5 +1,5 @@
 import WebFont from "webfontloader";
-import { FontData } from "../types/types";
+import { FontData } from "../types/themeTypes";
 
 export default function loadFont(
   fontData: FontData,

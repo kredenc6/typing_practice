@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { makeStyles, useTheme } from "@material-ui/core";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import FadeAway from "../transitions/FadeAway/FadeAway";
-import { SymbolStyle, AnimateMistyped } from "../../types/types";
+import { SymbolStyle, AnimateMistyped } from "../../types/themeTypes";
 
 interface Props {
   DisplayedSymbol: JSX.Element | null;

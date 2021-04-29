@@ -2,7 +2,7 @@ import React from "react";
 import { Divider, makeStyles } from "@material-ui/core";
 import FontSizeSelector from "./FontSizeSelector/FontSizeSelector";
 import FontFaceSelector from "./FontFaceSelector/FontFaceSelector";
-import { FontData, FontFamily, FontSize } from "../../types/types";
+import { FontData, FontFamily, FontSize } from "../../types/themeTypes";
 
 interface Props {
   activeFontFamily: FontFamily;

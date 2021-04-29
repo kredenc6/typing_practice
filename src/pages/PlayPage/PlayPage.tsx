@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core";
 import PlaySettings from "../../components/PlaySettings/PlaySettings";
 import TextDisplay from "../../components/TextDisplay/TextDisplay";
-import { FontData } from "../../types/types";
-import { Row } from "../../textFunctions/transformTextToSymbolRows";
+import { FontData } from "../../types/themeTypes";
+import { Row } from "../../types/symbolTypes";
 import Timer from "../../accessories/Timer";
 
 interface Props {

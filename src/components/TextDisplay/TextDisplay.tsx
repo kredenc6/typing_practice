@@ -9,19 +9,21 @@ import {
   getWordTimeObject,
   getPositions,
   getWordObject,
-  updateRowWithMistype,
+  updateSymbolCorrectness,
   updateWordTime,
-  updateSymbolRows
+  updateSymbolRows,
+  getIndexes
 } from "./helpFunctions";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import { calcTypingPrecision, calcTypingSpeedInKeystrokes, calcTypingSpeedInWPM } from "../../helpFunctions/calcTypigSpeed";
-import { Row, transformTextToSymbolRows } from "../../textFunctions/transformTextToSymbolRows";
 import adjustRowsToNewFontData from "../../textFunctions/adjustRowsToNewFontData";
 import Timer from "../../accessories/Timer";
 import DisplayedRow from "../DisplayedRow/DisplayedRow";
-import { FontData, AnimateMistyped } from "../../types/types";
+import { FontData, AnimateMistyped } from "../../types/themeTypes";
+import { Row, SymbolCorrectness } from "../../types/symbolTypes";
 import { ThemeContext } from "../../styles/themeContext";
+import { transformTextToSymbolRows } from "../../textFunctions/transformTextToSymbolRows";
 
 interface Props {
   fontData: FontData;
@@ -84,7 +86,7 @@ export default function TextDisplay({
   const [gameStatus, setGameStatus] = useState<GameStatus>("settingUp");
   const [isRowInTransition, setIsRowInTransition] = useState(false);
   const [subsequentMistypeCount, setSubsequentMistypeCount] = useState(0);
-  const [animateMistypedSymbol, setAnimateMistypedSymbol] = useState<AnimateMistyped | null>(null)
+  const [animateMistypedSymbol, setAnimateMistypedSymbol] = useState<AnimateMistyped | null>(null);
 
   const classes = useStyles({ fontData, lineCount, rowHeight });
   const { state: { textDisplayTheme } } = useContext(ThemeContext);
@@ -92,7 +94,7 @@ export default function TextDisplay({
   const textDisplayRef: React.MutableRefObject<null | HTMLDivElement> = useRef(null);
   const fontDataAndTextRef: React.MutableRefObject<FontDataAndTextRef> = useRef({ fontData, text });
 
-  const handleUpdateTypedSymbol = () => {
+  const moveActiveSymbol = () => {
     const newCursorPosition = cursorPosition + 1;
     const {
       rowPosition: newRowPosition,
@@ -136,7 +138,7 @@ export default function TextDisplay({
 
     // on mistyped symbol
     if(enteredSymbol !== text[cursorPosition]) {
-      const updatedRow = updateRowWithMistype(symbolRows, rowPosition, wordPosition, cursorPosition);
+      const updatedRow = updateSymbolCorrectness(symbolRows, rowPosition, cursorPosition, "mistyped");
       updateSymbolRows(setSymbolRows, updatedRow, rowPosition);
       setSubsequentMistypeCount(subsequentMistypeCount + 1);
       setAnimateMistypedSymbol({
@@ -145,12 +147,20 @@ export default function TextDisplay({
       });
 
       if(allowedMistypeCount > subsequentMistypeCount) {
-        handleUpdateTypedSymbol();
+        moveActiveSymbol();
       }
       
       // on correctly typed symbol
     } else {
-      handleUpdateTypedSymbol();
+      const { symbolIndex, wordIndex, rowIndex } = getIndexes(cursorPosition, symbolRows);
+      const activeSymbolCorrectness = symbolRows[rowIndex].words[wordIndex].symbols[symbolIndex].correctness;
+      const updatedSymbolCorrectness: SymbolCorrectness = activeSymbolCorrectness === "mistyped"
+        ? "corrected"
+        : "correct";
+      const updatedRow = updateSymbolCorrectness(symbolRows, rowPosition, cursorPosition, updatedSymbolCorrectness);
+
+      updateSymbolRows(setSymbolRows, updatedRow, rowPosition);
+      moveActiveSymbol();
       setSubsequentMistypeCount(0);
     }
     

@@ -4,12 +4,12 @@ import { ThemeProvider as MuiThemeProvider } from "@material-ui/core";
 import PlayPage from "./pages/PlayPage/PlayPage";
 import MainMenu from "./pages/MainMenu/MainMenu";
 import Timer from "./accessories/Timer";
-import { Row } from "./textFunctions/transformTextToSymbolRows";
 import getFontData from "./async/getFontData";
 import loadFont from "./async/loadFont";
 import transformPixelSizeToNumber from "./helpFunctions/transformPixelSizeToNumber";
 import { defaultTextDisplayFontData } from "./styles/textDisplayTheme/textDisplayData";
-import { FontData } from "./types/types";
+import { FontData } from "./types/themeTypes";
+import { Row } from "./types/symbolTypes";
 import { ThemeContext } from "./styles/themeContext";
 import { createUpdatedAppTheme } from "./styles/appTheme";
 

@@ -1,7 +1,7 @@
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
-import { Row, SymbolWidths } from "../../textFunctions/transformTextToSymbolRows";
 import Timer from "../../accessories/Timer";
-import { FontData, Offset } from "../../types/types";
+import { FontData, Offset } from "../../types/themeTypes";
+import { Row, SymbolCorrectness, SymbolWidths } from "../../types/symbolTypes";
 
 interface WordTimeObject {
   rowPosition: number;
@@ -9,16 +9,15 @@ interface WordTimeObject {
   wordTime: number;
 }
 
-export const updateRowWithMistype = (symbolRows: Row[], rowPosition: number, wordPosition: number, textPosition: number) => {
+export const updateSymbolCorrectness = (
+  symbolRows: Row[], rowPosition: number, textPosition: number, correctness: SymbolCorrectness
+): Row => {
   const row = symbolRows[rowPosition];
-  const wordPositionItTheRow =
-    row.words.findIndex(({ wordPosition: comparedWordPosition }) => comparedWordPosition === wordPosition);
-  const symbolPositionInTheWord =
-    row.words[wordPositionItTheRow].symbols.findIndex(({ symbolPosition }) => symbolPosition === textPosition);
+  const { wordIndex, symbolIndex } = getIndexes(textPosition, symbolRows);
 
   const updatedWords = [...row.words];
-  updatedWords[wordPositionItTheRow].wasCorrect = false;
-  updatedWords[wordPositionItTheRow].symbols[symbolPositionInTheWord].wasCorrect = false;
+  updatedWords[wordIndex].wasCorrect = false;
+  updatedWords[wordIndex].symbols[symbolIndex].correctness = correctness;
 
   return { ...row, words: updatedWords };
 };
@@ -70,7 +69,7 @@ export const collectMistypedSymbolPositions = (symbolRows: Row[]) => {
       .reduce((mistypedSymbols, wordObject) => {
 
         const mistypedSymbolsInWordObject = wordObject.symbols.reduce((mistypedSymbols, symbol) => {
-          if(!symbol.wasCorrect) {
+          if(symbol.correctness === "mistyped") {
             return [...mistypedSymbols, symbol.symbolPosition];
           }
           return mistypedSymbols;
@@ -92,33 +91,33 @@ export const calculateDisplayTextInnerWidth = (width: string, paddingLeft: strin
 };
 
 export const getPositions = (cursorPosition: number, symbolRows: Row[], rowStartPosition = 0) => {
+  const result = {
+    rowPosition: -1,
+    wordPosition: -1
+  };
+
   if(!symbolRows.length) {
-    return {
-      rowPosition: 0,
-      wordPosition: 0
-    }
+    return result;
   }
   
-  let rowPosition = rowStartPosition;
   for(let i=rowStartPosition; i<symbolRows.length; i++) {
     if(cursorPosition <= symbolRows[i].highestSymbolPosition) {
-      rowPosition = i;
+      result.rowPosition = i;
       break;
     }
   }
 
-  const wordObject = symbolRows[rowPosition].words.find(({ symbols }) => {
+  const wordObject = symbolRows[result.rowPosition].words.find(({ symbols }) => {
     return symbols.some(({ symbolPosition }) => symbolPosition === cursorPosition);
   });
 
   if(!wordObject) {
-    throw new Error("Failed to get word position!");
+    console.error("Failed to get word position!");
+    return result;
+  } else {
+    result.wordPosition = wordObject.wordPosition;
   }
-
-  return {
-    rowPosition,
-    wordPosition: wordObject.wordPosition
-  };
+  return result;
 };
 
 export const getWordTimeObject = (wordTimer: Timer, symbolRows: Row[], rowPosition: number, wordPosition: number ) => {
@@ -178,4 +177,32 @@ export const createSymbolWidthsObject = (
     paddingX: transformPixelSizeToNumber(paddingLeft) + transformPixelSizeToNumber(paddingRight),
     widths: symbolWidths
   }
+};
+
+export const getIndexes = (cursorPosition: number, symbolRows: Row[]) => {
+  const result = {
+    rowIndex: -1,
+    wordIndex: -1,
+    symbolIndex: -1
+  };
+
+  if(!symbolRows.length) {
+    return result;
+  }
+  
+  for(let i=0; i<symbolRows.length; i++) {
+    if(cursorPosition <= symbolRows[i].highestSymbolPosition) {
+      result.rowIndex = i;
+      break;
+    }
+  }
+
+  result.wordIndex = symbolRows[result.rowIndex].words.findIndex(({ symbols }) => {
+    return symbols.some(({ symbolPosition }) => symbolPosition === cursorPosition);
+  });
+
+  result.symbolIndex = symbolRows[result.rowIndex].words[result.wordIndex].symbols
+    .findIndex(({ symbolPosition }) => symbolPosition === cursorPosition);
+
+  return result;
 };

@@ -2,7 +2,7 @@ import React from "react";
 import { ButtonGroup, Grid } from "@material-ui/core";
 import SelectableFontSizeButton from "../SelectableFontSizeButton/SelectableFontSizeButton";
 import { fontSizes } from "../../../styles/textDisplayTheme/textDisplayData";
-import { FontSize, FontStyle } from "../../../types/types";
+import { FontSize, FontStyle } from "../../../types/themeTypes";
 
 interface Props {
   activeFontSize: FontSize;

@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useState } from "react";
 import { ClickAwayListener, Grid, makeStyles, Popper, Typography } from "@material-ui/core";
 import Spinner from "../../Spinner/Spinner";
 import { fontFamilies } from "../../../styles/textDisplayTheme/textDisplayData";
-import { FontFamily } from "../../../types/types";
+import { FontFamily } from "../../../types/themeTypes";
 
 import FakeSelect from "../../FakeSelect/FakeSelect";
 

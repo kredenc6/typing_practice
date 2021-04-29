@@ -1,33 +1,4 @@
-import { FontData } from "../types/types";
-
-type WordType = "word" | "whitespace" | "other";
-
-export type SymbolObject = {
-  symbol: string;
-  symbolPosition: number;
-  wasCorrect: boolean;
-};
-
-export type WordObject = {
-  string: string;
-  symbols: SymbolObject[];
-  type: WordType;
-  wordPosition: number;
-  typedSpeed: number;
-  wasCorrect: boolean;
-}
-
-export type Row = {
-  highestSymbolPosition: number;
-  symbolCount: number;
-  words: WordObject[];
-};
-
-export type SymbolWidths = {
-  widths: FontData["symbolWidths"];
-  marginX: number;
-  paddingX: number;
-};
+import { Row, SymbolObject, SymbolWidths, WordObject, WordType } from "../types/symbolTypes";
 
 const splitterRegexp = /[0-9\p{L}']+|\s+|[^0-9\p{L}'\s+]/giu; // numbers, letters or apostrophe | whitespace | nothing of the previous
 export const lineEndersRegexp = /[ .,!?;:)\]}]|\n+/;
@@ -104,7 +75,7 @@ export const transformTextToSymbolRows =
         wordInSymbolObjects.push({
           symbol,
           symbolPosition: symbolPosition,
-          wasCorrect: true
+          correctness: "pending"
         });
         
         symbolPosition++;
