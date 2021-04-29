@@ -13,6 +13,7 @@ interface Props {
   setMistypedWords: React.Dispatch<React.SetStateAction<Row["words"]>>;
   text: string;
   timer: Timer;
+  allowedMistypeCount: number;
 }
 
 const useStyles = makeStyles(({ textDisplayTheme }) => ({
@@ -29,7 +30,8 @@ export default function PlayPage({
   isFontDataLoading,
   setMistypedWords,
   text,
-  timer
+  timer,
+  allowedMistypeCount
 }: Props) {
   const classes = useStyles();
   const [restart , setRestart] = useState(false);
@@ -48,7 +50,8 @@ export default function PlayPage({
         setMistypedWords={setMistypedWords}
         setRestart={setRestart}
         text={text}
-        timer={timer} />
+        timer={timer}
+        allowedMistypeCount={allowedMistypeCount} />
     </div>
   );
 }

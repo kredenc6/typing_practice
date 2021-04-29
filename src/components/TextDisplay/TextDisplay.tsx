@@ -20,7 +20,7 @@ import { Row, transformTextToSymbolRows } from "../../textFunctions/transformTex
 import adjustRowsToNewFontData from "../../textFunctions/adjustRowsToNewFontData";
 import Timer from "../../accessories/Timer";
 import DisplayedRow from "../DisplayedRow/DisplayedRow";
-import { FontData } from "../../types/types";
+import { FontData, AnimateMistyped } from "../../types/types";
 import { ThemeContext } from "../../styles/themeContext";
 
 interface Props {
@@ -30,6 +30,7 @@ interface Props {
   setRestart: React.Dispatch<React.SetStateAction<boolean>>;
   text: string;
   timer: Timer;
+  allowedMistypeCount: number;
 }
 
 interface FontDataAndTextRef {
@@ -66,13 +67,12 @@ const useStyles = makeStyles(({ textDisplayTheme }) => ({
   },
   rowMovingUp: {
     marginTop: ({ rowHeight }: MakeStylesProps) => `-${rowHeight}`
-  },
-  test: {
-    position: "absolute"
   }
 }));
 
-export default function TextDisplay({ fontData, restart, setMistypedWords, setRestart, text, timer }: Props) {
+export default function TextDisplay({
+  fontData, restart, setMistypedWords, setRestart, text, timer, allowedMistypeCount }: Props)
+  {
   const [symbolRows, setSymbolRows] = useState<Row[]>([]);
   const [rowPosition, setRowPosition] = useState(0);
   const [wordPosition, setWordPosition] = useState(0);
@@ -83,12 +83,29 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
   const [rowHeight, setRowHeight] = useState("50px");
   const [gameStatus, setGameStatus] = useState<GameStatus>("settingUp");
   const [isRowInTransition, setIsRowInTransition] = useState(false);
-  
+  const [subsequentMistypeCount, setSubsequentMistypeCount] = useState(0);
+  const [animateMistypedSymbol, setAnimateMistypedSymbol] = useState<AnimateMistyped | null>(null)
+
   const classes = useStyles({ fontData, lineCount, rowHeight });
   const { state: { textDisplayTheme } } = useContext(ThemeContext);
   const wordTimer = useRef(new Timer(2));
   const textDisplayRef: React.MutableRefObject<null | HTMLDivElement> = useRef(null);
   const fontDataAndTextRef: React.MutableRefObject<FontDataAndTextRef> = useRef({ fontData, text });
+
+  const handleUpdateTypedSymbol = () => {
+    const newCursorPosition = cursorPosition + 1;
+    const {
+      rowPosition: newRowPosition,
+      wordPosition: newWordPosition
+    } = getPositions(newCursorPosition, symbolRows, rowPosition);
+    
+    if(newRowPosition > rowPosition) {
+      setIsRowInTransition(true);
+      setRowPosition(newRowPosition);
+    }
+    setWordPosition(newWordPosition);
+    setCursorPosition(newCursorPosition);
+  };
 
   // (on keypress === truthy enteredSymbol) check and adjust all the necessary stuff
   useEffect(() => {
@@ -120,27 +137,25 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
     // on mistyped symbol
     if(enteredSymbol !== text[cursorPosition]) {
       const updatedRow = updateRowWithMistype(symbolRows, rowPosition, wordPosition, cursorPosition);
-      
       updateSymbolRows(setSymbolRows, updatedRow, rowPosition);
+      setSubsequentMistypeCount(subsequentMistypeCount + 1);
+      setAnimateMistypedSymbol({
+        symbol: enteredSymbol,
+        symbolPosition: cursorPosition
+      });
+
+      if(allowedMistypeCount > subsequentMistypeCount) {
+        handleUpdateTypedSymbol();
+      }
       
       // on correctly typed symbol
     } else {
-      const newCursorPosition = cursorPosition + 1;
-      const {
-        rowPosition: newRowPosition,
-        wordPosition: newWordPosition
-      } = getPositions(newCursorPosition, symbolRows, rowPosition);
-      
-      if(newRowPosition > rowPosition) {
-        setIsRowInTransition(true);
-        setRowPosition(newRowPosition);
-      }
-      setWordPosition(newWordPosition);
-      setCursorPosition(newCursorPosition);
+      handleUpdateTypedSymbol();
+      setSubsequentMistypeCount(0);
     }
     
     setEnteredSymbol(""); // reset typed symbol
-  }, [cursorPosition, enteredSymbol, gameStatus, keyStrokeCount, setMistypedWords, symbolRows, rowPosition, text, timer, wordPosition])
+  })
 
   // on did mount add keypress event listener
   useEffect(() => {
@@ -247,7 +262,9 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
             setRowHeight={setRowHeight}
             textPosition={cursorPosition}
             theme={textDisplayTheme}
-            enteredSymbol={enteredSymbol} />
+            enteredSymbol={enteredSymbol}
+            animateMistypedSymbol={animateMistypedSymbol}
+            setAnimateMistypedSymbol={setAnimateMistypedSymbol} />
         );
       }
       return (
@@ -257,7 +274,9 @@ export default function TextDisplay({ fontData, restart, setMistypedWords, setRe
           row={row}
           textPosition={cursorPosition}
           theme={textDisplayTheme}
-          enteredSymbol={enteredSymbol} />
+          enteredSymbol={enteredSymbol}
+          animateMistypedSymbol={animateMistypedSymbol}
+          setAnimateMistypedSymbol={setAnimateMistypedSymbol} />
       );
     }
   );

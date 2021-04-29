@@ -1,9 +1,8 @@
 import React, { ReactNode } from "react";
 import { useTheme } from "@material-ui/core";
-import { Transition } from "react-transition-group";
+import { Transition, TransitionStatus } from "react-transition-group";
+import { TransitionProps } from "react-transition-group/Transition";
 import classnames from "classnames";
-
-type transitionPhase = "entering" | "entered" | "exiting" | "exited";
 
 interface Props {
     inProp: boolean;
@@ -29,18 +28,30 @@ const transitionStyles = {
   exited:  {
     opacity: 1,
   },
+  unmounted: {
+    opacity: 1
+  }
 };
 
-export default function FadeAway({ inProp, children, className }: Props) {
+export default function FadeAway({
+  inProp, children, className, ...transitionProps
+}: Props & TransitionProps) {
   const { transitions } = useTheme();
-  
+  const timeout = typeof transitionProps.timeout === "number"
+    ? transitionProps.timeout
+    : transitions.duration.complex;
+
   return (
-    <Transition in={inProp} timeout={transitions.duration.complex} unmountOnExit>
-      {(phase: transitionPhase) => (
+    <Transition
+      in={inProp}
+      unmountOnExit
+      {...transitionProps}
+    >
+      {(phase: TransitionStatus) => (
           <div
             className={classnames(className)}
             style={{
-              ...defaultStyle(transitions.duration.complex),
+              ...defaultStyle(timeout),
               ...transitionStyles[phase]
             }}
           >

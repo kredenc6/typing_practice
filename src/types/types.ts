@@ -59,6 +59,11 @@ export interface SymbolStyle extends FontThemeStyle {
   symbolOffset: Offset["symbol"];
 }
 
+export interface AnimateMistyped {
+  symbol: string;
+  symbolPosition: number;
+}
+
 export type RelativeSymbolPosition = "pending" | "active" | "processed";
 
 export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> =

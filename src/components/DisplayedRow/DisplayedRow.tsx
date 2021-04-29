@@ -5,7 +5,7 @@ import DisplayedSymbol from "../DisplayedSymbol/DisplayedSymbol";
 import TextCursor from "../TextCursor/TextCursor";
 import { getRelativePosition, getSymbolStyle } from "./helpFunctions";
 import { Row } from "../../textFunctions/transformTextToSymbolRows";
-import { FontSize, TextDisplayTheme } from "../../types/types";
+import { FontSize, TextDisplayTheme, AnimateMistyped } from "../../types/types";
 import InvalidSymbol from "../TextDisplay/InvalidSymbol/InvalidSymbol";
 import DisplayedSymbolWrapper from "../DisplayedSymbolWrapper/DisplayedSymbolWrapper";
 
@@ -16,6 +16,8 @@ interface Props extends React.HTMLProps<HTMLDivElement> {
   textPosition: number;
   theme: TextDisplayTheme;
   enteredSymbol: string;
+  animateMistypedSymbol: AnimateMistyped | null;
+  setAnimateMistypedSymbol: React.Dispatch<React.SetStateAction<AnimateMistyped | null>>
 }
 
 const useStyles = makeStyles({
@@ -33,6 +35,8 @@ export default function DisplayedRow({
   textPosition,
   theme,
   enteredSymbol,
+  animateMistypedSymbol,
+  setAnimateMistypedSymbol,
   ...divProps
 }: Props) {
   const classes = useStyles();
@@ -50,9 +54,9 @@ export default function DisplayedRow({
       const relativePosition = getRelativePosition(textPosition, symbolPosition);
 
       const InvalidSymbolComponent =
-        enteredSymbol && enteredSymbol !== symbol && relativePosition === "active" ?
+        animateMistypedSymbol?.symbolPosition === symbolPosition ?
         <InvalidSymbol
-          symbol={enteredSymbol}
+          symbol={animateMistypedSymbol.symbol}
           symbolStyle={getSymbolStyle(false, "processed", theme)} />
         :
         null;
@@ -67,7 +71,8 @@ export default function DisplayedRow({
           symbolStyle={getSymbolStyle(wasCorrect, relativePosition, theme)} // for memo
           DisplayedSymbol={DisplayedSymbolComponent}
           TextCursor={relativePosition === "active" ? <TextCursor height={fontSize === "20px" ? "2px" : "3px"} /> : null}
-          InvalidSymbol={InvalidSymbolComponent} />
+          InvalidSymbol={InvalidSymbolComponent}
+          setAnimateMistypedSymbol={setAnimateMistypedSymbol} />
       );
     });
   });

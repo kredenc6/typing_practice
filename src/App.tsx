@@ -19,6 +19,7 @@ export default function App() {
   const [text, setText] = useState("");
   const [mistypedWords, setMistypedWords] = useState<Row["words"]>([]);
   const { state: theme } = useContext(ThemeContext);
+  const [allowedMistypeCount, setAllowedMisttypeCount] = useState(2);
   // const [theme, setTheme] = useState(appTheme)
   // const [mistypedSymbols, setMistypedSymbols] = useState<string[]>([]);
 
@@ -97,7 +98,8 @@ export default function App() {
               isFontDataLoading={isFontDataLoading}
               setMistypedWords={setMistypedWords}
               text={text}
-              timer={timer.current} />
+              timer={timer.current}
+              allowedMistypeCount={allowedMistypeCount} />
           </Route>
         </Switch>
       </Router>

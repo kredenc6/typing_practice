@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, useTheme } from "@material-ui/core";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import FadeAway from "../transitions/FadeAway/FadeAway";
-import { SymbolStyle } from "../../types/types";
+import { SymbolStyle, AnimateMistyped } from "../../types/types";
 
 interface Props {
   DisplayedSymbol: JSX.Element | null;
   TextCursor: JSX.Element | null;
   InvalidSymbol: JSX.Element | null;
   symbolStyle: SymbolStyle; // for memo
+  setAnimateMistypedSymbol: React.Dispatch<React.SetStateAction<AnimateMistyped | null>>;
 }
 
 const useStyles = makeStyles({
@@ -30,9 +31,10 @@ const useStyles = makeStyles({
 });
 
 function DisplayedSymbolWrapper(
-  { DisplayedSymbol, TextCursor, InvalidSymbol }: Props
+  { DisplayedSymbol, TextCursor, InvalidSymbol, setAnimateMistypedSymbol }: Props
 ) {
   const classes = useStyles();
+  const { transitions } = useTheme();
   const [displayInvalid, setDisplayInvalid] = useState(false);
   const timeoutIdRef = useRef(-1);
 
@@ -48,7 +50,12 @@ function DisplayedSymbolWrapper(
   return(
     <div className={classes.displayedSymbolWrapper}>
       {DisplayedSymbol}
-      <FadeAway inProp={displayInvalid} className={classes.invalidSymbol}>
+      <FadeAway
+        className={classes.invalidSymbol}
+        inProp={displayInvalid}
+        timeout={transitions.duration.complex}
+        onExited={() => setAnimateMistypedSymbol(null)}
+      >
         {InvalidSymbol}
       </FadeAway>
       {TextCursor}
