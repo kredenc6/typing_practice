@@ -8,28 +8,28 @@ export const defaultPalette: Omit<TextDisplayTheme, "offset"> = {
   },
   symbols: {
     active: {
-      bgcColor: "inherit",
+      backgroundColor: "inherit",
       color: "#757575"
     },
     correct: {
-      bgcColor: "#e7fbd3",
+      backgroundColor: "#e7fbd3",
       color: "#0e630e"
     },
     corrected: {
-      bgcColor: "#ffe9b2",
+      backgroundColor: "#ffe9b2",
       color: "green"
     },
-    default: {
-      bgcColor: "inherit",
+    pending: {
+      backgroundColor: "inherit",
       color: "#757575"
     },
     mistyped: {
-      bgcColor: "pink",
+      backgroundColor: "pink",
       color: "darkred"
     },
     invalid: {
-      bgcColor: "pink",
-      color: "darkred"
+      backgroundColor: "pink",
+      color: "white"
     }
   }
 };
@@ -42,28 +42,28 @@ export const blue1: Omit<TextDisplayTheme, "offset"> = {
   },
   symbols: {
     active: {
-      bgcColor: "inherit",
+      backgroundColor: "inherit",
       color: "#555"
     },
     correct: {
-      bgcColor: "#004f80",
+      backgroundColor: "#004f80",
       color: "#d3e6fb"
     },
     corrected: {
-      bgcColor: "#ffe9b2",
+      backgroundColor: "#ffe9b2",
       color: "green"
     },
-    default: {
-      bgcColor: "inherit",
+    pending: {
+      backgroundColor: "inherit",
       color: "#555"
     },
     mistyped: {
-      bgcColor: "pink",
+      backgroundColor: "pink",
       color: "darkred"
     },
     invalid: {
-      bgcColor: "pink",
-      color: "darkred"
+      backgroundColor: "pink",
+      color: "white"
     }
   }
 };
@@ -76,28 +76,28 @@ export const blue2: Omit<TextDisplayTheme, "offset"> = {
   },
   symbols: {
     active: {
-      bgcColor: "inherit",
+      backgroundColor: "inherit",
       color: "#555"
     },
     correct: {
-      bgcColor: "#d6f4f9",
+      backgroundColor: "#d6f4f9",
       color: "#366770"
     },
     corrected: {
-      bgcColor: "#ffd424",
+      backgroundColor: "#ffd424",
       color: "#5c4500"
     },
-    default: {
-      bgcColor: "inherit",
+    pending: {
+      backgroundColor: "inherit",
       color: "#555"
     },
     mistyped: {
-      bgcColor: "#ed8525",
+      backgroundColor: "#ed8525",
       color: "#613209"
     },
     invalid: {
-      bgcColor: "pink",
-      color: "darkred"
+      backgroundColor: "pink",
+      color: "white"
     }
   }
 };
@@ -110,28 +110,28 @@ export const black1: Omit<TextDisplayTheme, "offset"> = {
   },
   symbols: {
     active: {
-      bgcColor: "inherit",
+      backgroundColor: "rgba(255, 255, 255, 0.1)",
       color: "#757575"
     },
     correct: {
-      bgcColor: "#ddd",
+      backgroundColor: "#ddd",
       color: "#000"
     },
     corrected: {
-      bgcColor: "#ffe9b2",
+      backgroundColor: "#ffe9b2",
       color: "green"
     },
-    default: {
-      bgcColor: "inherit",
+    pending: {
+      backgroundColor: "inherit",
       color: "#757575"
     },
     mistyped: {
-      bgcColor: "#bd9292",
+      backgroundColor: "#bd9292",
       color: "#6d0000"
     },
     invalid: {
-      bgcColor: "pink",
-      color: "darkred"
+      backgroundColor: "pink",
+      color: "white"
     }
   }
 };

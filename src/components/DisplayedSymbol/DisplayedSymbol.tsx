@@ -9,12 +9,11 @@ interface Props {
 
 const useStyles = makeStyles({
   textSymbol: {
-    position: "relative",
     marginRight: ({ symbolOffset }: SymbolStyle) => symbolOffset.marginRight,
     paddingLeft: ({ symbolOffset }: SymbolStyle) => symbolOffset.paddingLeft,
     paddingRight: ({ symbolOffset }: SymbolStyle) => symbolOffset.paddingRight,
     color: ({ color }: SymbolStyle) => color,
-    backgroundColor: ({ bgcColor }: SymbolStyle) => bgcColor,
+    backgroundColor: ({ backgroundColor }: SymbolStyle) => backgroundColor,
     borderRadius: "3px"
   }
 });

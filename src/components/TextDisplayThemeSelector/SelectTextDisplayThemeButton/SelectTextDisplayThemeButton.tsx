@@ -23,15 +23,15 @@ const useStyles = makeStyles(({ palette }) => ({
   },
   correct: {
     color: ({ themeToSelect }: UseStylesProps) => themeToSelect.symbols.correct.color,
-    backgroundColor: ({ themeToSelect }: UseStylesProps) => themeToSelect.symbols.correct.bgcColor
+    backgroundColor: ({ themeToSelect }: UseStylesProps) => themeToSelect.symbols.correct.backgroundColor
   },
   corrected: {
     color: ({ themeToSelect }: UseStylesProps) => themeToSelect.symbols.corrected.color,
-    backgroundColor: ({ themeToSelect }: UseStylesProps) => themeToSelect.symbols.corrected.bgcColor
+    backgroundColor: ({ themeToSelect }: UseStylesProps) => themeToSelect.symbols.corrected.backgroundColor
   },
   mistyped: {
     color: ({ themeToSelect }: UseStylesProps) => themeToSelect.symbols.mistyped.color,
-    backgroundColor: ({ themeToSelect }: UseStylesProps) => themeToSelect.symbols.mistyped.bgcColor
+    backgroundColor: ({ themeToSelect }: UseStylesProps) => themeToSelect.symbols.mistyped.backgroundColor
   },
   symbol: {
     marginRight: "1px",

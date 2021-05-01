@@ -1,8 +1,10 @@
 import { FontData } from "./themeTypes";
+import { defaultPalette } from "../styles/textDisplayPaletes";
 
 export type WordType = "word" | "whitespace" | "other";
 export type RelativeSymbolPosition = "pending" | "active" | "processed";
-export type SymbolCorrectness = "pending" | "correct" | "mistyped" | "corrected";
+type SymbolCorrectnessTypes = "pending" | "correct" | "mistyped" | "corrected" | "invalid";
+export type SymbolCorrectness = Extract<keyof typeof defaultPalette["symbols"], SymbolCorrectnessTypes>;
 
 export type SymbolObject = {
   symbol: string;
@@ -30,4 +32,3 @@ export type SymbolWidths = {
   marginX: number;
   paddingX: number;
 };
-

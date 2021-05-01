@@ -12,29 +12,20 @@ export const getSymbolStyle = (
   relativePosition: RelativeSymbolPosition,
   { offset, symbols }: TextDisplayTheme
 ): SymbolStyle => {
-  const symbolStyle: SymbolStyle = {
-    bgcColor: symbols.default.bgcColor,
-    color: symbols.default.color,
+  let symbolStyle: SymbolStyle = {
+    backgroundColor: symbols.pending.backgroundColor,
+    color: symbols.pending.color,
     cursorColor: "transparent",
     symbolOffset: offset["symbol"]
   };
-
+  
   if(relativePosition === "processed") {
-    if(correctness === "correct") {
-      symbolStyle.bgcColor = symbols.correct.bgcColor;
-      symbolStyle.color = symbols.correct.color;
-    } else if(correctness === "mistyped") {
-      symbolStyle.bgcColor = symbols.mistyped.bgcColor;
-      symbolStyle.color = symbols.mistyped.color;
-    } else if(correctness === "corrected") {
-      symbolStyle.bgcColor = symbols.corrected.bgcColor;
-      symbolStyle.color = symbols.corrected.color;
-    }
+    symbolStyle = { ...symbolStyle, ...symbols[correctness] }
   } else if(relativePosition === "active") {
     symbolStyle.cursorColor = "#0a6bf9";
-    symbolStyle.bgcColor = symbols.active.bgcColor;
+    symbolStyle.backgroundColor = symbols.active.backgroundColor;
     symbolStyle.color = symbols.active.color;
-  } 
+  }
   
   return symbolStyle;
 };

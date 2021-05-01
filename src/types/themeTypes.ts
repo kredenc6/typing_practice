@@ -21,7 +21,7 @@ export type FontFamilies = {
 }[]
 
 export interface FontThemeStyle {
-  bgcColor: string;
+  backgroundColor: string;
   color: string;
 }
 
@@ -55,7 +55,7 @@ export interface TextDisplayTheme {
     active: FontThemeStyle;
     correct: FontThemeStyle;
     corrected: FontThemeStyle;
-    default: FontThemeStyle;
+    pending: FontThemeStyle;
     mistyped: FontThemeStyle;
     invalid: FontThemeStyle;
   },

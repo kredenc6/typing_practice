@@ -6,7 +6,6 @@ import TextCursor from "../TextCursor/TextCursor";
 import { getRelativePosition, getSymbolStyle } from "./helpFunctions";
 import { Row } from "../../types/symbolTypes";
 import { FontSize, TextDisplayTheme, AnimateMistyped } from "../../types/themeTypes";
-import InvalidSymbol from "../TextDisplay/InvalidSymbol/InvalidSymbol";
 import DisplayedSymbolWrapper from "../DisplayedSymbolWrapper/DisplayedSymbolWrapper";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 
@@ -21,7 +20,7 @@ interface Props extends React.HTMLProps<HTMLDivElement> {
   setAnimateMistypedSymbol: React.Dispatch<React.SetStateAction<AnimateMistyped | null>>
 }
 
-const useStyles = makeStyles( ({ transitions }) => ({
+const useStyles = makeStyles(({ transitions }) => ({
   row: {
     whiteSpace: "nowrap",
     transition: `margin-top ${transitions.duration.complex}ms,
@@ -57,16 +56,16 @@ export default function DisplayedRow({
 
       const InvalidSymbolComponent =
         animateMistypedSymbol?.symbolPosition === symbolPosition ?
-        <InvalidSymbol
-          symbol={animateMistypedSymbol.symbol}
-          symbolStyle={getSymbolStyle("mistyped", "processed", theme)} />
-        :
-        null;
+          <DisplayedSymbol
+            symbol={animateMistypedSymbol.symbol}
+            symbolStyle={getSymbolStyle("invalid", "processed", theme)} />
+          :
+          null;
 
         const DisplayedSymbolComponent = 
           <DisplayedSymbol
-            symbolStyle={getSymbolStyle(correctness, relativePosition, theme)}
-            symbol={symbol} />;
+            symbol={symbol}
+            symbolStyle={getSymbolStyle(correctness, relativePosition, theme)} />;
       return (
         <DisplayedSymbolWrapper
           key={symbolPosition}
