@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import classNames from "classnames";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, useTheme } from "@material-ui/core";
 import {
   calculateDisplayTextInnerWidth,
   collectMistypedSymbolPositions,
@@ -12,9 +12,9 @@ import {
   updateSymbolCorrectness,
   updateWordTime,
   updateSymbolRows,
-  getIndexes
+  getIndexes,
+  isAllowedKey
 } from "./helpFunctions";
-import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import { calcTypingPrecision, calcTypingSpeedInKeystrokes, calcTypingSpeedInWPM } from "../../helpFunctions/calcTypigSpeed";
 import adjustRowsToNewFontData from "../../textFunctions/adjustRowsToNewFontData";
@@ -24,6 +24,7 @@ import { FontData, AnimateMistyped } from "../../types/themeTypes";
 import { Row, SymbolCorrectness } from "../../types/symbolTypes";
 import { ThemeContext } from "../../styles/themeContext";
 import { transformTextToSymbolRows } from "../../textFunctions/transformTextToSymbolRows";
+import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 
 interface Props {
   fontData: FontData;
@@ -45,21 +46,16 @@ type GameStatus = "settingUp" | "start" | "playing" | "finished";
 interface MakeStylesProps {
   fontData: FontData;
   lineCount: number;
-  rowHeight: string;
+  rowHeight: number;
 }
-
-const TRANSITION_DURATION = 500;
-
 
 // TODO try dynamic width?
 const useStyles = makeStyles(({ textDisplayTheme }) => ({
   textWindow: {
-    positon: "relative",
     boxSizing: "content-box",
     width: "800px",
-    height: ({ lineCount, rowHeight }: MakeStylesProps) => `${transformPixelSizeToNumber(rowHeight) * lineCount}px`,
-    margin: textDisplayTheme.offset.display.margin,
-    padding: textDisplayTheme.offset.display.padding,
+    height: ({ lineCount, rowHeight }: MakeStylesProps) => `${rowHeight * lineCount}px`,
+    ...textDisplayTheme.offset.display,
     fontFamily: ({ fontData }: MakeStylesProps) => fontData.fontFamily,
     fontSize: ({ fontData }: MakeStylesProps) => fontData.fontSize,
     borderTop: `1px solid ${textDisplayTheme.background.secondary}`,
@@ -67,8 +63,11 @@ const useStyles = makeStyles(({ textDisplayTheme }) => ({
     whiteSpace: "nowrap",
     overflow: "hidden"
   },
-  rowMovingUp: {
-    marginTop: ({ rowHeight }: MakeStylesProps) => `-${rowHeight}`
+  topHiddenRow: {
+    marginTop: ({ rowHeight }: MakeStylesProps) => (
+      `-${rowHeight + transformPixelSizeToNumber(textDisplayTheme.offset.display.paddingTop)}px`
+    ),
+    paddingBottom: textDisplayTheme.offset.display.paddingTop
   }
 }));
 
@@ -82,29 +81,37 @@ export default function TextDisplay({
   const [enteredSymbol, setEnteredSymbol] = useState("");
   const [keyStrokeCount, setKeyStrokeCount] = useState(0);
   const [lineCount, setLineCount] = useState(0);
-  const [rowHeight, setRowHeight] = useState("50px");
+  const [cssCalculatedrowHeight, setCssCalculatedRowHeight] = useState(50);
   const [gameStatus, setGameStatus] = useState<GameStatus>("settingUp");
   const [isRowInTransition, setIsRowInTransition] = useState(false);
   const [subsequentMistypeCount, setSubsequentMistypeCount] = useState(0);
   const [animateMistypedSymbol, setAnimateMistypedSymbol] = useState<AnimateMistyped | null>(null);
 
-  const classes = useStyles({ fontData, lineCount, rowHeight });
+  const { transitions } = useTheme();
+  const classes = useStyles({ fontData, lineCount, rowHeight: cssCalculatedrowHeight });
   const { state: { textDisplayTheme } } = useContext(ThemeContext);
   const wordTimer = useRef(new Timer(2));
   const textDisplayRef: React.MutableRefObject<null | HTMLDivElement> = useRef(null);
   const fontDataAndTextRef: React.MutableRefObject<FontDataAndTextRef> = useRef({ fontData, text });
 
-  const moveActiveSymbol = () => {
-    const newCursorPosition = cursorPosition + 1;
+  const moveActiveSymbol = (by: -1 | 1) => {
+    const newCursorPosition = cursorPosition + by;
+    if(newCursorPosition < 0) return;
+
     const {
       rowPosition: newRowPosition,
       wordPosition: newWordPosition
-    } = getPositions(newCursorPosition, symbolRows, rowPosition);
+    } = getPositions(newCursorPosition, symbolRows);
+    // } = getPositions(newCursorPosition, symbolRows, rowPosition);
     
-    if(newRowPosition > rowPosition) {
+    if(newRowPosition !== rowPosition) {
       setIsRowInTransition(true);
       setRowPosition(newRowPosition);
     }
+    // if(newRowPosition > rowPosition) {
+    //   setIsRowInTransition(true);
+    //   setRowPosition(newRowPosition);
+    // }
     setWordPosition(newWordPosition);
     setCursorPosition(newCursorPosition);
   };
@@ -136,6 +143,10 @@ export default function TextDisplay({
       return;
     }
 
+    // on Backspace
+    if(enteredSymbol === "Backspace") {
+      moveActiveSymbol(-1);
+    } else
     // on mistyped symbol
     if(enteredSymbol !== text[cursorPosition]) {
       const updatedRow = updateSymbolCorrectness(symbolRows, rowPosition, cursorPosition, "mistyped");
@@ -147,20 +158,22 @@ export default function TextDisplay({
       });
 
       if(allowedMistypeCount > subsequentMistypeCount) {
-        moveActiveSymbol();
+        moveActiveSymbol(1);
       }
       
       // on correctly typed symbol
     } else {
       const { symbolIndex, wordIndex, rowIndex } = getIndexes(cursorPosition, symbolRows);
       const activeSymbolCorrectness = symbolRows[rowIndex].words[wordIndex].symbols[symbolIndex].correctness;
-      const updatedSymbolCorrectness: SymbolCorrectness = activeSymbolCorrectness === "mistyped"
-        ? "corrected"
-        : "correct";
+      const updatedSymbolCorrectness: SymbolCorrectness =
+        activeSymbolCorrectness === "mistyped" ||
+        activeSymbolCorrectness === "corrected"
+          ? "corrected"
+          : "correct";
       const updatedRow = updateSymbolCorrectness(symbolRows, rowPosition, cursorPosition, updatedSymbolCorrectness);
 
       updateSymbolRows(setSymbolRows, updatedRow, rowPosition);
-      moveActiveSymbol();
+      moveActiveSymbol(1);
       setSubsequentMistypeCount(0);
     }
     
@@ -172,7 +185,7 @@ export default function TextDisplay({
     const onKeyDown = (key: string) => {
       setKeyStrokeCount(prevCount => prevCount + 1);
       
-      if(key.length === 1) {
+      if(isAllowedKey(key)) {
         setEnteredSymbol(key);
       }
     };
@@ -247,8 +260,8 @@ export default function TextDisplay({
 
   useEffect(() => {
     if(isRowInTransition) {
-      setTimeout(() => setIsRowInTransition(false), TRANSITION_DURATION);
-    }
+      setTimeout(() => setIsRowInTransition(false), transitions.duration.complex);
+    } // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRowInTransition])
 
   const DisplayedRowComponents = symbolRows
@@ -257,31 +270,20 @@ export default function TextDisplay({
         return i < lineCount;
       }
       return ( // when other rows are active
-        i >= (rowPosition - 1 - Number(isRowInTransition)) && // show 1 previous line(or 2 when in transition)...
-        i < (rowPosition + lineCount - 1) // ...then next lines based on lineCount(need to deduct 1 previous line)
+        i >= (rowPosition - 2) && // show 1 previous line and hide second previous for transition)...
+        i < (rowPosition + lineCount - 1) // ...then show next lines based on lineCount(need to deduct 1 previous line)
       );
     })
     .map((row, rowIndex) => {
-      if(rowIndex === 0) {
-        return (
-          <DisplayedRow
-            className={classNames((rowPosition > 1 && isRowInTransition) && classes.rowMovingUp)}
-            fontSize={fontData.fontSize}
-            key={row.highestSymbolPosition}
-            row={row}
-            setRowHeight={setRowHeight}
-            textPosition={cursorPosition}
-            theme={textDisplayTheme}
-            enteredSymbol={enteredSymbol}
-            animateMistypedSymbol={animateMistypedSymbol}
-            setAnimateMistypedSymbol={setAnimateMistypedSymbol} />
-        );
-      }
       return (
         <DisplayedRow
+          className={classNames(
+            rowIndex === 0 && rowPosition >= 2 && classes.topHiddenRow
+          )}
           fontSize={fontData.fontSize}
           key={row.highestSymbolPosition}
           row={row}
+          setRowHeight={rowIndex === 1? setCssCalculatedRowHeight : undefined}
           textPosition={cursorPosition}
           theme={textDisplayTheme}
           enteredSymbol={enteredSymbol}

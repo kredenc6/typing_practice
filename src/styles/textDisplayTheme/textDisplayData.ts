@@ -12,8 +12,14 @@ export const defaultTextDisplayTheme: TextDisplayTheme = {
   ...defaultPalette,
   offset: {
     display: {
-      margin: "1rem auto",
-      padding: "0.5rem 1.5rem"
+      marginTop: "16px",
+      marginRight: "auto",
+      marginBottom: "16px",
+      marginLeft: "auto",
+      paddingTop: "8px",
+      paddingRight: "24px",
+      paddingBottom: "8px",
+      paddingLeft: "24px"
     },
     symbol: {
       paddingLeft: "1px",

@@ -1,4 +1,4 @@
-// import { Theme as OriginalMuiTheme, ThemeOptions } from "@material-ui/core";
+// import { Theme as OriginalMuiTheme, ThemeOptions, Duration } from "@material-ui/core";
 import { TextDisplayTheme } from "./types/themeTypes";
 
 declare module "@material-ui/core" {

@@ -8,11 +8,12 @@ import { Row } from "../../types/symbolTypes";
 import { FontSize, TextDisplayTheme, AnimateMistyped } from "../../types/themeTypes";
 import InvalidSymbol from "../TextDisplay/InvalidSymbol/InvalidSymbol";
 import DisplayedSymbolWrapper from "../DisplayedSymbolWrapper/DisplayedSymbolWrapper";
+import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 
 interface Props extends React.HTMLProps<HTMLDivElement> {
   fontSize: FontSize;
   row: Row;
-  setRowHeight?: React.Dispatch<React.SetStateAction<string>>;
+  setRowHeight?: React.Dispatch<React.SetStateAction<number>>;
   textPosition: number;
   theme: TextDisplayTheme;
   enteredSymbol: string;
@@ -20,12 +21,13 @@ interface Props extends React.HTMLProps<HTMLDivElement> {
   setAnimateMistypedSymbol: React.Dispatch<React.SetStateAction<AnimateMistyped | null>>
 }
 
-const useStyles = makeStyles({
+const useStyles = makeStyles( ({ transitions }) => ({
   row: {
     whiteSpace: "nowrap",
-    transition: "margin-top 500ms"
+    transition: `margin-top ${transitions.duration.complex}ms,
+                 padding-bottom ${transitions.duration.complex}ms`
   }
-});
+}));
 
 export default function DisplayedRow({
   className,
@@ -45,7 +47,7 @@ export default function DisplayedRow({
   useLayoutEffect(() => {
     if(divRef.current && setRowHeight) {
         const rowHeight = getComputedStyle(divRef.current!).height;
-        setRowHeight(rowHeight);
+        setRowHeight(transformPixelSizeToNumber(rowHeight));
     }
   })
 

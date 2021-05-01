@@ -27,8 +27,14 @@ export interface FontThemeStyle {
 
 export interface Offset {
   display: {
-    margin: string;
-    padding: string;
+    marginTop: string;
+    marginRight: string;
+    marginBottom: string;
+    marginLeft: string;
+    paddingTop: string;
+    paddingRight: string;
+    paddingBottom: string;
+    paddingLeft: string;
   },
   symbol: {
     paddingLeft: string;
@@ -36,7 +42,9 @@ export interface Offset {
     marginRight: string;
   }
 }
-
+/**
+ * keep any sizing in px
+ */
 export interface TextDisplayTheme {
   name: string;
   background: {

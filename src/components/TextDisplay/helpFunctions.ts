@@ -206,3 +206,10 @@ export const getIndexes = (cursorPosition: number, symbolRows: Row[]) => {
 
   return result;
 };
+
+export const isAllowedKey = (key: string) => {
+  return (
+    key.length === 1 ||
+    key === "Backspace"
+  );
+};

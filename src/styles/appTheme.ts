@@ -7,9 +7,8 @@ const settings = {
       disableRipple: true
     }
   },
-  textDisplayTheme: defaultTextDisplayTheme
+  textDisplayTheme: defaultTextDisplayTheme,
 };
-
 
 let appTheme = createMuiTheme(settings);
 appTheme = responsiveFontSizes(appTheme);
@@ -17,17 +16,12 @@ appTheme = responsiveFontSizes(appTheme);
 export default appTheme;
 
 export const createUpdatedAppTheme = (update: ThemeOptions) => {
-  const settings = {
-    props: {
-      MuiButtonBase: {
-        disableRipple: true
-      }
-    },
-    textDisplayTheme: defaultTextDisplayTheme,
+  const updateSettings = {
+    ...settings,
     ...update
   };
 
-  let updatedAppTheme = createMuiTheme(settings);
+  let updatedAppTheme = createMuiTheme(updateSettings);
   updatedAppTheme = responsiveFontSizes(updatedAppTheme);
 
   return updatedAppTheme;

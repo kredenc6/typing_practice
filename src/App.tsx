@@ -6,7 +6,6 @@ import MainMenu from "./pages/MainMenu/MainMenu";
 import Timer from "./accessories/Timer";
 import getFontData from "./async/getFontData";
 import loadFont from "./async/loadFont";
-import transformPixelSizeToNumber from "./helpFunctions/transformPixelSizeToNumber";
 import { defaultTextDisplayFontData } from "./styles/textDisplayTheme/textDisplayData";
 import { FontData } from "./types/themeTypes";
 import { Row } from "./types/symbolTypes";
@@ -34,9 +33,10 @@ export default function App() {
     setIsFontDataLoading(true);
     
     if(updatedFields.includes("fontSize")) {
-      const updatedPadding = `0.5rem ${transformPixelSizeToNumber(fontSize) / 20}rem`;
       const updatedTextDisplayTheme = { ...theme.textDisplayTheme };
-      updatedTextDisplayTheme.offset.display.padding = updatedPadding;
+      const updatedSidePadding = fontSize;
+      updatedTextDisplayTheme.offset.display.paddingRight = updatedSidePadding;
+      updatedTextDisplayTheme.offset.display.paddingLeft = updatedSidePadding;
       createUpdatedAppTheme({ textDisplayTheme: updatedTextDisplayTheme });
       setIsFontDataLoading(false);
     }
