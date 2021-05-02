@@ -13,7 +13,8 @@ import {
   updateWordTime,
   updateSymbolRows,
   getIndexes,
-  isAllowedKey
+  isAllowedKey,
+  isAllowedToMoveToNextSymbolOnMistake
 } from "./helpFunctions";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import { calcTypingPrecision, calcTypingSpeedInKeystrokes, calcTypingSpeedInWPM } from "../../helpFunctions/calcTypigSpeed";
@@ -84,7 +85,6 @@ export default function TextDisplay({
   const [cssCalculatedrowHeight, setCssCalculatedRowHeight] = useState(50);
   const [gameStatus, setGameStatus] = useState<GameStatus>("settingUp");
   const [isRowInTransition, setIsRowInTransition] = useState(false);
-  const [subsequentMistypeCount, setSubsequentMistypeCount] = useState(0);
   const [animateMistypedSymbol, setAnimateMistypedSymbol] = useState<AnimateMistyped | null>(null);
 
   const { transitions } = useTheme();
@@ -151,13 +151,14 @@ export default function TextDisplay({
     if(enteredSymbol !== text[cursorPosition]) {
       const updatedRow = updateSymbolCorrectness(symbolRows, rowPosition, cursorPosition, "mistyped");
       updateSymbolRows(setSymbolRows, updatedRow, rowPosition);
-      setSubsequentMistypeCount(subsequentMistypeCount + 1);
       setAnimateMistypedSymbol({
         symbol: enteredSymbol,
         symbolPosition: cursorPosition
       });
 
-      if(allowedMistypeCount > subsequentMistypeCount) {
+      const isAllowedToMoveToNextSymbol =
+        isAllowedToMoveToNextSymbolOnMistake(symbolRows, cursorPosition, allowedMistypeCount);
+      if(isAllowedToMoveToNextSymbol) {
         moveActiveSymbol(1);
       }
       
@@ -174,7 +175,6 @@ export default function TextDisplay({
 
       updateSymbolRows(setSymbolRows, updatedRow, rowPosition);
       moveActiveSymbol(1);
-      setSubsequentMistypeCount(0);
     }
     
     setEnteredSymbol(""); // reset typed symbol

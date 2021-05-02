@@ -213,3 +213,37 @@ export const isAllowedKey = (key: string) => {
     key === "Backspace"
   );
 };
+
+const getPreviousSymbol = (symbolPosition: number, symbolRows: Row[]) => {
+  let { rowIndex, symbolIndex, wordIndex } = getIndexes(symbolPosition, symbolRows);
+  if(!symbolIndex && !wordIndex && !rowIndex) {
+    return null;
+  }
+  if(symbolIndex === 0 && wordIndex === 0) {
+    rowIndex -= 1;
+    wordIndex = symbolRows[rowIndex].words.length - 1;
+    symbolIndex = symbolRows[rowIndex].words[wordIndex].symbols.length - 1;
+  } else if(symbolIndex === 0) {
+    wordIndex -= 1;
+    symbolIndex = symbolRows[rowIndex].words[wordIndex].symbols.length - 1;
+  } else {
+    symbolIndex -= 1;
+  }
+
+  return symbolRows[rowIndex].words[wordIndex].symbols[symbolIndex];
+};
+
+export const isAllowedToMoveToNextSymbolOnMistake = (
+  symbolRows: Row[], textPosition: number, allowedMistypeCount: number
+) => {
+  for(let stepper = 0; allowedMistypeCount > 0; allowedMistypeCount--) {
+    console.log(allowedMistypeCount)
+    const previousSymbol = getPreviousSymbol(textPosition - stepper, symbolRows);
+    if(!previousSymbol || previousSymbol.correctness !== "mistyped") {
+      return true;
+    }
+    stepper++;
+  }
+
+  return false;
+};
