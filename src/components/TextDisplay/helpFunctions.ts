@@ -16,7 +16,9 @@ export const updateSymbolCorrectness = (
   const { wordIndex, symbolIndex } = getIndexes(textPosition, symbolRows);
 
   const updatedWords = [...row.words];
-  updatedWords[wordIndex].wasCorrect = false;
+  if(correctness === "mistyped" || correctness === "corrected") {
+    updatedWords[wordIndex].wasCorrect = false;
+  }
   updatedWords[wordIndex].symbols[symbolIndex].correctness = correctness;
 
   return { ...row, words: updatedWords };
@@ -63,24 +65,44 @@ export const collectMistypedWords = (symbolRows: Row[]) => {
   }, [] as Row["words"]);
 };
 
-export const collectMistypedSymbolPositions = (symbolRows: Row[]) => {
-  return symbolRows.reduce((mistypedSymbolPositions, row) => {
-    const mistypedSymbolsInWords = row.words.filter(({ wasCorrect }) => !wasCorrect)
-      .reduce((mistypedSymbols, wordObject) => {
+export const collectSymbolPositionsByCorrectness = (symbolRows: Row[], correctness: SymbolCorrectness) => {
+  return symbolRows.reduce((symbolPositions, row) => {
+    const symbolsInWords = row.words
+      // .filter(({ wasCorrect }) => !wasCorrect)
+      .reduce((symbols, wordObject) => {
 
-        const mistypedSymbolsInWordObject = wordObject.symbols.reduce((mistypedSymbols, symbol) => {
-          if(symbol.correctness === "mistyped") {
-            return [...mistypedSymbols, symbol.symbolPosition];
+        const symbolsInWordObject = wordObject.symbols.reduce((symbols, symbol) => {
+          if(symbol.correctness === correctness) {
+            return [...symbols, symbol.symbolPosition];
           }
-          return mistypedSymbols;
+          return symbols;
         }, [] as number[]);
 
-        return [...mistypedSymbols, ...mistypedSymbolsInWordObject];
+        return [...symbols, ...symbolsInWordObject];
       }, [] as number[]);
 
-    return [...mistypedSymbolPositions, ...mistypedSymbolsInWords];
+    return [...symbolPositions, ...symbolsInWords];
   }, [] as number[]);
 };
+// export const collectMistypedSymbolPositions = (symbolRows: Row[]) => {
+//   return symbolRows.reduce((mistypedSymbolPositions, row) => {
+//     const mistypedSymbolsInWords = row.words
+//       .filter(({ wasCorrect }) => !wasCorrect)
+//       .reduce((mistypedSymbols, wordObject) => {
+
+//         const mistypedSymbolsInWordObject = wordObject.symbols.reduce((mistypedSymbols, symbol) => {
+//           if(symbol.correctness === "mistyped") {
+//             return [...mistypedSymbols, symbol.symbolPosition];
+//           }
+//           return mistypedSymbols;
+//         }, [] as number[]);
+
+//         return [...mistypedSymbols, ...mistypedSymbolsInWordObject];
+//       }, [] as number[]);
+
+//     return [...mistypedSymbolPositions, ...mistypedSymbolsInWords];
+//   }, [] as number[]);
+// };
 
 export const calculateDisplayTextInnerWidth = (width: string, paddingLeft: string, paddingRight: string) => {
   return (

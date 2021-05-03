@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { makeStyles, useTheme } from "@material-ui/core";
 import {
   calculateDisplayTextInnerWidth,
-  collectMistypedSymbolPositions,
+  collectSymbolPositionsByCorrectness,
   collectMistypedWords,
   createSymbolWidthsObject,
   getWordTimeObject,
@@ -99,7 +99,11 @@ export default function TextDisplay({
 
   const moveActiveSymbol = (by: -1 | 1) => {
     const newCursorPosition = cursorPosition + by;
-    if(newCursorPosition < 0) return;
+    if(newCursorPosition < 0) return; // reached start of text
+    if(newCursorPosition >= text.length) { // reached end of text
+      setCursorPosition(newCursorPosition);
+      return;
+    }
 
     const {
       rowPosition: newRowPosition,
@@ -115,9 +119,8 @@ export default function TextDisplay({
     setCursorPosition(newCursorPosition);
   };
 
-  // (on keypress === truthy enteredSymbol) check and adjust all the necessary stuff
+  // on start and finish
   useEffect(() => {
-    if(!enteredSymbol || gameStatus === "finished" || !symbolRows.length) return;
     if(gameStatus === "start") { // on first keypress
       timer.start();
       if(getWordObject(symbolRows, 0, 0)?.type === "word") {
@@ -125,22 +128,33 @@ export default function TextDisplay({
       }
       setGameStatus("playing");
     }
-    // if the transcription is completed
-    if(cursorPosition >= text.length - 1) {
+
+    if(cursorPosition >= text.length && gameStatus !== "finished") {
       timer.stop();
       setGameStatus("finished");
+      // TODO later this  should not be needed
+      if(cursorPosition === text.length) { // return cursor position to valid index
+        setCursorPosition(cursorPosition - 1);
+      }
 
       const mistypedWords = collectMistypedWords(symbolRows);
       setMistypedWords(mistypedWords);
 
-      const mistakeCount = collectMistypedSymbolPositions(symbolRows).length;
-      const typingSpeed = calcTypingSpeedInKeystrokes(timer.getTime(), keyStrokeCount, mistakeCount);
+      const mistakeCount = collectSymbolPositionsByCorrectness(symbolRows, "mistyped").length;
+      const correctedCount = collectSymbolPositionsByCorrectness(symbolRows, "corrected").length;
+      const errorCount = mistakeCount + correctedCount;
+
+      const typingSpeed = calcTypingSpeedInKeystrokes(timer.getTime(), keyStrokeCount, errorCount);
       const wpm = calcTypingSpeedInWPM(text, timer.getTime(), mistypedWords.length);
       console.log(`strokes per minute: ${typingSpeed}`);
       console.log(`WPM: ${wpm}`);
-      console.log(`${calcTypingPrecision(keyStrokeCount, mistakeCount)}%`);
-      return;
+      console.log(`${calcTypingPrecision(keyStrokeCount, errorCount)}%`);
     }
+  },[cursorPosition, text, keyStrokeCount, timer, setMistypedWords, symbolRows, gameStatus])
+
+  // (on keypress === truthy enteredSymbol) check and adjust all the necessary stuff
+  useEffect(() => {
+    if(!enteredSymbol || gameStatus !== "playing" || !symbolRows.length) return;
 
     // on Backspace
     if(enteredSymbol === "Backspace") {
@@ -178,7 +192,8 @@ export default function TextDisplay({
     }
     
     setEnteredSymbol(""); // reset typed symbol
-  })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[enteredSymbol])
 
   // on did mount add keypress event listener
   useEffect(() => {
