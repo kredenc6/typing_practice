@@ -69,6 +69,9 @@ const useStyles = makeStyles(({ textDisplayTheme }) => ({
       `-${rowHeight + transformPixelSizeToNumber(textDisplayTheme.offset.display.paddingTop)}px`
     ),
     paddingBottom: textDisplayTheme.offset.display.paddingTop
+  },
+  bottomHiddenRow: {
+    marginTop: "5px"
   }
 }));
 
@@ -142,13 +145,6 @@ export default function TextDisplay({
     // on Backspace
     if(enteredSymbol === "Backspace") {
       moveActiveSymbol(-1);
-      // setAnimateMistypedSymbol(null);
-    //   setAnimateMistypedSymbol(prev => {
-    //     if(prev) {
-    //       return { ...prev, isAllowedToMoveToNextSymbol: true };
-    //     }
-    //     return prev;
-    // });
     } else
     // on mistyped symbol
     if(enteredSymbol !== text[cursorPosition]) {
@@ -275,19 +271,20 @@ export default function TextDisplay({
       }
       return ( // when other rows are active
         i >= (rowPosition - 2) && // show 1 previous line and hide second previous for transition)...
-        i < (rowPosition + lineCount - 1) // ...then show next lines based on lineCount(need to deduct 1 previous line)
+        i < (rowPosition + lineCount) // ...then show next lines based on lineCount(+ 1 extra hidden for transition)
       );
     })
     .map((row, rowIndex) => {
       return (
         <DisplayedRow
           className={classNames(
-            rowIndex === 0 && rowPosition >= 2 && classes.topHiddenRow
+            rowIndex === 0 && rowPosition >= 2 && classes.topHiddenRow,
+            rowIndex === lineCount && classes.bottomHiddenRow
           )}
           fontSize={fontData.fontSize}
           key={row.highestSymbolPosition}
           row={row}
-          setRowHeight={rowIndex === 1? setCssCalculatedRowHeight : undefined}
+          setRowHeight={rowIndex === 2 ? setCssCalculatedRowHeight : undefined}
           textPosition={cursorPosition}
           theme={textDisplayTheme}
           enteredSymbol={enteredSymbol}
