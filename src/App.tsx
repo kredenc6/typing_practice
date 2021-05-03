@@ -18,7 +18,7 @@ export default function App() {
   const [text, setText] = useState("");
   const [mistypedWords, setMistypedWords] = useState<Row["words"]>([]);
   const { state: theme } = useContext(ThemeContext);
-  const [allowedMistypeCount, setAllowedMisttypeCount] = useState(2);
+  const [allowedMistypeCount, setAllowedMisttypeCount] = useState(3);
   // const [theme, setTheme] = useState(appTheme)
   // const [mistypedSymbols, setMistypedSymbols] = useState<string[]>([]);
 

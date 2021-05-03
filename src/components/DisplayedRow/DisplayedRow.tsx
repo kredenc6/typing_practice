@@ -1,7 +1,6 @@
 import React, { useLayoutEffect, useRef } from "react";
 import classNames from "classnames";
 import { makeStyles } from "@material-ui/core";
-import DisplayedSymbol from "../DisplayedSymbol/DisplayedSymbol";
 import TextCursor from "../TextCursor/TextCursor";
 import { getRelativePosition, getSymbolStyle } from "./helpFunctions";
 import { Row } from "../../types/symbolTypes";
@@ -54,26 +53,15 @@ export default function DisplayedRow({
     return wordInSymbols.map(({ symbol, symbolPosition, correctness }) => {
       const relativePosition = getRelativePosition(textPosition, symbolPosition);
 
-      const InvalidSymbolComponent =
-        animateMistypedSymbol?.symbolPosition === symbolPosition ?
-          <DisplayedSymbol
-            symbol={animateMistypedSymbol.symbol}
-            symbolStyle={getSymbolStyle("invalid", "processed", theme)} />
-          :
-          null;
-
-        const DisplayedSymbolComponent = 
-          <DisplayedSymbol
-            symbol={symbol}
-            symbolStyle={getSymbolStyle(correctness, relativePosition, theme)} />;
       return (
         <DisplayedSymbolWrapper
           key={symbolPosition}
           symbolStyle={getSymbolStyle(correctness, relativePosition, theme)} // for memo
-          DisplayedSymbol={DisplayedSymbolComponent}
+          symbol={symbol}
           TextCursor={relativePosition === "active" ? <TextCursor height={fontSize === "20px" ? "2px" : "3px"} /> : null}
-          InvalidSymbol={InvalidSymbolComponent}
-          setAnimateMistypedSymbol={setAnimateMistypedSymbol} />
+          setAnimateMistypedSymbol={setAnimateMistypedSymbol}
+          symbolPosition={symbolPosition}
+          animateMistypedSymbol={animateMistypedSymbol} />
       );
     });
   });

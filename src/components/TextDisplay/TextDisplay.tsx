@@ -82,13 +82,13 @@ export default function TextDisplay({
   const [enteredSymbol, setEnteredSymbol] = useState("");
   const [keyStrokeCount, setKeyStrokeCount] = useState(0);
   const [lineCount, setLineCount] = useState(0);
-  const [cssCalculatedrowHeight, setCssCalculatedRowHeight] = useState(50);
+  const [cssCalculatedRowHeight, setCssCalculatedRowHeight] = useState(50);
   const [gameStatus, setGameStatus] = useState<GameStatus>("settingUp");
   const [isRowInTransition, setIsRowInTransition] = useState(false);
   const [animateMistypedSymbol, setAnimateMistypedSymbol] = useState<AnimateMistyped | null>(null);
 
   const { transitions } = useTheme();
-  const classes = useStyles({ fontData, lineCount, rowHeight: cssCalculatedrowHeight });
+  const classes = useStyles({ fontData, lineCount, rowHeight: cssCalculatedRowHeight });
   const { state: { textDisplayTheme } } = useContext(ThemeContext);
   const wordTimer = useRef(new Timer(2));
   const textDisplayRef: React.MutableRefObject<null | HTMLDivElement> = useRef(null);
@@ -102,16 +102,12 @@ export default function TextDisplay({
       rowPosition: newRowPosition,
       wordPosition: newWordPosition
     } = getPositions(newCursorPosition, symbolRows);
-    // } = getPositions(newCursorPosition, symbolRows, rowPosition);
     
     if(newRowPosition !== rowPosition) {
       setIsRowInTransition(true);
       setRowPosition(newRowPosition);
     }
-    // if(newRowPosition > rowPosition) {
-    //   setIsRowInTransition(true);
-    //   setRowPosition(newRowPosition);
-    // }
+
     setWordPosition(newWordPosition);
     setCursorPosition(newCursorPosition);
   };
@@ -146,21 +142,29 @@ export default function TextDisplay({
     // on Backspace
     if(enteredSymbol === "Backspace") {
       moveActiveSymbol(-1);
+      // setAnimateMistypedSymbol(null);
+    //   setAnimateMistypedSymbol(prev => {
+    //     if(prev) {
+    //       return { ...prev, isAllowedToMoveToNextSymbol: true };
+    //     }
+    //     return prev;
+    // });
     } else
     // on mistyped symbol
     if(enteredSymbol !== text[cursorPosition]) {
       const updatedRow = updateSymbolCorrectness(symbolRows, rowPosition, cursorPosition, "mistyped");
       updateSymbolRows(setSymbolRows, updatedRow, rowPosition);
-      setAnimateMistypedSymbol({
-        symbol: enteredSymbol,
-        symbolPosition: cursorPosition
-      });
 
       const isAllowedToMoveToNextSymbol =
         isAllowedToMoveToNextSymbolOnMistake(symbolRows, cursorPosition, allowedMistypeCount);
       if(isAllowedToMoveToNextSymbol) {
         moveActiveSymbol(1);
       }
+      setAnimateMistypedSymbol({
+        symbol: enteredSymbol,
+        symbolPosition: cursorPosition,
+        isAllowedToMoveToNextSymbol
+      });
       
       // on correctly typed symbol
     } else {

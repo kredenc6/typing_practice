@@ -237,7 +237,6 @@ export const isAllowedToMoveToNextSymbolOnMistake = (
   symbolRows: Row[], textPosition: number, allowedMistypeCount: number
 ) => {
   for(let stepper = 0; allowedMistypeCount > 0; allowedMistypeCount--) {
-    console.log(allowedMistypeCount)
     const previousSymbol = getPreviousSymbol(textPosition - stepper, symbolRows);
     if(!previousSymbol || previousSymbol.correctness !== "mistyped") {
       return true;

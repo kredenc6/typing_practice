@@ -70,6 +70,7 @@ export interface SymbolStyle extends FontThemeStyle {
 export interface AnimateMistyped {
   symbol: string;
   symbolPosition: number;
+  isAllowedToMoveToNextSymbol: boolean;
 }
 
 export type RequireAtLeastOne<T, Keys extends keyof T = keyof T> =

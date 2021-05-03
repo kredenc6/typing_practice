@@ -1,15 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { makeStyles, useTheme } from "@material-ui/core";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
+import DisplayedSymbol from "../DisplayedSymbol/DisplayedSymbol";
 import FadeAway from "../transitions/FadeAway/FadeAway";
 import { SymbolStyle, AnimateMistyped } from "../../types/themeTypes";
+import { getSymbolStyle } from "../DisplayedRow/helpFunctions";
 
 interface Props {
-  DisplayedSymbol: JSX.Element | null;
   TextCursor: JSX.Element | null;
-  InvalidSymbol: JSX.Element | null;
   symbolStyle: SymbolStyle; // for memo
   setAnimateMistypedSymbol: React.Dispatch<React.SetStateAction<AnimateMistyped | null>>;
+  symbolPosition: number;
+  animateMistypedSymbol: AnimateMistyped | null;
+  symbol: string;
 }
 
 const useStyles = makeStyles({
@@ -17,9 +20,6 @@ const useStyles = makeStyles({
     position: "relative",
     display: "inline-box",
     whiteSpace: "pre"
-  },
-  symbol: {
-    
   },
   invalidSymbol: {
     position: "absolute",
@@ -30,34 +30,49 @@ const useStyles = makeStyles({
   }
 });
 
-function DisplayedSymbolWrapper(
-  { DisplayedSymbol, TextCursor, InvalidSymbol, setAnimateMistypedSymbol }: Props
-) {
+function DisplayedSymbolWrapper({
+  TextCursor, symbol, setAnimateMistypedSymbol,
+  animateMistypedSymbol, symbolStyle, symbolPosition
+}: Props) {
   const classes = useStyles();
-  const { transitions } = useTheme();
+  const { transitions, textDisplayTheme } = useTheme();
   const [displayInvalid, setDisplayInvalid] = useState(false);
   const timeoutIdRef = useRef(-1);
 
   useEffect(() => {
-    if(InvalidSymbol) {
-      setDisplayInvalid(true);
-      timeoutIdRef.current = window.setTimeout(() => setDisplayInvalid(false), 150);
+    if(animateMistypedSymbol && !animateMistypedSymbol.isAllowedToMoveToNextSymbol &&
+      animateMistypedSymbol.symbolPosition === symbolPosition) {
+      clearTimeout(timeoutIdRef.current);
     }
 
-    return () => clearTimeout(timeoutIdRef.current);
-  },[InvalidSymbol])
+    if(animateMistypedSymbol?.symbolPosition === symbolPosition) {
+      setDisplayInvalid(true);
+      const newTimeoutId = window.setTimeout(
+        () =>  {
+          setDisplayInvalid(false);
+        },
+        transitions.duration.complex
+      );
+      timeoutIdRef.current = newTimeoutId;
+    }
+      
+  },[animateMistypedSymbol, symbolPosition, transitions.duration.complex])
 
   return(
     <div className={classes.displayedSymbolWrapper}>
-      {DisplayedSymbol}
-      <FadeAway
-        className={classes.invalidSymbol}
-        inProp={displayInvalid}
-        timeout={transitions.duration.complex}
-        onExited={() => setAnimateMistypedSymbol(null)}
-      >
-        {InvalidSymbol}
-      </FadeAway>
+      <DisplayedSymbol symbol={symbol} symbolStyle={symbolStyle} />
+        <FadeAway
+          className={classes.invalidSymbol}
+          inProp={displayInvalid}
+          timeout={transitions.duration.complex}
+          onExited={() => setAnimateMistypedSymbol(null)}
+        >
+          {animateMistypedSymbol &&
+            <DisplayedSymbol
+              symbol={animateMistypedSymbol?.symbol}
+              symbolStyle={getSymbolStyle("invalid", "processed", textDisplayTheme)} />
+          }
+        </FadeAway>
       {TextCursor}
     </div>
   );
@@ -72,7 +87,7 @@ const isEqual = (prevProps: Props, nextProps: Props) => {
       return false;
     }
   }
-  if(nextProps.InvalidSymbol) {
+  if(nextProps.animateMistypedSymbol?.symbolPosition === nextProps.symbolPosition) {
     return false;
   }
 
