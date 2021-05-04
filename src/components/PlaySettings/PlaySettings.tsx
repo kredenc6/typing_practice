@@ -1,13 +1,15 @@
 import React, { useContext, useLayoutEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ClickAwayListener, IconButton, makeStyles } from "@material-ui/core";
-import { FormatSize, Menu, Palette, Refresh } from "@material-ui/icons";
+import { FormatSize, Menu, Palette, Refresh, Settings } from "@material-ui/icons";
 import TextFormatSelector from "../TextFormatSelector/TextFormatSelector";
 import TextDisplayThemeSelector from "../TextDisplayThemeSelector/TextDisplayThemeSelector";
+import TranscriptionSettings from "./TranscriptionSettings/TranscriptionSettings";
 import PlaySettingsPopper from "./PlaySettingsPopper/PlaySettingsPopper";
 import { FontData, TextDisplayTheme } from "../../types/themeTypes";
 import { ThemeContext } from "../../styles/themeContext";
 import { createUpdatedAppTheme } from "../../styles/appTheme";
+import { AllowedMistype } from "../../types/otherTypes";
 
 interface Props {
   fontData: FontData;
@@ -15,6 +17,8 @@ interface Props {
   isFontDataLoading: boolean;
   restart: boolean;
   setRestart: React.Dispatch<React.SetStateAction<boolean>>;
+  setAllowedMistype: React.Dispatch<React.SetStateAction<AllowedMistype>>;
+  allowedMistype: AllowedMistype;
 }
 
 const useStyles = makeStyles(({ textDisplayTheme, palette }) => ({
@@ -42,6 +46,8 @@ export default function PlaySettings({
   isFontDataLoading,
   restart,
   setRestart,
+  allowedMistype,
+  setAllowedMistype
 }: Props) {
   const classes = useStyles();
   const { state: theme, update: updateTheme } = useContext(ThemeContext);
@@ -73,17 +79,45 @@ export default function PlaySettings({
 
   const { fontFamily, fontSize } = fontData;
   const isPopperOpen = Boolean(popperOpenedBy);
-  const popperContent = isPopperOpen && popperOpenedBy === "formatFontBtt" ?
-    <TextFormatSelector
-      activeFontFamily={ fontFamily }
-      activeFontSize={ fontSize }
-      adjustSymbolRightMargin={adjustSymbolRightMargin}
-      handleFontDataChange={handleFontDataChange}
-      isFontDataLoading={isFontDataLoading} />
-    :
-    <TextDisplayThemeSelector
-      handleTextDisplayThemeChange={handleTextDisplayThemeChange}
-      textDisplayTheme={theme.textDisplayTheme} />;
+  const getPopperContent = () => {
+    if(!isPopperOpen) return null;
+    if(popperOpenedBy === "formatFontBtt") {
+      return (
+        <TextFormatSelector
+          activeFontFamily={ fontFamily }
+          activeFontSize={ fontSize }
+          adjustSymbolRightMargin={adjustSymbolRightMargin}
+          handleFontDataChange={handleFontDataChange}
+          isFontDataLoading={isFontDataLoading} />
+      );
+    }
+    if(popperOpenedBy === "fontPaletteBtt") {
+      return (
+        <TextDisplayThemeSelector
+          handleTextDisplayThemeChange={handleTextDisplayThemeChange}
+          textDisplayTheme={theme.textDisplayTheme} />
+      );
+    }
+    if(popperOpenedBy === "gameSettings") {
+      return (
+        <TranscriptionSettings
+          setAllowedMistype={setAllowedMistype}
+          allowedMistype={allowedMistype} />
+      );
+    }
+    return null;
+  };
+  // const popperContent = isPopperOpen && popperOpenedBy === "formatFontBtt" ?
+  //   <TextFormatSelector
+  //     activeFontFamily={ fontFamily }
+  //     activeFontSize={ fontSize }
+  //     adjustSymbolRightMargin={adjustSymbolRightMargin}
+  //     handleFontDataChange={handleFontDataChange}
+  //     isFontDataLoading={isFontDataLoading} />
+  //   :
+  //   <TextDisplayThemeSelector
+  //     handleTextDisplayThemeChange={handleTextDisplayThemeChange}
+  //     textDisplayTheme={theme.textDisplayTheme} />;
   
   useLayoutEffect(() => {
     const popperAnchor = document.getElementById("playSettingsHeader");
@@ -107,9 +141,12 @@ export default function PlaySettings({
             <IconButton className={classes.iconButton} id="fontPaletteBtt" onClick={e => handleClick(e.currentTarget.id)}>
               <Palette />
             </IconButton>
+            <IconButton className={classes.iconButton} id="gameSettings" onClick={e => handleClick(e.currentTarget.id)}>
+              <Settings />
+            </IconButton>
             <PlaySettingsPopper
               anchorEl={anchorEl}
-              children={popperContent}
+              children={getPopperContent()}
               open={isPopperOpen} />
           </div>
         </ClickAwayListener>

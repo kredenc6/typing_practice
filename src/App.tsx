@@ -11,6 +11,7 @@ import { FontData } from "./types/themeTypes";
 import { Row } from "./types/symbolTypes";
 import { ThemeContext } from "./styles/themeContext";
 import { createUpdatedAppTheme } from "./styles/appTheme";
+import { AllowedMistype } from "./types/otherTypes";
 
 export default function App() {
   const [fontData, setFontData] = useState(defaultTextDisplayFontData);
@@ -18,7 +19,9 @@ export default function App() {
   const [text, setText] = useState("");
   const [mistypedWords, setMistypedWords] = useState<Row["words"]>([]);
   const { state: theme } = useContext(ThemeContext);
-  const [allowedMistypeCount, setAllowedMisttypeCount] = useState(3);
+  const [allowedMistype, setAllowedMistype] = useState<AllowedMistype>({
+    count: 1, isAllowed: true
+  });
   // const [theme, setTheme] = useState(appTheme)
   // const [mistypedSymbols, setMistypedSymbols] = useState<string[]>([]);
 
@@ -99,7 +102,8 @@ export default function App() {
               setMistypedWords={setMistypedWords}
               text={text}
               timer={timer.current}
-              allowedMistypeCount={allowedMistypeCount} />
+              setAllowedMistype={setAllowedMistype}
+              allowedMistype={allowedMistype} />
           </Route>
         </Switch>
       </Router>

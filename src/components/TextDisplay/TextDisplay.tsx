@@ -26,6 +26,7 @@ import { Row, SymbolCorrectness } from "../../types/symbolTypes";
 import { ThemeContext } from "../../styles/themeContext";
 import { transformTextToSymbolRows } from "../../textFunctions/transformTextToSymbolRows";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
+import { AllowedMistype } from "../../types/otherTypes";
 
 interface Props {
   fontData: FontData;
@@ -34,7 +35,7 @@ interface Props {
   setRestart: React.Dispatch<React.SetStateAction<boolean>>;
   text: string;
   timer: Timer;
-  allowedMistypeCount: number;
+  allowedMistype: AllowedMistype;
 }
 
 interface FontDataAndTextRef {
@@ -76,7 +77,7 @@ const useStyles = makeStyles(({ textDisplayTheme }) => ({
 }));
 
 export default function TextDisplay({
-  fontData, restart, setMistypedWords, setRestart, text, timer, allowedMistypeCount }: Props)
+  fontData, restart, setMistypedWords, setRestart, text, timer, allowedMistype }: Props)
   {
   const [symbolRows, setSymbolRows] = useState<Row[]>([]);
   const [rowPosition, setRowPosition] = useState(0);
@@ -166,7 +167,7 @@ export default function TextDisplay({
       updateSymbolRows(setSymbolRows, updatedRow, rowPosition);
 
       const isAllowedToMoveToNextSymbol =
-        isAllowedToMoveToNextSymbolOnMistake(symbolRows, cursorPosition, allowedMistypeCount);
+        isAllowedToMoveToNextSymbolOnMistake(symbolRows, cursorPosition, allowedMistype);
       if(isAllowedToMoveToNextSymbol) {
         moveActiveSymbol(1);
       }

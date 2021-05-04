@@ -2,6 +2,7 @@ import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeTo
 import Timer from "../../accessories/Timer";
 import { FontData, Offset } from "../../types/themeTypes";
 import { Row, SymbolCorrectness, SymbolWidths } from "../../types/symbolTypes";
+import { AllowedMistype } from "../../types/otherTypes";
 
 interface WordTimeObject {
   rowPosition: number;
@@ -256,8 +257,13 @@ const getPreviousSymbol = (symbolPosition: number, symbolRows: Row[]) => {
 };
 
 export const isAllowedToMoveToNextSymbolOnMistake = (
-  symbolRows: Row[], textPosition: number, allowedMistypeCount: number
+  symbolRows: Row[], textPosition: number, allowedMistype: AllowedMistype
 ) => {
+  if(!allowedMistype.isAllowed) {
+    return true;
+  }
+
+  let allowedMistypeCount = allowedMistype.count;
   for(let stepper = 0; allowedMistypeCount > 0; allowedMistypeCount--) {
     const previousSymbol = getPreviousSymbol(textPosition - stepper, symbolRows);
     if(!previousSymbol || previousSymbol.correctness !== "mistyped") {
