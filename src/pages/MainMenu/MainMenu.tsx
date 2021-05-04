@@ -45,7 +45,7 @@ export default function MainMenu({ setText, text }: Props) {
   const [generalNormalize] = useState(true);
   const [wikiNormalize, setWikiNormalize] = useState(true);
   const [czechKeyboardNormalize, setCzechKeyboardNormalize] = useState(true);
-  const [loadedParagraphs, setLoadedParagraphs] = useState<string []>([]);
+  const [loadedParagraphs, setLoadedParagraphs] = useState<string[]>([]);
   const timeoutIdRef = useRef(-1);
   const handleInputChange = (text: string) => {
     setTextInput(text);
@@ -93,6 +93,10 @@ export default function MainMenu({ setText, text }: Props) {
       setTextInput(adjustedText);
     }, TEXT_NORMALIZE_DELAY);
   })
+
+  // TODO to ge rid of the warning(loadedParagraphs no used) - delete when not needed
+  useEffect(() => {
+  },[loadedParagraphs])
 
   return (
     <div className={classes.mainMenu}>
