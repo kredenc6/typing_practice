@@ -25,6 +25,6 @@ export const getRidOfUnknownCharacters = async (text: string) => {
 
 export const normalizeWhitespace = (text: string) => text.replace(/\s+/g, " ").trim();
 
-export default async function normalizeTextGeneral(text: string) {
+export default async function adjustTextGeneral(text: string) {
   return await getRidOfUnknownCharacters( normalizeWhitespace(text) );
 };

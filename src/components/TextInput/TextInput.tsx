@@ -9,7 +9,7 @@ const useStyles = makeStyles({
   textFieldWrapper: {
     minWidth: "500px",
     width: "70%",
-    margin: "1rem auto"
+    margin: "0 auto"
   },
   textField: {
     "& .MuiInputBase-root": {
@@ -21,15 +21,16 @@ const useStyles = makeStyles({
 export default function TextInput({ handleInputChange, ...textFieldProps }: Props) {
   const classes = useStyles();
   return (
-    <div className={classes.textFieldWrapper}>
+    // <div className={classes.textFieldWrapper}>
         <TextField
           className={classes.textField}
           fullWidth
           multiline
+          rows={10}
           onChange={e => handleInputChange(e.target.value)}
-          placeholder="paste some text here"
-          rowsMax={7}
+          placeholder="zde můžete vložit vlastní text"
+          rowsMax={10}
           {...textFieldProps} />
-    </div>
+    // </div>
   );
 }

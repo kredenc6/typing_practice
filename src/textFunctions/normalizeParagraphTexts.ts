@@ -1,11 +1,13 @@
-import normalizeText from "./normalizeText";
+import adjustTextFromWiki from "./adjustTextFromWiki";
+import adjustTextForCzechKeyboard from "./adjustTextForCzechKeyboard";
+import adjustTextGeneral from "./adjustTextGeneral";
 
 export default function normalizeParagraphTexts(
-  paragraphs: string[],
-  wikiNormalize: boolean,
-  czechKeyboardNormalize: boolean
+  paragraphs: string[]
 ) {
   return Promise.all(paragraphs.map(paragraph => {
-    return normalizeText(paragraph, wikiNormalize, czechKeyboardNormalize);
+    paragraph = adjustTextFromWiki(paragraph);
+    paragraph = adjustTextForCzechKeyboard(paragraph);
+    return adjustTextGeneral(paragraph);
   }));
 }
