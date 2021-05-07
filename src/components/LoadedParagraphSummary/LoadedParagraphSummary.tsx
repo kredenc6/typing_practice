@@ -1,5 +1,6 @@
 import React from "react";
 import { makeStyles, Paper } from "@material-ui/core";
+import Simplebar from "simplebar-react";
 import LoadedParagraph from "../LoadedParagraph/LoadedParagraph";
 
 interface Props {
@@ -10,8 +11,10 @@ interface Props {
 const useStyles = makeStyles({
   paragraphSummary: {
     width: "35%",
-    height: "100%",
-    overflowY: "auto"
+    height: "100%"
+  },
+  paragraphWrapper: {
+    paddingRight: "12px"
   }
 });
 
@@ -30,7 +33,11 @@ export default function LoadedParagraphSummary({
 
   return (
     <Paper className={classes.paragraphSummary}>
-      {LoadedParagraphComponents}
+      <Simplebar style={{ maxHeight: "100%" }} autoHide={false}>
+        <div className={classes.paragraphWrapper}>
+          {LoadedParagraphComponents}
+        </div>
+      </Simplebar>
     </Paper>
   );
 }

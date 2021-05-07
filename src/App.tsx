@@ -12,6 +12,7 @@ import { Row } from "./types/symbolTypes";
 import { ThemeContext } from "./styles/themeContext";
 import { createUpdatedAppTheme } from "./styles/appTheme";
 import { AllowedMistype } from "./types/otherTypes";
+import "simplebar/dist/simplebar.min.css";
 
 export default function App() {
   const [fontData, setFontData] = useState(defaultTextDisplayFontData);

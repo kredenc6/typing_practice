@@ -11,10 +11,11 @@ interface Props {
 const useStyles = makeStyles({
   loadedParagraph: {
     display: "flex",
+    alignItems: "center",
     padding: "0.3rem"
   },
   paragraphId: {
-    marginRight: "0.8rem"
+    marginRight: "0.2rem"
   },
   paragraphText: {
     grow: 1
@@ -23,6 +24,9 @@ const useStyles = makeStyles({
     "& .MuiBadge-badge": {
       transform: "translate(50%, -90%)"
     }
+  },
+  addParagraphButton: {
+    margin: " 0 0.3rem 0 0.2rem"
   }
 });
 
@@ -34,6 +38,7 @@ export default function LoadedParagraph({
   return (
     <div className={classes.loadedParagraph}>
       <IconButton
+        className={classes.addParagraphButton}
         color="primary"
         size="small"
         onClick={() => handleInsertParagraph(loadedParagraph)}>
@@ -50,6 +55,7 @@ export default function LoadedParagraph({
             {loadedParagraph}
           </Badge>}
         arrow
+        interactive
         enterDelay={500}
         enterNextDelay={500}
         placement="top"

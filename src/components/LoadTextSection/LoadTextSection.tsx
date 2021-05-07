@@ -4,6 +4,7 @@ import LoadedParagraphSummary from "../LoadedParagraphSummary/LoadedParagraphSum
 import { InsertTextOnLoad } from "../../pages/MainMenu/MainMenu";
 
 const MIN_TEXT_INSERT_LENGTH = 100;
+const MAX_TEXT_INSERT_LENGTH = 10000;
 
 interface Props {
   handleLoadArcticle: (relativePath: string) => Promise<void>;
@@ -40,9 +41,8 @@ export default function LoadTextSection({
   };
 
   const handleInsertTextOnLoadLengthBlur = (newLength: number) => {
-    if(newLength < MIN_TEXT_INSERT_LENGTH) {
-      newLength = MIN_TEXT_INSERT_LENGTH;
-    }
+    newLength = Math.min(newLength, MAX_TEXT_INSERT_LENGTH);
+    newLength = Math.max(newLength, MIN_TEXT_INSERT_LENGTH);
     setInsertTextOnLoad(prev => ({ ...prev, length: newLength }));
   };
 
@@ -55,9 +55,8 @@ export default function LoadTextSection({
     const changeBy = e.shiftKey ? 100 : 10;
     setInsertTextOnLoad(prev => {
       let newLength = e.deltaY < 0 ? prev.length - changeBy : prev.length + changeBy;
-      if(newLength < MIN_TEXT_INSERT_LENGTH) {
-        newLength = MIN_TEXT_INSERT_LENGTH;
-      }
+      newLength = Math.min(newLength, MAX_TEXT_INSERT_LENGTH);
+      newLength = Math.max(newLength, MIN_TEXT_INSERT_LENGTH);
       return { ...prev, length: newLength };
     });
   };
@@ -94,7 +93,7 @@ export default function LoadTextSection({
                 className={classes.textFieldNumber}
                 value={insertTextOnLoad.length}
                 size="small"
-                inputProps={{ min: MIN_TEXT_INSERT_LENGTH }}
+                inputProps={{ min: MIN_TEXT_INSERT_LENGTH, max: MAX_TEXT_INSERT_LENGTH }}
                 type="number"
                 onChange={e => handleInsertTextOnLoadLengthChange(Number(e.target.value))}
                 onBlur={e => handleInsertTextOnLoadLengthBlur(Number(e.target.value))}
