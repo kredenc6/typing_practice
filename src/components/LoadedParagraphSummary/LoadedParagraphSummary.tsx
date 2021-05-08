@@ -10,8 +10,7 @@ interface Props {
 
 const useStyles = makeStyles({
   paragraphSummary: {
-    width: "35%",
-    height: "100%"
+    width: "100%",
   },
   paragraphWrapper: {
     paddingRight: "12px"

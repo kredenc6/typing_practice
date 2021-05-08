@@ -1,5 +1,8 @@
 import React from "react";
-import { makeStyles, Paper, ButtonGroup, Button, FormControlLabel, Checkbox, TextField } from "@material-ui/core";
+import {
+  makeStyles, Paper, Typography, ButtonGroup, Button, FormControlLabel, Checkbox,
+  TextField
+} from "@material-ui/core";
 import LoadedParagraphSummary from "../LoadedParagraphSummary/LoadedParagraphSummary";
 import { InsertTextOnLoad } from "../../pages/MainMenu/MainMenu";
 
@@ -18,15 +21,23 @@ const useStyles = makeStyles({
   loadTextSection: {
     height: "30%",
     display: "flex",
-    margin: "1rem"
+    justifyContent: "center",
+    margin: "1rem",
+    padding: "1rem"
   },
   loadOptions: {
     display: "flex",
     flexFlow: "column",
+    justifyContent: "space-around",
     alignItems: "center"
   },
   textFieldNumber: {
     width: "4rem"
+  },
+  loadedParagraphsOptions: {
+    width: "35%",
+    display: "grid",
+    gridTemplateRows: "15% 85%"
   }
 });
 
@@ -62,7 +73,7 @@ export default function LoadTextSection({
   };
 
   return (
-    <Paper className={classes.loadTextSection}>
+    <Paper className={classes.loadTextSection} elevation={0}>
       <div className={classes.loadOptions}>
         <ButtonGroup variant="outlined" color="primary" orientation="vertical">
           <Button
@@ -85,6 +96,7 @@ export default function LoadTextSection({
           control={
             <Checkbox
               checked={insertTextOnLoad.boolean}
+              color="primary"
               onChange={toggleInsertTextOnLoadBooleanChange} />}
           label={
             <div>
@@ -101,9 +113,12 @@ export default function LoadTextSection({
               &nbsp;znaků.
             </div>} />
       </div>
-      <LoadedParagraphSummary
-        loadedParagraphs={loadedParagraphs}
-        handleInsertParagraph={handleInsertParagraph} />
+      <div className={classes.loadedParagraphsOptions}>
+        <Typography component="h6" variant="h5">Nalezené odstavce</Typography>
+        <LoadedParagraphSummary
+          loadedParagraphs={loadedParagraphs}
+          handleInsertParagraph={handleInsertParagraph} />
+      </div>
     </Paper>
   );
 }
