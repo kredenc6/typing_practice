@@ -28,6 +28,8 @@ import { transformTextToSymbolRows } from "../../textFunctions/transformTextToSy
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 import { AllowedMistype } from "../../types/otherTypes";
 
+const LINE_MOVEMENT_MIN_POSITION = 3;
+
 interface Props {
   fontData: FontData;
   restart: boolean;
@@ -54,14 +56,18 @@ interface MakeStylesProps {
 // TODO try dynamic width?
 const useStyles = makeStyles(({ textDisplayTheme }) => ({
   textWindow: {
+    position: "absolute",
+    top: "40%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
     boxSizing: "content-box",
     width: "800px",
     height: ({ lineCount, rowHeight }: MakeStylesProps) => `${rowHeight * lineCount}px`,
     ...textDisplayTheme.offset.display,
     fontFamily: ({ fontData }: MakeStylesProps) => fontData.fontFamily,
     fontSize: ({ fontData }: MakeStylesProps) => fontData.fontSize,
-    borderTop: `1px solid ${textDisplayTheme.background.secondary}`,
-    borderBottom: `1px solid ${textDisplayTheme.background.secondary}`,
+    borderTop: `1px solid ${textDisplayTheme.text.main}`,
+    borderBottom: `1px solid ${textDisplayTheme.text.main}`,
     whiteSpace: "nowrap",
     overflow: "hidden"
   },
@@ -242,7 +248,7 @@ export default function TextDisplay({
     setRowPosition(newRowPosition);
     setSymbolRows(newSymbolRows);
     setWordPosition(newWordPosition);
-    setLineCount(fontData.fontSize === "20px" ? 5 : 4); // 1 line is hidden in overflow
+    setLineCount(fontData.fontSize === "20px" ? 6 : 5); // 1 line is hidden in overflow
 
     if(gameStatus === "settingUp") {
       setGameStatus("start");
@@ -282,11 +288,11 @@ export default function TextDisplay({
 
   const DisplayedRowComponents = symbolRows
     .filter((_, i) => { // adjust what rows should be displayed
-      if(rowPosition < 2) { // when first or second row is active
+      if(rowPosition < LINE_MOVEMENT_MIN_POSITION) { // when first or second row is active
         return i < lineCount;
       }
       return ( // when other rows are active
-        i >= (rowPosition - 2) && // show 1 previous line and hide second previous for transition)...
+        i >= (rowPosition - LINE_MOVEMENT_MIN_POSITION) && // show 1 previous line and hide second previous for transition)...
         i < (rowPosition + lineCount) // ...then show next lines based on lineCount(+ 1 extra hidden for transition)
       );
     })
@@ -294,8 +300,9 @@ export default function TextDisplay({
       return (
         <DisplayedRow
           className={classNames(
-            rowIndex === 0 && rowPosition >= 2 && classes.topHiddenRow,
-            rowIndex === lineCount && classes.bottomHiddenRow
+            rowIndex === 0 && rowPosition >= LINE_MOVEMENT_MIN_POSITION && classes.topHiddenRow,
+            rowIndex === lineCount && rowPosition < LINE_MOVEMENT_MIN_POSITION && classes.bottomHiddenRow,
+            rowIndex === lineCount + 1 && classes.bottomHiddenRow
           )}
           fontSize={fontData.fontSize}
           key={row.highestSymbolPosition}

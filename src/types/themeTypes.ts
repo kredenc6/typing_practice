@@ -51,6 +51,10 @@ export interface TextDisplayTheme {
     main: string;
     secondary: string;
   },
+  text: {
+    main: string,
+    secondary: string
+  },
   symbols: {
     active: FontThemeStyle;
     correct: FontThemeStyle;

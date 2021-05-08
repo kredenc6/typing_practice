@@ -21,7 +21,7 @@ interface Props {
   allowedMistype: AllowedMistype;
 }
 
-const useStyles = makeStyles(({ textDisplayTheme, palette }) => ({
+const useStyles = makeStyles(({ textDisplayTheme }) => ({
   header: {
     display: "grid",
     justifyContent: "space-between",
@@ -29,11 +29,11 @@ const useStyles = makeStyles(({ textDisplayTheme, palette }) => ({
     gridTemplateColumns: "auto auto",
     padding: "0.5rem 4rem",
     backgroundColor: textDisplayTheme.background.secondary,
-    color: palette.secondary.contrastText,
-    borderBottom: `1px solid ${palette.secondary.contrastText}`
+    color: textDisplayTheme.text.main,
+    borderBottom: `1px solid ${textDisplayTheme.text.secondary}`
   },
   iconButton: {
-    color: palette.secondary.contrastText
+    color: textDisplayTheme.text.secondary
   },
   clickAwayWrapper: {
     display: "inline-block"
@@ -107,17 +107,6 @@ export default function PlaySettings({
     }
     return null;
   };
-  // const popperContent = isPopperOpen && popperOpenedBy === "formatFontBtt" ?
-  //   <TextFormatSelector
-  //     activeFontFamily={ fontFamily }
-  //     activeFontSize={ fontSize }
-  //     adjustSymbolRightMargin={adjustSymbolRightMargin}
-  //     handleFontDataChange={handleFontDataChange}
-  //     isFontDataLoading={isFontDataLoading} />
-  //   :
-  //   <TextDisplayThemeSelector
-  //     handleTextDisplayThemeChange={handleTextDisplayThemeChange}
-  //     textDisplayTheme={theme.textDisplayTheme} />;
   
   useLayoutEffect(() => {
     const popperAnchor = document.getElementById("playSettingsHeader");

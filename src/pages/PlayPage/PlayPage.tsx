@@ -20,6 +20,7 @@ interface Props {
 
 const useStyles = makeStyles(({ textDisplayTheme }) => ({
   playPage: {
+    display: "relative",
     height: "100vh",
     overflow: "hidden",
     backgroundColor: textDisplayTheme.background.main

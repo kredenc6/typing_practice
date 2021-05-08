@@ -11,9 +11,9 @@ const useStyles = makeStyles(({ palette, textDisplayTheme }) => ({
     padding: "0.5rem",
     backgroundColor: textDisplayTheme.background.secondary,
     borderTop: `1px solid ${textDisplayTheme.background.secondary}`,
-    borderRight: `1px solid ${palette.secondary.contrastText}`,
-    borderBottom: `1px solid ${palette.secondary.contrastText}`,
-    borderLeft: `1px solid ${palette.secondary.contrastText}`
+    borderRight: `1px solid ${textDisplayTheme.text.secondary}`,
+    borderBottom: `1px solid ${textDisplayTheme.text.secondary}`,
+    borderLeft: `1px solid ${textDisplayTheme.text.secondary}`
   }
 }));
 

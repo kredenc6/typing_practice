@@ -1,10 +1,9 @@
 import React, { useLayoutEffect, useState } from "react";
 import { ClickAwayListener, Grid, makeStyles, Popper, Typography } from "@material-ui/core";
 import Spinner from "../../Spinner/Spinner";
+import FakeSelect from "../../FakeSelect/FakeSelect";
 import { fontFamilies } from "../../../styles/textDisplayTheme/textDisplayData";
 import { FontFamily } from "../../../types/themeTypes";
-
-import FakeSelect from "../../FakeSelect/FakeSelect";
 
 interface Props {
   activeFontFamily: FontFamily;
@@ -12,7 +11,7 @@ interface Props {
   isFontDataLoading: boolean;
 }
 
-const useStyles = makeStyles(({ palette, typography }) => ({
+const useStyles = makeStyles(({ palette, typography, textDisplayTheme }) => ({
   select: {
     color: "inherit",
     "& .MuiSelect-icon": {
@@ -25,7 +24,8 @@ const useStyles = makeStyles(({ palette, typography }) => ({
     gridTemplateColumns: "1fr 1fr 1fr",
     padding: "1rem",
     backgroundColor: "white",
-    border: `1px solid ${palette.secondary.contrastText}`
+    border: `1px solid ${textDisplayTheme.text.secondary}`
+    // border: `1px solid ${palette.secondary.contrastText}`
   },
   fontFamilyItem: {
     padding: "0.5rem",

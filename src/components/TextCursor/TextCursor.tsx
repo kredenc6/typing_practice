@@ -2,7 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core";
 
 interface Props {
-  height?: string;
+  height: string;
 }
 
 const useStyles = makeStyles(({ palette }) => ({
@@ -12,7 +12,7 @@ const useStyles = makeStyles(({ palette }) => ({
     left: 0,
     width: "100%",
     height: "100%",
-    borderBottomWidth: ({ height }: Props) => height ? height : "3px",
+    borderBottomWidth: ({ height }: Props) => height,
     borderBottomStyle: "solid",
     borderBottomColor: `${palette.info.main}`
   }

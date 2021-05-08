@@ -8,16 +8,15 @@ interface Props {
   allowedMistype: AllowedMistype;
 }
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(({  textDisplayTheme }) => ({
   button: {
-    fontSize: "1rem",
-    textTransform: "none",
-    alignItems: "flex-start"
+    fontSize: "2rem",
+    color: `${textDisplayTheme.text.secondary}`
   },
-  buttonNumber: {
-    fontSize: "2rem"
+  switchLabel: {
+    color: `${textDisplayTheme.text.secondary}`
   }
-});
+}));
 
 export default function RuleSettings({ allowedMistype, setAllowedMistype }: Props) {
   const classes = useStyles();
@@ -37,21 +36,21 @@ export default function RuleSettings({ allowedMistype, setAllowedMistype }: Prop
           disabled={allowedMistype.count === 0}
           onClick={() => setMistypeCount(0)}
         >
-          <span className={classes.buttonNumber}>1</span>st
+          1.
         </SettingsButton>
         <SettingsButton
           className={classes.button}
           disabled={allowedMistype.count === 1}
           onClick={() => setMistypeCount(1)}
         >
-          <span className={classes.buttonNumber}>2</span>nd
+          2.
         </SettingsButton>
         <SettingsButton
           className={classes.button}
           disabled={allowedMistype.count === 2}
           onClick={() => setMistypeCount(2)}
         >
-          <span className={classes.buttonNumber}>3</span>rd
+          3.
         </SettingsButton>
       </>
     );
@@ -60,13 +59,15 @@ export default function RuleSettings({ allowedMistype, setAllowedMistype }: Prop
   return (
     <Box>
       <FormControlLabel
+        className={classes.switchLabel}
         control={
           <Switch
+            color="primary"
             checked={allowedMistype.isAllowed}
             onChange={toggleMistype}
-            name="Block on error(s)" />
+            name="Blokuj postup na chybě" />
         }
-        label="Block on error(s)" />
+        label="Blokuj postup na chybě" />
         {allowedMistype.isAllowed &&
           <>
             <Divider />

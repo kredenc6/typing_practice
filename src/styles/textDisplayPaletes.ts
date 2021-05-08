@@ -4,7 +4,11 @@ export const defaultPalette: Omit<TextDisplayTheme, "offset"> = {
   name: "defaultPalette",
   background: {
     main: "#fff",
-    secondary: "#ddd"
+    secondary: "#fff"
+  },
+  text: {
+    main: "rgba(0, 0, 0, 0.87)",
+    secondary: "#777"
   },
   symbols: {
     active: {
@@ -38,7 +42,11 @@ export const blue1: Omit<TextDisplayTheme, "offset"> = {
   name: "blue1",
   background: {
     main: "#fff",
-    secondary: "#ddd",
+    secondary: "#fff",
+  },
+  text: {
+    main: "rgba(0, 0, 0, 0.87)",
+    secondary: "#777"
   },
   symbols: {
     active: {
@@ -72,7 +80,11 @@ export const blue2: Omit<TextDisplayTheme, "offset"> = {
   name: "blue2",
   background: {
     main: "#fff",
-    secondary: "#ddd",
+    secondary: "#fff",
+  },
+  text: {
+    main: "rgba(0, 0, 0, 0.87)",
+    secondary: "#777"
   },
   symbols: {
     active: {
@@ -107,6 +119,10 @@ export const black1: Omit<TextDisplayTheme, "offset"> = {
   background: {
     main: "#272822",
     secondary: "#3c3c3c",
+  },
+  text: {
+    main: "rgba(255, 255, 255, 0.87)",
+    secondary: "rgba(255, 255, 255, 0.87)"
   },
   symbols: {
     active: {

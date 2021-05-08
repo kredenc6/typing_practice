@@ -69,7 +69,6 @@ export default function LoadedParagraph({
           enterDelay={500}
           enterNextDelay={500}
           placement="top"
-          // open={paragraphId === 1}
           aria-label={`paragraph ${paragraphId}`}
         >
           <Typography className={classes.paragraphText} noWrap>{loadedParagraph}</Typography>

@@ -112,13 +112,10 @@ export default function App() {
   );
 }
 
-// TODO add sounds like in www.typingclub.com
-// TODO way to handle mistakes:
-//  - stop at the current character and wait till the current one is pressed
-//  - continue to the next character
-//  - allow backspace
+// TODO add typing sounds
 // TODO add $nbsp; after prepositions
 
 // TODO handle failed font fetch
 
 // TODO make links and comments for used sources like wiki and osel(here I should probably ask for permision)
+// TODO display url of the loaded article

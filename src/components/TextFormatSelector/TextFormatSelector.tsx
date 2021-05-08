@@ -12,9 +12,10 @@ interface Props {
   isFontDataLoading: boolean;
 }
 
-const useStyles = makeStyles(({ palette }) => ({
+const useStyles = makeStyles(({ palette, textDisplayTheme }) => ({
   textFormat: {
-    color: palette.secondary.contrastText
+    // color: palette.secondary.contrastText
+    color: textDisplayTheme.text.secondary
   }
 }));
 
