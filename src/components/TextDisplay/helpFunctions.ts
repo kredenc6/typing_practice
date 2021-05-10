@@ -1,8 +1,9 @@
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 import Timer from "../../accessories/Timer";
+import { calcTypingPrecision, calcTypingSpeedInKeystrokes, calcTypingSpeedInWPM } from "../../helpFunctions/calcTypigSpeed";
 import { FontData, Offset } from "../../types/themeTypes";
 import { Row, SymbolCorrectness, SymbolWidths } from "../../types/symbolTypes";
-import { AllowedMistype } from "../../types/otherTypes";
+import { AllowedMistype, Results } from "../../types/otherTypes";
 
 interface WordTimeObject {
   rowPosition: number;
@@ -273,4 +274,25 @@ export const isAllowedToMoveToNextSymbolOnMistake = (
   }
 
   return false;
+};
+
+export const createResultObj = (
+  symbolRows: Row[], time: number, keyStrokeCount: number, text: string
+): Results => {
+  const mistypedWords = collectMistypedWords(symbolRows);
+
+  const mistakeCount = collectSymbolPositionsByCorrectness(symbolRows, "mistyped").length;
+  const correctedCount = collectSymbolPositionsByCorrectness(symbolRows, "corrected").length;
+  const errorCount = mistakeCount + correctedCount;
+
+  const typingSpeed = calcTypingSpeedInKeystrokes(time, keyStrokeCount, errorCount);
+  const wpm = calcTypingSpeedInWPM(text, time, mistypedWords.length);
+  const precision = calcTypingPrecision(keyStrokeCount, errorCount);
+
+  return {
+    mistypedWords,
+    typingSpeed,
+    wpm,
+    precision
+  };
 };

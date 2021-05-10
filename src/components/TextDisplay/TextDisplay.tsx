@@ -14,7 +14,8 @@ import {
   updateSymbolRows,
   getIndexes,
   isAllowedKey,
-  isAllowedToMoveToNextSymbolOnMistake
+  isAllowedToMoveToNextSymbolOnMistake,
+  createResultObj
 } from "./helpFunctions";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import { calcTypingPrecision, calcTypingSpeedInKeystrokes, calcTypingSpeedInWPM } from "../../helpFunctions/calcTypigSpeed";
@@ -26,7 +27,7 @@ import { Row, SymbolCorrectness } from "../../types/symbolTypes";
 import { ThemeContext } from "../../styles/themeContext";
 import { transformTextToSymbolRows } from "../../textFunctions/transformTextToSymbolRows";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
-import { AllowedMistype } from "../../types/otherTypes";
+import { AllowedMistype, GameStatus, Results } from "../../types/otherTypes";
 
 const LINE_MOVEMENT_MIN_POSITION = 3;
 
@@ -38,14 +39,15 @@ interface Props {
   text: string;
   timer: Timer;
   allowedMistype: AllowedMistype;
+  gameStatus: GameStatus;
+  setGameStatus: React.Dispatch<React.SetStateAction<GameStatus>>;
+  setResultObj: React.Dispatch<React.SetStateAction<Results | null>>;
 }
 
 interface FontDataAndTextRef {
   fontData: FontData | null;
   text: string;
 }
-
-type GameStatus = "settingUp" | "start" | "playing" | "finished";
 
 interface MakeStylesProps {
   fontData: FontData;
@@ -83,8 +85,9 @@ const useStyles = makeStyles(({ textDisplayTheme }) => ({
 }));
 
 export default function TextDisplay({
-  fontData, restart, setMistypedWords, setRestart, text, timer, allowedMistype }: Props)
-  {
+  fontData, restart, setMistypedWords, setRestart, text, timer, allowedMistype,
+  gameStatus, setGameStatus, setResultObj
+}: Props) {
   const [symbolRows, setSymbolRows] = useState<Row[]>([]);
   const [rowPosition, setRowPosition] = useState(0);
   const [wordPosition, setWordPosition] = useState(0);
@@ -93,7 +96,6 @@ export default function TextDisplay({
   const [keyStrokeCount, setKeyStrokeCount] = useState(0);
   const [lineCount, setLineCount] = useState(0);
   const [cssCalculatedRowHeight, setCssCalculatedRowHeight] = useState(50);
-  const [gameStatus, setGameStatus] = useState<GameStatus>("settingUp");
   const [isRowInTransition, setIsRowInTransition] = useState(false);
   const [animateMistypedSymbol, setAnimateMistypedSymbol] = useState<AnimateMistyped | null>(null);
 
@@ -143,6 +145,8 @@ export default function TextDisplay({
       if(cursorPosition === text.length) { // return cursor position to valid index
         setCursorPosition(cursorPosition - 1);
       }
+      const resultObj = createResultObj(symbolRows, timer.getTime(), keyStrokeCount, text);
+      setResultObj(resultObj);
 
       const mistypedWords = collectMistypedWords(symbolRows);
       setMistypedWords(mistypedWords);
@@ -157,7 +161,7 @@ export default function TextDisplay({
       console.log(`WPM: ${wpm}`);
       console.log(`${calcTypingPrecision(keyStrokeCount, errorCount)}%`);
     }
-  },[cursorPosition, text, keyStrokeCount, timer, setMistypedWords, symbolRows, gameStatus])
+  },[cursorPosition, text, keyStrokeCount, timer, setMistypedWords, symbolRows, gameStatus, setGameStatus])
 
   // (on keypress === truthy enteredSymbol) check and adjust all the necessary stuff
   useEffect(() => {
@@ -253,7 +257,7 @@ export default function TextDisplay({
     if(gameStatus === "settingUp") {
       setGameStatus("start");
     }
-  }, [cursorPosition, fontData, gameStatus, symbolRows, text, textDisplayTheme.offset])
+  }, [cursorPosition, fontData, gameStatus, symbolRows, text, textDisplayTheme.offset, setGameStatus])
 
   // on changed wordPosition adjust word timer
   useEffect(() => {
@@ -278,7 +282,7 @@ export default function TextDisplay({
     setGameStatus("settingUp");
     setEnteredSymbol("");
     setRestart(false);
-  }, [restart, setRestart, timer])
+  }, [restart, setRestart, timer, setGameStatus])
 
   useEffect(() => {
     if(isRowInTransition) {

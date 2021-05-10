@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { makeStyles } from "@material-ui/core";
+import { makeStyles, Fade } from "@material-ui/core";
 import PlaySettings from "../../components/PlaySettings/PlaySettings";
 import TextDisplay from "../../components/TextDisplay/TextDisplay";
+import TypingResults from "../../components/TypingResults/TypingResults";
 import { FontData } from "../../types/themeTypes";
 import { Row } from "../../types/symbolTypes";
 import Timer from "../../accessories/Timer";
-import { AllowedMistype } from "../../types/otherTypes";
+import { AllowedMistype, GameStatus, Results } from "../../types/otherTypes";
 
 interface Props {
   fontData: FontData;
@@ -20,10 +21,16 @@ interface Props {
 
 const useStyles = makeStyles(({ textDisplayTheme }) => ({
   playPage: {
-    display: "relative",
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
     height: "100vh",
-    overflow: "hidden",
     backgroundColor: textDisplayTheme.background.main
+  },
+  resultWrapper: {
+    flexGrow: 1,
+    width: "100%",
+    zIndex: 2
   }
 }));
 
@@ -39,6 +46,8 @@ export default function PlayPage({
 }: Props) {
   const classes = useStyles();
   const [restart , setRestart] = useState(false);
+  const [gameStatus, setGameStatus] = useState<GameStatus>("settingUp");
+  const [resultObj, setResultObj] = useState<Results | null>(null);
 
   return (
     <div className={classes.playPage}>
@@ -57,7 +66,15 @@ export default function PlayPage({
         setRestart={setRestart}
         text={text}
         timer={timer}
-        allowedMistype={allowedMistype} />
+        allowedMistype={allowedMistype}
+        gameStatus={gameStatus}
+        setGameStatus={setGameStatus}
+        setResultObj={setResultObj} />
+      <Fade in={gameStatus === "finished"}>
+        <div className={classes.resultWrapper}>
+          <TypingResults resultObj={resultObj} />
+        </div>
+      </Fade>
     </div>
   );
 }

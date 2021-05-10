@@ -1,7 +1,7 @@
 import React from "react";
 import { makeStyles, Popper, PopperProps } from "@material-ui/core";
 
-const useStyles = makeStyles(({ palette, textDisplayTheme }) => ({
+const useStyles = makeStyles(({ textDisplayTheme }) => ({
   popper: {
     width: "23rem",
     display: "flex",
@@ -13,7 +13,8 @@ const useStyles = makeStyles(({ palette, textDisplayTheme }) => ({
     borderTop: `1px solid ${textDisplayTheme.background.secondary}`,
     borderRight: `1px solid ${textDisplayTheme.text.secondary}`,
     borderBottom: `1px solid ${textDisplayTheme.text.secondary}`,
-    borderLeft: `1px solid ${textDisplayTheme.text.secondary}`
+    borderLeft: `1px solid ${textDisplayTheme.text.secondary}`,
+    zIndex: 3
   }
 }));
 
