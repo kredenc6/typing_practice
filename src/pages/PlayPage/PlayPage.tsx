@@ -29,7 +29,6 @@ const useStyles = makeStyles(({ textDisplayTheme }) => ({
   },
   resultWrapper: {
     flexGrow: 1,
-    width: "100%",
     zIndex: 2
   }
 }));

@@ -1,9 +1,10 @@
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 import Timer from "../../accessories/Timer";
-import { calcTypingPrecision, calcTypingSpeedInKeystrokes, calcTypingSpeedInWPM } from "../../helpFunctions/calcTypigSpeed";
+import { calcTypingPrecision, calcTypingSpeedInKeystrokesV2 } from "../../helpFunctions/calcTypigSpeed";
 import { FontData, Offset } from "../../types/themeTypes";
 import { Row, SymbolCorrectness, SymbolWidths } from "../../types/symbolTypes";
 import { AllowedMistype, Results } from "../../types/otherTypes";
+import { secondsToMMSS } from "../../helpFunctions/secondsToMMSS";
 
 interface WordTimeObject {
   rowPosition: number;
@@ -70,7 +71,6 @@ export const collectMistypedWords = (symbolRows: Row[]) => {
 export const collectSymbolPositionsByCorrectness = (symbolRows: Row[], correctness: SymbolCorrectness) => {
   return symbolRows.reduce((symbolPositions, row) => {
     const symbolsInWords = row.words
-      // .filter(({ wasCorrect }) => !wasCorrect)
       .reduce((symbols, wordObject) => {
 
         const symbolsInWordObject = wordObject.symbols.reduce((symbols, symbol) => {
@@ -277,22 +277,21 @@ export const isAllowedToMoveToNextSymbolOnMistake = (
 };
 
 export const createResultObj = (
-  symbolRows: Row[], time: number, keyStrokeCount: number, text: string
+  symbolRows: Row[], time: number, keyStrokeCount: number
 ): Results => {
   const mistypedWords = collectMistypedWords(symbolRows);
-
   const mistakeCount = collectSymbolPositionsByCorrectness(symbolRows, "mistyped").length;
   const correctedCount = collectSymbolPositionsByCorrectness(symbolRows, "corrected").length;
   const errorCount = mistakeCount + correctedCount;
 
-  const typingSpeed = calcTypingSpeedInKeystrokes(time, keyStrokeCount, errorCount);
-  const wpm = calcTypingSpeedInWPM(text, time, mistypedWords.length);
-  const precision = calcTypingPrecision(keyStrokeCount, errorCount);
+  const typingSpeed = calcTypingSpeedInKeystrokesV2(time, symbolRows);
+  const wpm = Math.round(typingSpeed / 5);
 
   return {
     mistypedWords,
     typingSpeed,
     wpm,
-    precision
+    precision: calcTypingPrecision(keyStrokeCount, errorCount),
+    time: secondsToMMSS(time)
   };
 };

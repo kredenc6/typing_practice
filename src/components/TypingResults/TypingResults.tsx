@@ -3,12 +3,12 @@ import Simplebar from "simplebar-react";
 import { makeStyles, Paper, Typography, useTheme } from "@material-ui/core";
 import { Results } from "../../types/otherTypes";
 import MistypedWord from "./MistypedWord/MistypedWord";
+import SpecificResult from "./SpecificResult/SpecificResult";
 import { ReactComponent as TopSpeed } from "../../svg/top-speed.svg";
 import { ReactComponent as Target } from "../../svg/target.svg";
 import { ReactComponent as ErrorCircle } from "../../svg/error-circle.svg";
 import { ReactComponent as ThumbUp } from "../../svg/thumb-up.svg";
-
-// const temp = ["1234", "12345", "123456", "1234", "12345", "123456", "1234", "12345", "123456", "1234", "12345", "123456", "1234", "12345", "123456"];
+import { ReactComponent as Clock } from "../../svg/time.svg";
 
 interface Props {
   resultObj: Results | null;
@@ -34,31 +34,18 @@ const useStyles = makeStyles(({ textDisplayTheme, typography, palette }) => ({
     padding: "10px",
     color: textDisplayTheme.text.main,
     backgroundColor: textDisplayTheme.background.main,
-    border: `1px solid ${palette.divider}`
+    border: `1px solid ${palette.divider}`,
+    overflow: "hidden"
   },
   mistypedWords: {
     display: "flex",
     flexWrap: "wrap",
     fontSize: "40px"
   },
-  results: {
-    display: "grid",
-    gridTemplateColumns: "1fr 2fr",
-    gap: "2rem",
-    alignItems: "center"
-  },
-  resultDescription: {
-    justifySelf: "end",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center"
-  },
-  icon: {
-    fill: textDisplayTheme.text.main
-  },
   thumbUp: {
     width: typography.h2.fontSize,
-    height: typography.h2.fontSize
+    height: typography.h2.fontSize,
+    fill: textDisplayTheme.text.main
   }
 }));
 
@@ -66,15 +53,6 @@ export default function TypingResults({ resultObj }: Props) {
   const classes = useStyles();
   const { textDisplayTheme } = useTheme();
 
-  // const MistypedWordsComponents = temp.map((mistypedWord, i) => {
-  //   if(i === temp.length - 1) {
-  //     return <MistypedWord key={i} mistypedWord={mistypedWord} textDisplayTheme={textDisplayTheme} />
-  //   }
-  //   return <div style={{ display: "flex" }}>
-  //     <MistypedWord key={i} mistypedWord={mistypedWord} textDisplayTheme={textDisplayTheme} />
-  //     <span>,&nbsp;</span>
-  //   </div>
-  // });
   const MistypedWordsComponents = resultObj?.mistypedWords.map((mistypedWord, i) => {
     if(i === resultObj?.mistypedWords.length - 1) {
       return <MistypedWord key={i} mistypedWord={mistypedWord} textDisplayTheme={textDisplayTheme} />
@@ -90,31 +68,24 @@ export default function TypingResults({ resultObj }: Props) {
       {resultObj &&
       <>
         <div className={classes.typingResultsWrapper}>
-          <div className={classes.results}>
-            <div className={classes.resultDescription}>
-              <TopSpeed className={classes.icon} />
-              <Typography component="h6" variant="h4">Rychlost</Typography>
-            </div>
+          <SpecificResult Icon={Clock} description="Čas">
             <Typography component="h6" variant="h4">
-              {resultObj.typingSpeed} znaků za minutu ({resultObj.wpm} slov za minutu).
+              {resultObj.time}
             </Typography>
-          </div>
-          <div className={classes.results}>
-            <div className={classes.resultDescription}>
-              <Target className={classes.icon} />
-              <Typography component="h6" variant="h4">Přesnost</Typography>
-            </div>
+          </SpecificResult>
+          <SpecificResult Icon={TopSpeed} description="Rychlost">
+            <Typography component="h6" variant="h4">
+              {resultObj.typingSpeed} úderů za minutu ({resultObj.wpm} slov za minutu).
+            </Typography>
+          </SpecificResult>
+          <SpecificResult Icon={Target} description="Přesnost">
             <Typography component="h6" variant="h4">
               {resultObj.precision}%
             </Typography>
-          </div>
+          </SpecificResult>
           {
             !!MistypedWordsComponents &&
-            <div className={classes.results}>
-              <div className={classes.resultDescription}>
-                <ErrorCircle className={classes.icon} />
-                <Typography component="h6" variant="h4">Překlepy</Typography>
-              </div>
+            <SpecificResult Icon={ErrorCircle} description="Překlepy">
               {MistypedWordsComponents.length > 0 ?
                 <Paper className={classes.mistypedWordsWrapper} variant="outlined" elevation={0}>
                   <Simplebar style={{ maxHeight: "100%" }} autoHide={false}>
@@ -126,10 +97,10 @@ export default function TypingResults({ resultObj }: Props) {
                 :
                 <Typography component="h6" variant="h4">
                   Bez překlepů! Pěkná práce.&nbsp;
-                  <ThumbUp className={`${classes.icon} ${classes.thumbUp}`} />
+                  <ThumbUp className={classes.thumbUp} />
                 </Typography>
-            }
-            </div>
+              }
+            </SpecificResult>
           }
         </div>
       </>

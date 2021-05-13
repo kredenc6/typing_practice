@@ -12,4 +12,5 @@ export type Results = {
   typingSpeed: number;
   wpm: number;
   precision: number;
+  time: string;
 };

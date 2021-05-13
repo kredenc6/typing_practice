@@ -75,7 +75,8 @@ export const transformTextToSymbolRows =
         wordInSymbolObjects.push({
           symbol,
           symbolPosition: symbolPosition,
-          correctness: "pending"
+          correctness: "pending",
+          keyStrokeValue: determineSymbolKeyStrokeValue(symbolPosition, text)
         });
         
         symbolPosition++;
@@ -104,7 +105,6 @@ export const transformTextToSymbolRows =
   return rowArray;
 };
 
-
 const determineWordType = (word: string): WordType => {
   if(/\s+/.test(word)) {
     return "whitespace";
@@ -113,4 +113,57 @@ const determineWordType = (word: string): WordType => {
     return "word";
   }
   return "other";
+};
+
+// TODO this is a very simple solution returning a lot of inaccurate values on CAPS/shift edge cases
+// TODO idealy this should return the least possible key stroke count concerning nearby symbols, holding left/right shift, etc.
+const determineSymbolKeyStrokeValue = (position: number, text: string) => {
+  const CAPITAL_LETTERS_VALUE_2 = [
+    "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G",
+    "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M"
+  ];
+  const CAPITAL_LETTERS_VALUE_3 = ["Ý", "Á", "Í", "É", "Ú", "Ó"]; // Ó has value 2 when CAPS!!
+  const CAPITAL_LETTERS_VALUE_4 = ["Č", "Ď", "Ř", "Š", "Ť", "Ž", "Ň", "Ě", "Ů"]; // Ď, Ť, Ň has value 3 when CAPS!!
+  const CAPITAL_LETTERS = [
+    ...CAPITAL_LETTERS_VALUE_2, ...CAPITAL_LETTERS_VALUE_3, ...CAPITAL_LETTERS_VALUE_4
+  ];
+
+  const STROKE_VALUE_2 = [
+    "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "%", "/", "(", "'", '"',
+    "!", "?", ":", "_", "ó" 
+  ];
+  const STROKE_VALUE_3 = ["°", "ď", "ť", "ň"];
+
+  const symbol = text[position];
+  // capital letters
+  if(CAPITAL_LETTERS.includes(symbol)) {
+    const previousSymbol = text[position - 1];
+    const nextSymbol = text[position + 1];
+    // with CAPS
+    if(CAPITAL_LETTERS.includes(previousSymbol) && CAPITAL_LETTERS.includes(nextSymbol)) {
+      if(symbol === "Ď" || symbol === "Ť" || symbol === "Ň") {
+        return 3;
+      }
+      if(symbol === "Ó") {
+        return 2;
+      }
+      return 1;
+    }
+    // without CAPS
+    if(CAPITAL_LETTERS_VALUE_4.includes(symbol)) {
+      return 4;
+    }
+    if(CAPITAL_LETTERS_VALUE_3.includes(symbol)) {
+      return 3;
+    }
+    return 2;
+  }
+  // all symbols except capital letters
+  if(STROKE_VALUE_3.includes(symbol)) {
+    return 3;
+  }
+  if(STROKE_VALUE_2.includes(symbol)) {
+    return 2;
+  }
+  return 1;
 };

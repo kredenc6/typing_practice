@@ -10,6 +10,7 @@ export type SymbolObject = {
   symbol: string;
   symbolPosition: number;
   correctness: SymbolCorrectness;
+  keyStrokeValue: 1 | 2 | 3 | 4;
 };
 
 export type WordObject = {

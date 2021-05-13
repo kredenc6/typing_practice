@@ -2,23 +2,11 @@ import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from 
 import classNames from "classnames";
 import { makeStyles, useTheme } from "@material-ui/core";
 import {
-  calculateDisplayTextInnerWidth,
-  collectSymbolPositionsByCorrectness,
-  collectMistypedWords,
-  createSymbolWidthsObject,
-  getWordTimeObject,
-  getPositions,
-  getWordObject,
-  updateSymbolCorrectness,
-  updateWordTime,
-  updateSymbolRows,
-  getIndexes,
-  isAllowedKey,
-  isAllowedToMoveToNextSymbolOnMistake,
-  createResultObj
+  calculateDisplayTextInnerWidth, createSymbolWidthsObject, getWordTimeObject,
+  getPositions, getWordObject, updateSymbolCorrectness, updateWordTime, updateSymbolRows,
+  getIndexes, isAllowedKey, isAllowedToMoveToNextSymbolOnMistake, createResultObj
 } from "./helpFunctions";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
-import { calcTypingPrecision, calcTypingSpeedInKeystrokes, calcTypingSpeedInWPM } from "../../helpFunctions/calcTypigSpeed";
 import adjustRowsToNewFontData from "../../textFunctions/adjustRowsToNewFontData";
 import Timer from "../../accessories/Timer";
 import DisplayedRow from "../DisplayedRow/DisplayedRow";
@@ -128,9 +116,9 @@ export default function TextDisplay({
     setCursorPosition(newCursorPosition);
   };
 
-  // on start and finish
+  // on first keypress and finish
   useEffect(() => {
-    if(gameStatus === "start") { // on first keypress
+    if(gameStatus === "start") { // when started typing
       timer.start();
       if(getWordObject(symbolRows, 0, 0)?.type === "word") {
         wordTimer.current.start();
@@ -138,30 +126,16 @@ export default function TextDisplay({
       setGameStatus("playing");
     }
 
-    if(cursorPosition >= text.length && gameStatus !== "finished") {
+    if(cursorPosition >= text.length && gameStatus !== "finished") { // when finished
       timer.stop();
       setGameStatus("finished");
-      // TODO later this  should not be needed
       if(cursorPosition === text.length) { // return cursor position to valid index
         setCursorPosition(cursorPosition - 1);
       }
-      const resultObj = createResultObj(symbolRows, timer.getTime(), keyStrokeCount, text);
+      const resultObj = createResultObj(symbolRows, timer.getTime(), keyStrokeCount);
       setResultObj(resultObj);
-
-      const mistypedWords = collectMistypedWords(symbolRows);
-      setMistypedWords(mistypedWords);
-
-      const mistakeCount = collectSymbolPositionsByCorrectness(symbolRows, "mistyped").length;
-      const correctedCount = collectSymbolPositionsByCorrectness(symbolRows, "corrected").length;
-      const errorCount = mistakeCount + correctedCount;
-
-      const typingSpeed = calcTypingSpeedInKeystrokes(timer.getTime(), keyStrokeCount, errorCount);
-      const wpm = calcTypingSpeedInWPM(text, timer.getTime(), mistypedWords.length);
-      console.log(`strokes per minute: ${typingSpeed}`);
-      console.log(`WPM: ${wpm}`);
-      console.log(`${calcTypingPrecision(keyStrokeCount, errorCount)}%`);
     }
-  },[cursorPosition, text, keyStrokeCount, timer, setMistypedWords, symbolRows, gameStatus, setGameStatus])
+  },[cursorPosition, text, keyStrokeCount, timer, symbolRows, gameStatus, setGameStatus, setResultObj])
 
   // (on keypress === truthy enteredSymbol) check and adjust all the necessary stuff
   useEffect(() => {
