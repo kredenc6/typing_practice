@@ -1,6 +1,6 @@
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 import Timer from "../../accessories/Timer";
-import { calcTypingPrecision, calcTypingSpeedInKeystrokesV2 } from "../../helpFunctions/calcTypigSpeed";
+import { calcTypingPrecision, calcTypingSpeedInKeystrokes } from "../../helpFunctions/calcTypigSpeed";
 import { FontData, Offset } from "../../types/themeTypes";
 import { Row, SymbolCorrectness, SymbolWidths } from "../../types/symbolTypes";
 import { AllowedMistype, Results } from "../../types/otherTypes";
@@ -284,7 +284,7 @@ export const createResultObj = (
   const correctedCount = collectSymbolPositionsByCorrectness(symbolRows, "corrected").length;
   const errorCount = mistakeCount + correctedCount;
 
-  const typingSpeed = calcTypingSpeedInKeystrokesV2(time, symbolRows);
+  const typingSpeed = calcTypingSpeedInKeystrokes(time, symbolRows);
   const wpm = Math.round(typingSpeed / 5);
 
   return {

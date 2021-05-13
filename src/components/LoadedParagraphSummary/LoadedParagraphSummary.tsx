@@ -11,6 +11,7 @@ interface Props {
 const useStyles = makeStyles({
   paragraphSummary: {
     width: "100%",
+    overflow: "hidden"
   },
   paragraphWrapper: {
     paddingRight: "12px"
@@ -31,7 +32,7 @@ export default function LoadedParagraphSummary({
   );
 
   return (
-    <Paper className={classes.paragraphSummary}>
+    <Paper className={classes.paragraphSummary} variant="outlined">
       <Simplebar style={{ maxHeight: "100%" }} autoHide={false}>
         <div className={classes.paragraphWrapper}>
           {LoadedParagraphComponents}

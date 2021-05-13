@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Badge, Button, makeStyles } from "@material-ui/core";
+import { Badge, Button, makeStyles, Typography } from "@material-ui/core";
 import TextInput from "../TextInput/TextInput";
 import TextNormalizeSwitches from "./TextNormalizeSwitches/TextNormalizeSwitches";
 import adjustTextGeneral from "../../textFunctions/adjustTextGeneral";
@@ -28,17 +28,24 @@ export interface AdjustText {
 }
 
 const useStyles = makeStyles({
-  textSettingsWrapper: {
-    display: "flex",
-    margin: "1rem",
+  textFieldSection: {
+    width: "85%",
+    display: "grid",
+    gridTemplateColumns: "3fr 1fr",
+    columnGap: "4rem",
+    margin: "1rem auto",
     padding: "1rem"
   },
-  textFieldWrapper: {
+  textFieldHeading: {
+    gridColumn: "1 / 4"
+  },
+  textField: {
+    gridColumn: "1 / 3",
     minWidth: "500px",
-    width: "70%",
-    margin: "0 auto"
+    width: "100%"
   },
   switchWrapper: {
+    gridColumn: "4 / 4",
     height: "100%",
     display: "flex",
     flexFlow: "column",
@@ -46,7 +53,6 @@ const useStyles = makeStyles({
     alignItem: "center"
   }
 });
-
 
 export default function TextFieldSection({ setTextInput, textInput }: Props) {
   const classes = useStyles();
@@ -79,9 +85,16 @@ export default function TextFieldSection({ setTextInput, textInput }: Props) {
   }
 
   return (
-    <div className={classes.textSettingsWrapper}>
+    <div className={classes.textFieldSection}>
+      <Typography
+        className={classes.textFieldHeading}
+        variant="h5"
+        component="h6"
+      >
+        Text k opsání
+      </Typography>
       <Badge
-        className={classes.textFieldWrapper}
+        className={classes.textField}
         color="primary"
         badgeContent={textInput.length ? `${textInput.length} znaků` : 0}
       >

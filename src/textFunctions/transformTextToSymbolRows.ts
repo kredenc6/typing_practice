@@ -115,8 +115,10 @@ const determineWordType = (word: string): WordType => {
   return "other";
 };
 
-// TODO this is a very simple solution returning a lot of inaccurate values on CAPS/shift edge cases
-// TODO idealy this should return the least possible key stroke count concerning nearby symbols, holding left/right shift, etc.
+// TODO This is a very simple solution returning a lot of inaccurate values on CAPS/shift edge cases. It's also not considering english keybord layout.
+// TODO Idealy this should return the least possible key stroke count concerning nearby symbols, holding left/right shift, etc.
+// https://cs.wikipedia.org/wiki/Psac%C3%AD_stroj#:~:text=Rychlost%20psan%C3%AD%20se%20uv%C3%A1d%C3%AD%20v,d%C4%9Bl%C3%AD%20dobou%20psan%C3%AD%20v%20minut%C3%A1ch
+// https://www.100utils.com/how-to-calculate-typing-speed-wpm-and-accuracy/
 const determineSymbolKeyStrokeValue = (position: number, text: string) => {
   const CAPITAL_LETTERS_VALUE_2 = [
     "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G",
