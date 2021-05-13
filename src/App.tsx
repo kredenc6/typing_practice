@@ -8,23 +8,20 @@ import getFontData from "./async/getFontData";
 import loadFont from "./async/loadFont";
 import { defaultTextDisplayFontData } from "./styles/textDisplayTheme/textDisplayData";
 import { FontData } from "./types/themeTypes";
-import { Row } from "./types/symbolTypes";
 import { ThemeContext } from "./styles/themeContext";
 import { createUpdatedAppTheme } from "./styles/appTheme";
 import { AllowedMistype } from "./types/otherTypes";
+import { getKnownSymbols } from "./helpFunctions/getKnownSymbols";
 import "simplebar/dist/simplebar.min.css";
 
 export default function App() {
   const [fontData, setFontData] = useState(defaultTextDisplayFontData);
   const [isFontDataLoading, setIsFontDataLoading] = useState(false);
   const [text, setText] = useState("");
-  const [mistypedWords, setMistypedWords] = useState<Row["words"]>([]);
   const { state: theme } = useContext(ThemeContext);
   const [allowedMistype, setAllowedMistype] = useState<AllowedMistype>({
     count: 1, isAllowed: true
   });
-  // const [theme, setTheme] = useState(appTheme)
-  // const [mistypedSymbols, setMistypedSymbols] = useState<string[]>([]);
 
   const timer = useRef(new Timer());
 
@@ -71,20 +68,6 @@ export default function App() {
       }); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  useEffect(() => {
-    if(mistypedWords.length) {
-      const time = timer.current.getTime();
-      // const wordCount = symbolRows.reduce((wordCount, { words }) => wordCount + words.length, 0);
-      console.log(`Time: ${time}s`);
-      // console.log(`Typing speed:
-      //   ${calcTypingSpeed(time, text.length - mistypedSymbols.length)} chars/minute`);
-      console.log("You've reached the end of the text.");
-      // console.log(mistypedWords);
-      // console.log(mistypedSymbols);
-      console.log(mistypedWords);
-    }
-  }, [mistypedWords, timer])
-
   return (
     <MuiThemeProvider theme={theme}>
       <Router>
@@ -93,14 +76,13 @@ export default function App() {
             <Redirect to="/mainMenu" />
           </Route>
           <Route path="/mainMenu">
-            <MainMenu setText={setText} text={text} />
+            <MainMenu setText={setText} knownSymbols={getKnownSymbols(fontData)} />
           </Route>
           <Route path="/playArea">
             <PlayPage
               fontData={fontData}
               handleFontDataChange={handleFontDataChange}
               isFontDataLoading={isFontDataLoading}
-              setMistypedWords={setMistypedWords}
               text={text}
               timer={timer.current}
               setAllowedMistype={setAllowedMistype}

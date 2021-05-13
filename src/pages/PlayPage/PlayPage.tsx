@@ -4,7 +4,6 @@ import PlaySettings from "../../components/PlaySettings/PlaySettings";
 import TextDisplay from "../../components/TextDisplay/TextDisplay";
 import TypingResults from "../../components/TypingResults/TypingResults";
 import { FontData } from "../../types/themeTypes";
-import { Row } from "../../types/symbolTypes";
 import Timer from "../../accessories/Timer";
 import { AllowedMistype, GameStatus, Results } from "../../types/otherTypes";
 
@@ -12,7 +11,6 @@ interface Props {
   fontData: FontData;
   handleFontDataChange: (fieldsToUpdate: Partial<Pick<FontData, "fontFamily" | "fontSize">>) => Promise<void>;
   isFontDataLoading: boolean;
-  setMistypedWords: React.Dispatch<React.SetStateAction<Row["words"]>>;
   text: string;
   timer: Timer;
   setAllowedMistype: React.Dispatch<React.SetStateAction<AllowedMistype>>;
@@ -37,7 +35,6 @@ export default function PlayPage({
   fontData,
   handleFontDataChange,
   isFontDataLoading,
-  setMistypedWords,
   text,
   timer,
   setAllowedMistype,
@@ -61,7 +58,6 @@ export default function PlayPage({
       <TextDisplay
         fontData={fontData}
         restart={restart}
-        setMistypedWords={setMistypedWords}
         setRestart={setRestart}
         text={text}
         timer={timer}

@@ -4,13 +4,16 @@ import { Button, makeStyles } from "@material-ui/core";
 import normalizeParagraphTexts from "../../textFunctions/normalizeParagraphTexts";
 import LoadTextSection from "../../components/LoadTextSection/LoadTextSection";
 import TextFieldSection from "../../components/TextFieldSection/TextFieldSection";
+import InvalidSymbolsMessage from "../../components/InvalidSymbolsMessage/InvalidSymbolsMessage";
 import getArticle from "../../async/getArticle";
 import extractParagraphsFromHtml from "../../textFunctions/extractParagraphsFromHtml";
 import adjustLoadedTextLength from "../../textFunctions/adjustLoadedTextLength";
+import { getInvalidSymbols } from "../../helpFunctions/getInvalidSymbols";
+import adjustTextGeneral from "../../textFunctions/adjustTextGeneral";
 
 interface Props {
   setText: React.Dispatch<React.SetStateAction<string>>;
-  text: string;
+  knownSymbols: string[];
 }
 
 export interface InsertTextOnLoad {
@@ -33,7 +36,7 @@ const useStyles = makeStyles({
 });
 
 // TODO setText maximum length
-export default function MainMenu({ setText, text }: Props) {
+export default function MainMenu({ setText, knownSymbols }: Props) {
   const classes = useStyles();
   const [textInput, setTextInput] = useState("");
   const [loadedParagraphs, setLoadedParagraphs] = useState<string[]>([]);
@@ -41,8 +44,9 @@ export default function MainMenu({ setText, text }: Props) {
     length: 1000, boolean: true
   });
 
-  const handleStart = () => {
-    setText(textInput);
+  const handleStart = async () => {
+    const cleanedText = await adjustTextGeneral(textInput);
+    setText(cleanedText);
     document.getElementById("link-to-playArea")!.click();
   };
 
@@ -90,6 +94,7 @@ export default function MainMenu({ setText, text }: Props) {
       >
         Start
       </Button>
+      <InvalidSymbolsMessage invalidSymbols={getInvalidSymbols(textInput, knownSymbols)} />
     </div>
   );
 }

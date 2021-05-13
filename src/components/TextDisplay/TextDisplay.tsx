@@ -22,7 +22,6 @@ const LINE_MOVEMENT_MIN_POSITION = 3;
 interface Props {
   fontData: FontData;
   restart: boolean;
-  setMistypedWords: React.Dispatch<React.SetStateAction<Row["words"]>>;
   setRestart: React.Dispatch<React.SetStateAction<boolean>>;
   text: string;
   timer: Timer;
@@ -73,8 +72,8 @@ const useStyles = makeStyles(({ textDisplayTheme }) => ({
 }));
 
 export default function TextDisplay({
-  fontData, restart, setMistypedWords, setRestart, text, timer, allowedMistype,
-  gameStatus, setGameStatus, setResultObj
+  fontData, restart, setRestart, text, timer, allowedMistype, gameStatus,
+  setGameStatus, setResultObj
 }: Props) {
   const [symbolRows, setSymbolRows] = useState<Row[]>([]);
   const [rowPosition, setRowPosition] = useState(0);
