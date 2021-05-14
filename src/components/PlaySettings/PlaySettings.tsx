@@ -4,7 +4,7 @@ import { ClickAwayListener, IconButton, makeStyles } from "@material-ui/core";
 import { FormatSize, Menu, Palette, Refresh, Settings } from "@material-ui/icons";
 import TextFormatSelector from "../TextFormatSelector/TextFormatSelector";
 import TextDisplayThemeSelector from "../TextDisplayThemeSelector/TextDisplayThemeSelector";
-import TranscriptionSettings from "./TranscriptionSettings/TranscriptionSettings";
+import MistypeSettings from "./MistypeSettings/MistypeSettings";
 import PlaySettingsPopper from "./PlaySettingsPopper/PlaySettingsPopper";
 import { FontData, TextDisplayTheme } from "../../types/themeTypes";
 import { ThemeContext } from "../../styles/themeContext";
@@ -58,6 +58,7 @@ export default function PlaySettings({
     const updatedTextDisplaytheme = { ...theme.textDisplayTheme, ...newTheme };
     const updatedAppTheme = createUpdatedAppTheme({ textDisplayTheme: updatedTextDisplaytheme });
     updateTheme(updatedAppTheme);
+    localStorage.setItem("typingPracticeTextDisplayTheme", JSON.stringify(updatedTextDisplaytheme));
   };
 
   const adjustSymbolRightMargin = (marginRight: string) => {
@@ -100,7 +101,7 @@ export default function PlaySettings({
     }
     if(popperOpenedBy === "gameSettings") {
       return (
-        <TranscriptionSettings
+        <MistypeSettings
           setAllowedMistype={setAllowedMistype}
           allowedMistype={allowedMistype} />
       );

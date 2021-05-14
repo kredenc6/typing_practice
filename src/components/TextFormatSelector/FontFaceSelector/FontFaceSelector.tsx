@@ -24,8 +24,8 @@ const useStyles = makeStyles(({ palette, typography, textDisplayTheme }) => ({
     gridTemplateColumns: "1fr 1fr 1fr",
     padding: "1rem",
     backgroundColor: "white",
-    border: `1px solid ${textDisplayTheme.text.secondary}`
-    // border: `1px solid ${palette.secondary.contrastText}`
+    border: `1px solid ${textDisplayTheme.text.secondary}`,
+    zIndex: 3
   },
   fontFamilyItem: {
     padding: "0.5rem",

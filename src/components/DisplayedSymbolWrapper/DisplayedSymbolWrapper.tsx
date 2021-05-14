@@ -18,7 +18,7 @@ interface Props {
 const useStyles = makeStyles({
   displayedSymbolWrapper: {
     position: "relative",
-    display: "inline-box",
+    display: "inline-block",
     whiteSpace: "pre"
   },
   invalidSymbol: {

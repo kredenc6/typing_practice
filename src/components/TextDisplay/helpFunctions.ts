@@ -2,7 +2,7 @@ import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeTo
 import Timer from "../../accessories/Timer";
 import { calcTypingPrecision, calcTypingSpeedInKeystrokes } from "../../helpFunctions/calcTypigSpeed";
 import { FontData, Offset } from "../../types/themeTypes";
-import { Row, SymbolCorrectness, SymbolWidths } from "../../types/symbolTypes";
+import { Row, SymbolCorrectness, SymbolWidths, WordObject } from "../../types/symbolTypes";
 import { AllowedMistype, Results } from "../../types/otherTypes";
 import { secondsToMMSS } from "../../helpFunctions/secondsToMMSS";
 
@@ -27,10 +27,28 @@ export const updateSymbolCorrectness = (
   return { ...row, words: updatedWords };
 };
 
-export const getWordObject = (symbolRows: Row[], rowPosition: number, wordPosition: number) => {
-  const activeWordObject = symbolRows[rowPosition].words.find(
-    ({ wordPosition: iteratedWordPosition }) => wordPosition === iteratedWordPosition);
-  return activeWordObject || null;
+// export const getWordObject = (symbolRows: Row[], rowPosition: number, wordPosition: number) => {
+//   const activeWordObject = symbolRows[rowPosition].words.find(
+//     ({ wordPosition: iteratedWordPosition }) => wordPosition === iteratedWordPosition);
+//   return activeWordObject || null;
+// };
+
+export const getWordObjectByWordPosition = (symbolRows: Row[], wordPosition: number, rowIndex?: number) => {
+  let foundWordObject: WordObject | undefined;
+  
+  if(rowIndex !== undefined) {
+    foundWordObject = symbolRows[rowIndex].words.find(
+      ({ wordPosition: iteratedWordPosition }) => wordPosition === iteratedWordPosition);
+    return foundWordObject || null;
+  }
+
+  for(const symbolRow of symbolRows) {
+    foundWordObject = symbolRow.words.find(
+      ({ wordPosition: iteratedWordPosition }) => wordPosition === iteratedWordPosition);
+    if(foundWordObject) break;
+  }
+
+  return foundWordObject || null;
 };
 
 export const updateRowWithWordTime = (row: Row, wordPosition: number, wordTime: number): Row => {
@@ -150,11 +168,13 @@ export const getWordTimeObject = (wordTimer: Timer, symbolRows: Row[], rowPositi
   }
 
   let tempRowPosition = rowPosition;
-  let wordObject = getWordObject(symbolRows, rowPosition, wordPosition);
+  let wordObject = getWordObjectByWordPosition(symbolRows, wordPosition, rowPosition);
+  // let wordObject = getWordObject(symbolRows, rowPosition, wordPosition);
 
   if(!wordObject && tempRowPosition > 0) { // it's possible we've already moved to the next row - check the previous one
     tempRowPosition -= 1;
-    wordObject = getWordObject(symbolRows, tempRowPosition, wordPosition);
+    wordObject = getWordObjectByWordPosition(symbolRows, wordPosition, tempRowPosition);
+    // wordObject = getWordObject(symbolRows, tempRowPosition, wordPosition);
   }
   if(!wordObject) {
     throw new Error("Did not get the needed word object.");
@@ -256,6 +276,28 @@ const getPreviousSymbol = (symbolPosition: number, symbolRows: Row[]) => {
 
   return symbolRows[rowIndex].words[wordIndex].symbols[symbolIndex];
 };
+
+// export const getNextSymbol = (symbolPosition: number, symbolRows: Row[]) => {
+//   let { rowIndex, symbolIndex, wordIndex } = getIndexes(symbolPosition, symbolRows);
+//   if(!symbolIndex && !wordIndex && !rowIndex) {
+//     return null;
+//   }
+//   symbolIndex++;
+//   if(symbolRows[rowIndex].words[wordIndex].symbols[symbolIndex] === undefined)
+
+//   if(symbolIndex === 0 && wordIndex === 0) {
+//     rowIndex -= 1;
+//     wordIndex = symbolRows[rowIndex].words.length - 1;
+//     symbolIndex = symbolRows[rowIndex].words[wordIndex].symbols.length - 1;
+//   } else if(symbolIndex === 0) {
+//     wordIndex -= 1;
+//     symbolIndex = symbolRows[rowIndex].words[wordIndex].symbols.length - 1;
+//   } else {
+//     symbolIndex -= 1;
+//   }
+
+//   return symbolRows[rowIndex].words[wordIndex].symbols[symbolIndex];
+// };
 
 export const isAllowedToMoveToNextSymbolOnMistake = (
   symbolRows: Row[], textPosition: number, allowedMistype: AllowedMistype

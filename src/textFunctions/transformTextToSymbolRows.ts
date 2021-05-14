@@ -6,16 +6,27 @@ export const lineEndersRegexp = /[ .,!?;:)\]}]|\n+/;
 
 const sortTextToRows = (text: string, maxLineLength: number, symbolWidths: SymbolWidths) => {
   const splittedText = text.match(splitterRegexp) as string[];
-  const spaceLength = calcWordLength(" ", symbolWidths);
+  
+  // there can be several consecutive line enders - calc their length so we don't overflow the row
+  const calcLineEnderLengths = (nextTextIndex: number, lineEnderLengths = 0): number => {
+    const nextText = splittedText[nextTextIndex];
+    if(nextText && lineEndersRegexp.test(nextText)) {
+      lineEnderLengths += calcWordLength(nextText, symbolWidths);
+      return calcLineEnderLengths(nextTextIndex + 1, lineEnderLengths);
+    } else {
+      return lineEnderLengths;
+    }
+  };
   
   let currentTextLineLength = 0;
-  const rows = splittedText.reduce((textLines, unsortedWord) => {
+  const rows = splittedText.reduce((textLines, unsortedWord, i) => {
     const currentTextLineNumber = textLines.length - 1;
     const unsortedWordLength = calcWordLength(unsortedWord, symbolWidths);
+    const lineEnderLengths = calcLineEnderLengths(i + 1, 0);
 
     // If the next word fits into the line length or if it is a line ender...
     if(
-      currentTextLineLength + unsortedWordLength + spaceLength < maxLineLength ||
+      currentTextLineLength + unsortedWordLength + lineEnderLengths < maxLineLength ||
       lineEndersRegexp.test(unsortedWord)) {
 
       return textLines.map((textLine, i) => { // ...put it in to the line...

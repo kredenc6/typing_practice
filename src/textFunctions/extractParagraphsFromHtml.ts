@@ -15,7 +15,7 @@ export default function extractParagraphsFromHtml(html: string) {
 };
 
 function filterInParagraphs(html: string) {
-  const paragraphRegExp = /<p>[\s\S]*?<\/p>/g;
+  const paragraphRegExp = /<p[^>]*>[\s\S]*?<\/p>/g;
   const paragraphArr = html.match(paragraphRegExp);
 
   return paragraphArr ? paragraphArr : [];

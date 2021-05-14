@@ -42,6 +42,9 @@ const useStyles = makeStyles(({ textDisplayTheme, typography, palette }) => ({
     flexWrap: "wrap",
     fontSize: "40px"
   },
+  mistypedWordComma: {
+    transform: "translateY(15%)"
+  },
   thumbUp: {
     width: typography.h2.fontSize,
     height: typography.h2.fontSize,
@@ -59,7 +62,7 @@ export default function TypingResults({ resultObj }: Props) {
     }
     return <div style={{ display: "flex" }}>
       <MistypedWord key={i} mistypedWord={mistypedWord} textDisplayTheme={textDisplayTheme} />
-      <span>,&nbsp;</span>
+      <span className={classes.mistypedWordComma}>,&nbsp;</span>
     </div>
   });
 

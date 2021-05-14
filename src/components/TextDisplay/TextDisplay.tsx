@@ -2,9 +2,9 @@ import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from 
 import classNames from "classnames";
 import { makeStyles, useTheme } from "@material-ui/core";
 import {
-  calculateDisplayTextInnerWidth, createSymbolWidthsObject, getWordTimeObject,
-  getPositions, getWordObject, updateSymbolCorrectness, updateWordTime, updateSymbolRows,
-  getIndexes, isAllowedKey, isAllowedToMoveToNextSymbolOnMistake, createResultObj
+  createSymbolWidthsObject, getWordTimeObject, getPositions,getWordObjectByWordPosition,
+  updateSymbolCorrectness, updateWordTime, updateSymbolRows, getIndexes, isAllowedKey,
+  isAllowedToMoveToNextSymbolOnMistake, createResultObj
 } from "./helpFunctions";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import adjustRowsToNewFontData from "../../textFunctions/adjustRowsToNewFontData";
@@ -18,6 +18,7 @@ import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeTo
 import { AllowedMistype, GameStatus, Results } from "../../types/otherTypes";
 
 const LINE_MOVEMENT_MIN_POSITION = 3;
+const FIREFOX_PREVENTED_KEY_DEFAULTS = ["backspace", "'"];
 
 interface Props {
   fontData: FontData;
@@ -45,11 +46,11 @@ interface MakeStylesProps {
 // TODO try dynamic width?
 const useStyles = makeStyles(({ textDisplayTheme }) => ({
   textWindow: {
+    boxSizing: "content-box",
     position: "absolute",
     top: "40%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    boxSizing: "content-box",
     width: "800px",
     height: ({ lineCount, rowHeight }: MakeStylesProps) => `${rowHeight * lineCount}px`,
     ...textDisplayTheme.offset.display,
@@ -119,7 +120,7 @@ export default function TextDisplay({
   useEffect(() => {
     if(gameStatus === "start") { // when started typing
       timer.start();
-      if(getWordObject(symbolRows, 0, 0)?.type === "word") {
+      if(getWordObjectByWordPosition(symbolRows, 0, 0)?.type === "word") {
         wordTimer.current.start();
       }
       setGameStatus("playing");
@@ -181,16 +182,22 @@ export default function TextDisplay({
 
   // on did mount add keypress event listener
   useEffect(() => {
-    const onKeyDown = (key: string) => {
-      setKeyStrokeCount(prevCount => prevCount + 1);
+    const onKeyDown = (e: KeyboardEvent) => {
+      const { key } = e;
+
+      // prevent some browser default "onKey" actions (firefox mainly)
+      if(FIREFOX_PREVENTED_KEY_DEFAULTS.includes(key.toLowerCase())) {
+        e.preventDefault();
+      }
       
+      setKeyStrokeCount(prevCount => prevCount + 1);
       if(isAllowedKey(key)) {
         setEnteredSymbol(key);
       }
     };
 
-    window.addEventListener("keydown", ({ key }) => onKeyDown(key));
-    return () => window.removeEventListener("keydown", ({ key }) => onKeyDown(key));
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, [])
 
   // on pasted text, restart or changed font
@@ -200,21 +207,24 @@ export default function TextDisplay({
     
     // return if there are no symbolWidth data loaded
     const noSymbolWidths = !Object.keys(fontData.symbolWidths).length;
-    if(noSymbolWidths) return;
+    if(noSymbolWidths) {
+      console.error("No symbol widths!");
+      return;
+    }
     
     // after setting up continue with only text or fontData change
     if(gameStatus !== "settingUp" && areObjectValuesSame(fontDataAndTextRef.current, { fontData, text })) return;
     fontDataAndTextRef.current = { fontData, text };
 
-    const { paddingLeft, paddingRight, width } = getComputedStyle(textDisplayRef.current); // example: 1234.56px
-    const displayTextInnerWidth = calculateDisplayTextInnerWidth(width, paddingLeft, paddingRight);
+    const { width } = getComputedStyle(textDisplayRef.current); // example: 1234.56px
+    const displayTextWidth = transformPixelSizeToNumber(width);
     const symbolWidhtsObject = createSymbolWidthsObject(textDisplayTheme.offset["symbol"], fontData.symbolWidths);
     
     let newSymbolRows: Row[] = [];
     if(gameStatus !== "settingUp") {
-      newSymbolRows = adjustRowsToNewFontData(symbolRows, displayTextInnerWidth, symbolWidhtsObject);
+      newSymbolRows = adjustRowsToNewFontData(symbolRows, displayTextWidth, symbolWidhtsObject);
     } else {
-      newSymbolRows = transformTextToSymbolRows(text, displayTextInnerWidth, symbolWidhtsObject);
+      newSymbolRows = transformTextToSymbolRows(text, displayTextWidth, symbolWidhtsObject);
     }
     
     const {

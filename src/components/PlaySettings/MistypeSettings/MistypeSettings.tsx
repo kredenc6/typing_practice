@@ -18,14 +18,22 @@ const useStyles = makeStyles(({  textDisplayTheme }) => ({
   }
 }));
 
-export default function RuleSettings({ allowedMistype, setAllowedMistype }: Props) {
+export default function MistypeSettings({ allowedMistype, setAllowedMistype }: Props) {
   const classes = useStyles();
 
   const toggleMistype = () => {
-    setAllowedMistype(prev => ({ ...prev, isAllowed: !prev.isAllowed }));
+    setAllowedMistype(prev => {
+      const updatedObj = { ...prev, isAllowed: !prev.isAllowed };
+      localStorage.setItem("typingPracticeMistypeSettings", JSON.stringify(updatedObj));
+      return updatedObj;
+    });
   };
   const setMistypeCount = (count: AllowedMistype["count"]) => {
-    setAllowedMistype(prev => ({ ...prev, count }))
+    setAllowedMistype(prev => {
+      const updatedObj = { ...prev, count };
+      localStorage.setItem("typingPracticeMistypeSettings", JSON.stringify(updatedObj));
+      return updatedObj;
+    });
   };
 
   const MistypeCountComponents = function() {

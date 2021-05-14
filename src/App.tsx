@@ -39,6 +39,7 @@ export default function App() {
       updatedTextDisplayTheme.offset.display.paddingRight = updatedSidePadding;
       updatedTextDisplayTheme.offset.display.paddingLeft = updatedSidePadding;
       createUpdatedAppTheme({ textDisplayTheme: updatedTextDisplayTheme });
+      callback && callback();
       setIsFontDataLoading(false);
     }
     
@@ -53,19 +54,28 @@ export default function App() {
           setIsFontDataLoading(false);
         });
       }
+      localStorage.setItem("typingPracticeFontData", JSON.stringify(newFontData));
       return;
     }
-
+    
     setFontData(newFontData);
+    localStorage.setItem("typingPracticeFontData", JSON.stringify(newFontData));
   };
 
   useEffect(() => {
-    const { fontFamily, fontSize } = fontData;
+    const localFontData = localStorage.getItem("typingPracticeFontData");
+    const determinedFontData = localFontData ? JSON.parse(localFontData) as FontData : fontData;
+    const { fontFamily, fontSize } = determinedFontData;
     getFontData(fontFamily, fontSize)
       .then(newFontData => {
         if(!newFontData) return;
         handleFontDataChange(newFontData);
-      }); // eslint-disable-next-line react-hooks/exhaustive-deps
+      });
+    const loadedMistypeSetting = localStorage.getItem("typingPracticeMistypeSettings");
+    if(loadedMistypeSetting) {
+      setAllowedMistype(JSON.parse(loadedMistypeSetting) as AllowedMistype);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -101,3 +111,4 @@ export default function App() {
 
 // TODO make links and comments for used sources like wiki and osel(here I should probably ask for permision)
 // TODO display url of the loaded article
+// BUG word times are most likely incorect when the word is "backspaced"
