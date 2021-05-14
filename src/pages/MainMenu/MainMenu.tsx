@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button, makeStyles } from "@material-ui/core";
 import normalizeParagraphTexts from "../../textFunctions/normalizeParagraphTexts";
@@ -74,6 +74,19 @@ export default function MainMenu({ setText, knownSymbols }: Props) {
     });
   };
 
+  const handleInsertTextOnLoadChange = (changeObj: Partial<InsertTextOnLoad>) => {
+    setInsertTextOnLoad(prev => {
+      const updatedObj = { ...prev, ...changeObj };
+      localStorage.setItem("typingPracticeInsertTextOnLoad", JSON.stringify(updatedObj));
+      return updatedObj;
+    });
+  };
+
+  useEffect(() => {
+    const loadedInsertTextOnLoad = localStorage.getItem("typingPracticeInsertTextOnLoad");
+    loadedInsertTextOnLoad && setInsertTextOnLoad(JSON.parse(loadedInsertTextOnLoad));
+  },[])
+
   return (
     <div className={classes.mainMenu}>
       <TextFieldSection setTextInput={setTextInput} textInput={textInput} />
@@ -82,7 +95,7 @@ export default function MainMenu({ setText, knownSymbols }: Props) {
         loadedParagraphs={loadedParagraphs}
         handleInsertParagraph={handleInsertParagraph}
         insertTextOnLoad={insertTextOnLoad}
-        setInsertTextOnLoad={setInsertTextOnLoad} />
+        handleInsertTextOnLoadChange={handleInsertTextOnLoadChange} />
       <Link id="link-to-playArea" style={{ display: "none" }} to="playArea"></Link>
       <Button
         className={classes.startButton}

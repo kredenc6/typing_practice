@@ -14,7 +14,7 @@ interface Props {
   handleInsertParagraph: (paragraph: string) => void;
   loadedParagraphs: string[];
   insertTextOnLoad: InsertTextOnLoad;
-  setInsertTextOnLoad: React.Dispatch<React.SetStateAction<InsertTextOnLoad>>;
+  handleInsertTextOnLoadChange: (changeObj: Partial<InsertTextOnLoad>) => void;
 }
 
 const useStyles = makeStyles({
@@ -42,34 +42,29 @@ const useStyles = makeStyles({
 });
 
 export default function LoadTextSection({
-  handleLoadArcticle, loadedParagraphs, handleInsertParagraph, setInsertTextOnLoad,
-  insertTextOnLoad
+  handleLoadArcticle, loadedParagraphs, handleInsertParagraph,
+  insertTextOnLoad, handleInsertTextOnLoadChange
 }: Props) {
   const classes = useStyles();
 
   const handleInsertTextOnLoadLengthChange = (newLength: number) => {
-    setInsertTextOnLoad(prev => ({ ...prev, length: newLength }));
-  };
-
-  const handleInsertTextOnLoadLengthBlur = (newLength: number) => {
     newLength = Math.min(newLength, MAX_TEXT_INSERT_LENGTH);
     newLength = Math.max(newLength, MIN_TEXT_INSERT_LENGTH);
-    setInsertTextOnLoad(prev => ({ ...prev, length: newLength }));
+    handleInsertTextOnLoadChange({ length: newLength });
   };
 
   const toggleInsertTextOnLoadBooleanChange = () => {
-    setInsertTextOnLoad(prev => ({ ...prev, boolean: !prev.boolean }));
+    handleInsertTextOnLoadChange({ boolean: !insertTextOnLoad.boolean });
   };
 
   const handleNumberInputWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     e.persist();
     const changeBy = e.shiftKey ? 100 : 10;
-    setInsertTextOnLoad(prev => {
-      let newLength = e.deltaY < 0 ? prev.length - changeBy : prev.length + changeBy;
-      newLength = Math.min(newLength, MAX_TEXT_INSERT_LENGTH);
-      newLength = Math.max(newLength, MIN_TEXT_INSERT_LENGTH);
-      return { ...prev, length: newLength };
-    });
+    const prevLength = insertTextOnLoad.length;
+    let newLength = e.deltaY < 0 ? prevLength - changeBy : prevLength + changeBy;
+    newLength = Math.min(newLength, MAX_TEXT_INSERT_LENGTH);
+    newLength = Math.max(newLength, MIN_TEXT_INSERT_LENGTH);
+    handleInsertTextOnLoadChange({ length: newLength });
   };
 
   return (
@@ -108,7 +103,7 @@ export default function LoadTextSection({
                 inputProps={{ min: MIN_TEXT_INSERT_LENGTH, max: MAX_TEXT_INSERT_LENGTH }}
                 type="number"
                 onChange={e => handleInsertTextOnLoadLengthChange(Number(e.target.value))}
-                onBlur={e => handleInsertTextOnLoadLengthBlur(Number(e.target.value))}
+                onBlur={e => handleInsertTextOnLoadLengthChange(Number(e.target.value))}
                 onWheel={handleNumberInputWheel} />
               &nbsp;znaků.
             </div>} />
