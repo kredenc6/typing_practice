@@ -284,6 +284,10 @@ export default function TextDisplay({
       );
     })
     .map((row, rowIndex) => {
+      const shouldSetRowHeight = 
+        (symbolRows.length <= lineCount && rowIndex === 0) ||
+        (symbolRows.length > lineCount && rowIndex === 2);
+
       return (
         <DisplayedRow
           className={classNames(
@@ -294,7 +298,7 @@ export default function TextDisplay({
           fontSize={fontData.fontSize}
           key={row.highestSymbolPosition}
           row={row}
-          setRowHeight={rowIndex === 2 ? setCssCalculatedRowHeight : undefined}
+          setRowHeight={shouldSetRowHeight ? setCssCalculatedRowHeight : undefined}
           textPosition={cursorPosition}
           theme={textDisplayTheme}
           enteredSymbol={enteredSymbol}

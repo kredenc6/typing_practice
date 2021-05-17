@@ -11,7 +11,8 @@ interface Props {
 const useStyles = makeStyles(({  textDisplayTheme }) => ({
   button: {
     fontSize: "2rem",
-    color: `${textDisplayTheme.text.secondary}`
+    color: `${textDisplayTheme.text.secondary}`,
+    height: "auto"
   },
   switchLabel: {
     color: `${textDisplayTheme.text.secondary}`
