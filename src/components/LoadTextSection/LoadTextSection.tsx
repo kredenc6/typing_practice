@@ -48,6 +48,10 @@ export default function LoadTextSection({
   const classes = useStyles();
 
   const handleInsertTextOnLoadLengthChange = (newLength: number) => {
+    handleInsertTextOnLoadChange({ length: newLength });
+  };
+
+  const handleInsertTextOnLoadLengthBlur = (newLength: number) => {
     newLength = Math.min(newLength, MAX_TEXT_INSERT_LENGTH);
     newLength = Math.max(newLength, MIN_TEXT_INSERT_LENGTH);
     handleInsertTextOnLoadChange({ length: newLength });
@@ -103,7 +107,7 @@ export default function LoadTextSection({
                 inputProps={{ min: MIN_TEXT_INSERT_LENGTH, max: MAX_TEXT_INSERT_LENGTH }}
                 type="number"
                 onChange={e => handleInsertTextOnLoadLengthChange(Number(e.target.value))}
-                onBlur={e => handleInsertTextOnLoadLengthChange(Number(e.target.value))}
+                onBlur={e => handleInsertTextOnLoadLengthBlur(Number(e.target.value))}
                 onWheel={handleNumberInputWheel} />
               &nbsp;znaků.
             </div>} />
