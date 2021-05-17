@@ -10,25 +10,26 @@ interface Props {
   handleFontSizeChange: (fontSize: FontStyle["fontSize"]) => void;
 }
 
+export type TypeDescription = "malé" | "střední" | "velké";
 interface SelectableFontSizeButtonProps {
   [propName: string]: {
     variant: "h5" | "h4" | "h3";
-    typeDescription: "small" | "medium" | "large";
+    typeDescription: TypeDescription;
   }
 }
 
 const SELECTABLE_FONT_SIZE_BUTTON_VARIABLES: SelectableFontSizeButtonProps = {
   "20px": {
     variant: "h5",
-    typeDescription: "small"
+    typeDescription: "malé"
   },
   "30px": {
     variant: "h4",
-    typeDescription: "medium"
+    typeDescription: "střední"
   },
   "40px": {
     variant: "h3",
-    typeDescription: "large"
+    typeDescription: "velké"
   }
 };
 

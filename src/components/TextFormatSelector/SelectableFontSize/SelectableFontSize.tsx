@@ -1,9 +1,10 @@
 import React from "react";
 import { Box, Typography, TypographyProps } from "@material-ui/core";
+import { TypeDescription } from "../FontSizeSelector/FontSizeSelector";
 
 interface Props {
   typographyVariant: Partial<TypographyProps["variant"]>;
-  typeDescription: "small" | "medium" | "large";
+  typeDescription: TypeDescription;
 }
 
 export default function SelectableFontSize({ typeDescription, typographyVariant }: Props) {

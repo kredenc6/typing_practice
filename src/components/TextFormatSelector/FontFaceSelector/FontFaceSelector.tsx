@@ -93,7 +93,7 @@ export default function FontFaceSelector({
   return(
     <Grid alignItems="center" justify="space-around" container>
       <Grid item>
-        <Typography className={classes.selectDescription}>Font face:</Typography>
+        <Typography className={classes.selectDescription}>Typ fontu:</Typography>
       </Grid>
       <Grid item>
         <ClickAwayListener onClickAway={() => handleClickaway(isPopperOpen)}>
