@@ -14,3 +14,12 @@ export type Results = {
   precision: number;
   time: string;
 };
+
+/**
+ * USE ONLY WITH OBJECTS THAT ARE THE SAME ON COMPILE/RUN TIME !!!
+ * https://github.com/microsoft/TypeScript/pull/12253#issuecomment-263132208
+ * https://stackoverflow.com/questions/55012174/why-doesnt-object-keys-return-a-keyof-type-in-typescript
+ */
+export type Unsafe_Entries<T> = {
+  [K in keyof T]: [K, T[K]]
+}[keyof T][]

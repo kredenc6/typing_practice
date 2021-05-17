@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Badge, Button, makeStyles, Typography } from "@material-ui/core";
 import TextInput from "../TextInput/TextInput";
 import TextNormalizeSwitches from "./TextNormalizeSwitches/TextNormalizeSwitches";
 import adjustTextGeneral from "../../textFunctions/adjustTextGeneral";
 import adjustTextFromWiki from "../../textFunctions/adjustTextFromWiki";
 import adjustTextForCzechKeyboard from "../../textFunctions/adjustTextForCzechKeyboard";
+import { Unsafe_Entries } from "../../types/otherTypes";
 
 interface Props {
   setTextInput: React.Dispatch<React.SetStateAction<string>>;
@@ -25,6 +26,10 @@ export interface AdjustText {
   };
   fromWiki: AdjustTextObj;
   forCzechKeyboard: AdjustTextObj;
+}
+
+type LocalStorageAdjustText = {
+  [P in keyof AdjustText]: boolean;
 }
 
 const useStyles = makeStyles({
@@ -67,7 +72,18 @@ export default function TextFieldSection({ setTextInput, textInput }: Props) {
   };
 
   const handleSwitchChange = (propName: keyof AdjustText, boolean: boolean) => {
-    setAdjustText(prev => ({ ...prev, [propName]: { ...prev[propName], boolean } }));
+    const updatedAdjustText = {
+      ...adjustText, [propName]: { ...adjustText[propName], boolean }
+    };
+    setAdjustText(updatedAdjustText);
+
+    const adjustTextEntries = Object.entries(updatedAdjustText) as Unsafe_Entries<AdjustText>;
+    const localStorageAdjustText = adjustTextEntries.reduce((acc, [key, { boolean }]) => {
+      acc[key] = boolean;
+      return acc;
+    }, {} as LocalStorageAdjustText);
+
+    localStorage.setItem("typingPracticeAdjustText", JSON.stringify(localStorageAdjustText));
   };
 
   const handleAdjustText = async () => {
@@ -83,6 +99,23 @@ export default function TextFieldSection({ setTextInput, textInput }: Props) {
 
     setTextInput(adjustedText);
   }
+
+  // load local storage values for adjust text switches
+  useEffect(() => {
+    const localStorageAdjustText = localStorage.getItem("typingPracticeAdjustText");
+    if(localStorageAdjustText) {
+      setAdjustText(prev => {
+        const updatedAdjustText = { ...prev };
+        const adjustTextEntries = Object.entries(JSON.parse(localStorageAdjustText)) as Unsafe_Entries<LocalStorageAdjustText>;
+        
+        adjustTextEntries.forEach(([key, boolean]) => {
+          updatedAdjustText[key].boolean = boolean;
+        })
+        
+        return updatedAdjustText;
+      })
+    }
+  }, [])
 
   return (
     <div className={classes.textFieldSection}>
