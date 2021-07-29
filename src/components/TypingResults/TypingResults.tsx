@@ -57,11 +57,11 @@ export default function TypingResults({ resultObj }: Props) {
   const { textDisplayTheme } = useTheme();
 
   const MistypedWordsComponents = resultObj?.mistypedWords.map((mistypedWord, i) => {
-    if(i === resultObj?.mistypedWords.length - 1) {
+    if(i === resultObj?.mistypedWords.length - 1) { // don't add a comma after the last word
       return <MistypedWord key={i} mistypedWord={mistypedWord} textDisplayTheme={textDisplayTheme} />
     }
-    return <div style={{ display: "flex" }}>
-      <MistypedWord key={i} mistypedWord={mistypedWord} textDisplayTheme={textDisplayTheme} />
+    return <div key={i} style={{ display: "flex" }}>
+      <MistypedWord mistypedWord={mistypedWord} textDisplayTheme={textDisplayTheme} />
       <span className={classes.mistypedWordComma}>,&nbsp;</span>
     </div>
   });

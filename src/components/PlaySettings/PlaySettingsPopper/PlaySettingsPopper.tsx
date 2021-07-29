@@ -20,6 +20,7 @@ const useStyles = makeStyles(({ textDisplayTheme }) => ({
 
 export default function PlaySettingPopper({ children, ...popperProps }: PopperProps) {
   const classes = useStyles();
+
   return (
     <Popper
       className={classes.popper}

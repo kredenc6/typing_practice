@@ -108,6 +108,8 @@ export default function PlaySettings({
     }
     return null;
   };
+
+  const popperChildren = getPopperContent();
   
   useLayoutEffect(() => {
     const popperAnchor = document.getElementById("playSettingsHeader");
@@ -134,10 +136,13 @@ export default function PlaySettings({
             <IconButton className={classes.iconButton} id="gameSettings" onClick={e => handleClick(e.currentTarget.id)}>
               <Settings />
             </IconButton>
-            <PlaySettingsPopper
-              anchorEl={anchorEl}
-              children={getPopperContent()}
-              open={isPopperOpen} />
+            {
+              popperChildren && // this prevents sending null as children (error)
+                <PlaySettingsPopper
+                  anchorEl={anchorEl}
+                  children={popperChildren}
+                  open={isPopperOpen} />
+            }
           </div>
         </ClickAwayListener>
       </div>
