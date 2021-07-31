@@ -16,6 +16,7 @@ import { ThemeContext } from "../../styles/themeContext";
 import { transformTextToSymbolRows } from "../../textFunctions/transformTextToSymbolRows";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 import { AllowedMistype, GameStatus, Results } from "../../types/otherTypes";
+import { canSelfType } from "../../admin/selfTypeSymbol";
 
 const LINE_MOVEMENT_MIN_POSITION = 3;
 const FIREFOX_PREVENTED_KEY_DEFAULTS = ["backspace", "'"];
@@ -118,7 +119,7 @@ export default function TextDisplay({
 
   // on first keypress and finish
   useEffect(() => {
-    if(gameStatus === "start") { // when started typing
+    if(gameStatus === "start" && keyStrokeCount) { // when started typing
       timer.start();
       if(getWordObjectByWordPosition(symbolRows, 0, 0)?.type === "word") {
         wordTimer.current.start();
@@ -139,14 +140,16 @@ export default function TextDisplay({
 
   // (on keypress === truthy enteredSymbol) check and adjust all the necessary stuff
   useEffect(() => {
-    if(!enteredSymbol || gameStatus !== "playing" || !symbolRows.length) return;
+    // if(!enteredSymbol || gameStatus !== "playing" || !symbolRows.length) return;
+    if(!enteredSymbol || !["playing", "selfType"].includes(gameStatus) || !symbolRows.length) return;
 
     // on Backspace
     if(enteredSymbol === "Backspace") {
       moveActiveSymbol(-1);
-    } else
+    }
+
     // on mistyped symbol
-    if(enteredSymbol !== text[cursorPosition]) {
+    else if(enteredSymbol !== text[cursorPosition]) {
       const updatedRow = updateSymbolCorrectness(symbolRows, rowPosition, cursorPosition, "mistyped");
       updateSymbolRows(setSymbolRows, updatedRow, rowPosition);
 
@@ -183,11 +186,17 @@ export default function TextDisplay({
   // on did mount add keypress event listener
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      const { key } = e;
+      const { key, ctrlKey } = e;
 
       // prevent some browser default "onKey" actions (firefox mainly)
       if(FIREFOX_PREVENTED_KEY_DEFAULTS.includes(key.toLowerCase())) {
         e.preventDefault();
+      }
+
+      // run self type
+      if( canSelfType(ctrlKey, key) ) {
+        setGameStatus("selfType");
+        return;
       }
       
       setKeyStrokeCount(prevCount => prevCount + 1);
@@ -198,7 +207,32 @@ export default function TextDisplay({
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // self type
+  useEffect(() => {
+    if(enteredSymbol || gameStatus !== "selfType") return;
+
+    const MISTYPE_EVERY_NTH_SYMBOL = 10;
+    const SELFTYPE_SYMBOL_DELAY_MS = 10;
+    const shouldMistype = !(cursorPosition % MISTYPE_EVERY_NTH_SYMBOL);
+    // const shouldMistype = !(keyStrokeCount % MISTYPE_EVERY_NTH_SYMBOL);
+    
+    const selfType = () => {
+      if(shouldMistype) {
+        const wrongKey = text[cursorPosition] !== "a"
+          ? "a"
+          : "b";
+        setEnteredSymbol(wrongKey);
+      } else {
+        setEnteredSymbol(text[cursorPosition]);
+      }
+      setKeyStrokeCount(prevCount => prevCount + 1);
+    };
+
+    setTimeout(selfType, SELFTYPE_SYMBOL_DELAY_MS);
+  },[gameStatus, enteredSymbol, text, cursorPosition])
 
   // on pasted text, restart or changed font
   useLayoutEffect(() => {
