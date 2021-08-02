@@ -16,7 +16,7 @@ export const selfTypeSymbol = (
   setTimeout(() => setEnteredSymbol(symbol), options.delay);
 };
 
-export const canSelfType = (ctrlKey: boolean, key: string) => {
+export const shouldStartSelfType = (ctrlKey: boolean, key: string) => {
   return (
     ctrlKey &&
     key.toLowerCase() === "arrowdown" &&

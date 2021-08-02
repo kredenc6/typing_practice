@@ -3,7 +3,7 @@ import Timer from "../../accessories/Timer";
 import { calcTypingPrecision, calcTypingSpeedInKeystrokes } from "../../helpFunctions/calcTypigSpeed";
 import { FontData, Offset } from "../../types/themeTypes";
 import { Row, SymbolCorrectness, SymbolWidths, WordObject } from "../../types/symbolTypes";
-import { AllowedMistype, Results } from "../../types/otherTypes";
+import { AllowedMistype, GameStatus, Results } from "../../types/otherTypes";
 import { secondsToMMSS } from "../../helpFunctions/secondsToMMSS";
 
 interface WordTimeObject {
@@ -337,3 +337,14 @@ export const createResultObj = (
     time: secondsToMMSS(time)
   };
 };
+
+export const isPlayingGameStatus = (gameStatus: GameStatus) => {
+  return ["playing", "selfType"].includes(gameStatus)
+};
+
+export const createMistypedWordsLog = (mistypedWords: WordObject[]) => {
+  mistypedWords.map(mistypedWord => {
+    return "stuff"
+  })
+};
+

@@ -5,7 +5,7 @@ export interface AllowedMistype {
   isAllowed: boolean;
 }
 
-export type GameStatus = "settingUp" | "start" | "playing" | "finished" | "selfType";
+export type GameStatus = "settingUp" | "ready" | "playing" | "finished" | "selfType";
 
 export type Results = {
   mistypedWords: WordObject[];

@@ -4,7 +4,7 @@ import { makeStyles, useTheme } from "@material-ui/core";
 import {
   createSymbolWidthsObject, getWordTimeObject, getPositions,getWordObjectByWordPosition,
   updateSymbolCorrectness, updateWordTime, updateSymbolRows, getIndexes, isAllowedKey,
-  isAllowedToMoveToNextSymbolOnMistake, createResultObj
+  isAllowedToMoveToNextSymbolOnMistake, createResultObj, isPlayingGameStatus
 } from "./helpFunctions";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import adjustRowsToNewFontData from "../../textFunctions/adjustRowsToNewFontData";
@@ -16,7 +16,7 @@ import { ThemeContext } from "../../styles/themeContext";
 import { transformTextToSymbolRows } from "../../textFunctions/transformTextToSymbolRows";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 import { AllowedMistype, GameStatus, Results } from "../../types/otherTypes";
-import { canSelfType } from "../../admin/selfTypeSymbol";
+import { shouldStartSelfType } from "../../admin/selfTypeSymbol";
 
 const LINE_MOVEMENT_MIN_POSITION = 3;
 const FIREFOX_PREVENTED_KEY_DEFAULTS = ["backspace", "'"];
@@ -94,6 +94,7 @@ export default function TextDisplay({
   const wordTimer = useRef(new Timer(2));
   const textDisplayRef: React.MutableRefObject<null | HTMLDivElement> = useRef(null);
   const fontDataAndTextRef: React.MutableRefObject<FontDataAndTextRef> = useRef({ fontData, text });
+  const gameHasStartedRef = useRef(false);
 
   const moveActiveSymbol = (by: -1 | 1) => {
     const newCursorPosition = cursorPosition + by;
@@ -119,12 +120,15 @@ export default function TextDisplay({
 
   // on first keypress and finish
   useEffect(() => {
-    if(gameStatus === "start" && keyStrokeCount) { // when started typing
+    if(!gameHasStartedRef.current && enteredSymbol) {
       timer.start();
       if(getWordObjectByWordPosition(symbolRows, 0, 0)?.type === "word") {
         wordTimer.current.start();
       }
-      setGameStatus("playing");
+      gameHasStartedRef.current = true;
+      if(gameStatus !== "selfType") {
+        setGameStatus("playing");
+      }
     }
 
     if(cursorPosition >= text.length && gameStatus !== "finished") { // when finished
@@ -134,20 +138,20 @@ export default function TextDisplay({
         setCursorPosition(cursorPosition - 1);
       }
       const resultObj = createResultObj(symbolRows, timer.getTime(), keyStrokeCount);
+      console.dir(resultObj);
       setResultObj(resultObj);
     }
-  },[cursorPosition, text, keyStrokeCount, timer, symbolRows, gameStatus, setGameStatus, setResultObj])
+  },[cursorPosition, text, keyStrokeCount, timer, symbolRows, gameStatus, setGameStatus, setResultObj, enteredSymbol])
 
   // (on keypress === truthy enteredSymbol) check and adjust all the necessary stuff
   useEffect(() => {
-    // if(!enteredSymbol || gameStatus !== "playing" || !symbolRows.length) return;
-    if(!enteredSymbol || !["playing", "selfType"].includes(gameStatus) || !symbolRows.length) return;
+    if(!enteredSymbol || !symbolRows.length) return;
 
     // on Backspace
     if(enteredSymbol === "Backspace") {
       moveActiveSymbol(-1);
     }
-
+    
     // on mistyped symbol
     else if(enteredSymbol !== text[cursorPosition]) {
       const updatedRow = updateSymbolCorrectness(symbolRows, rowPosition, cursorPosition, "mistyped");
@@ -178,14 +182,15 @@ export default function TextDisplay({
       updateSymbolRows(setSymbolRows, updatedRow, rowPosition);
       moveActiveSymbol(1);
     }
-    
     setEnteredSymbol(""); // reset typed symbol
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[enteredSymbol])
 
-  // on did mount add keypress event listener
+  // update keypress event listener on gameStatus change
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      if(!["ready", "playing", "selfType"].includes(gameStatus)) return;
+      
       const { key, ctrlKey } = e;
 
       // prevent some browser default "onKey" actions (firefox mainly)
@@ -194,7 +199,7 @@ export default function TextDisplay({
       }
 
       // run self type
-      if( canSelfType(ctrlKey, key) ) {
+      if( shouldStartSelfType(ctrlKey, key) ) {
         setGameStatus("selfType");
         return;
       }
@@ -208,14 +213,14 @@ export default function TextDisplay({
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [gameStatus])
 
   // self type
   useEffect(() => {
     if(enteredSymbol || gameStatus !== "selfType") return;
 
     const MISTYPE_EVERY_NTH_SYMBOL = 10;
-    const SELFTYPE_SYMBOL_DELAY_MS = 10;
+    const SELFTYPE_SYMBOL_DELAY_MS = 50;
     const shouldMistype = !(cursorPosition % MISTYPE_EVERY_NTH_SYMBOL);
     // const shouldMistype = !(keyStrokeCount % MISTYPE_EVERY_NTH_SYMBOL);
     
@@ -272,13 +277,13 @@ export default function TextDisplay({
     setLineCount(fontData.fontSize === "20px" ? 6 : 5); // 1 line is hidden in overflow
 
     if(gameStatus === "settingUp") {
-      setGameStatus("start");
+      setGameStatus("ready");
     }
   }, [cursorPosition, fontData, gameStatus, symbolRows, text, textDisplayTheme.offset, setGameStatus])
 
   // on changed wordPosition adjust word timer
   useEffect(() => {
-    if(!symbolRows.length || gameStatus !== "playing") return;
+    if(!symbolRows.length || !isPlayingGameStatus(gameStatus)) return;
     
     const wordTimeObject = getWordTimeObject(wordTimer.current, symbolRows, rowPosition, wordPosition);
     if(!wordTimeObject) return;
@@ -298,6 +303,7 @@ export default function TextDisplay({
     setSymbolRows([]);
     setGameStatus("settingUp");
     setEnteredSymbol("");
+    gameHasStartedRef.current = false;
     setRestart(false);
   }, [restart, setRestart, timer, setGameStatus])
 
