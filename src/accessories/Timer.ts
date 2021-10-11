@@ -19,10 +19,14 @@ export default class Timer {
     this.time = 0;
   }
 
-  start() {
-    this.time = 0;
+  start(continueFromTime?: number) {
+    if(continueFromTime !== undefined) {
+      this.time = continueFromTime;
+    }
+
     this.startTime = new Date().getTime();
     this.isRunning = true;
+    console.log({startTime: this.time})
   }
   
   stop() {
@@ -33,7 +37,8 @@ export default class Timer {
     const divisor = 1000 / Math.pow(10, this.decimalCount);
     const decimalPoint = 1000 / divisor;
     
-    this.time = Math.round(dividend / divisor) / decimalPoint;
+    this.time += Math.round(dividend / divisor) / decimalPoint;
+    console.log({stopTime: this.time})
     this.isRunning = false;
   }
 

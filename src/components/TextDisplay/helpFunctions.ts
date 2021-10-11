@@ -6,6 +6,8 @@ import { Row, SymbolCorrectness, SymbolWidths, WordObject } from "../../types/sy
 import { AllowedMistype, GameStatus, Results } from "../../types/otherTypes";
 import { secondsToMMSS } from "../../helpFunctions/secondsToMMSS";
 
+export const LOCAL_STORAGE_KEY = "typingPractice_mistypedWords";
+
 interface WordTimeObject {
   rowPosition: number;
   wordPosition: number;
@@ -193,7 +195,10 @@ export const getWordTimeObject = (wordTimer: Timer, symbolRows: Row[], rowPositi
   }
 
   if(!wordTimer.isRunning && wordObject.type === "word") {
-    wordTimer.start();
+    const previousTypedSpeed = Math.max(0, wordObject.typedSpeed);
+    console.log({typedSpeed: wordObject.typedSpeed})
+    wordTimer.start(wordObject.typedSpeed);
+    // wordTimer.start(previousTypedSpeed);
   }
   return null;
 }
@@ -208,7 +213,7 @@ export const updateWordTime =
   
   const updatedRow = updateRowWithWordTime(symbolRows[rowPosition], wordPosition, wordTime);
   updateSymbolRows(setSymbolRows, updatedRow, rowPosition);
-}
+};
 
 export const createSymbolWidthsObject = (
   symbolOffset: Offset["symbol"],
@@ -342,9 +347,46 @@ export const isPlayingGameStatus = (gameStatus: GameStatus) => {
   return ["playing", "selfType"].includes(gameStatus)
 };
 
+type MistypedWordsLog = {
+  [propName: string]: {
+    timestamps: number[];
+    sumOfMistypes: number;
+  }
+}
+
 export const createMistypedWordsLog = (mistypedWords: WordObject[]) => {
-  mistypedWords.map(mistypedWord => {
-    return "stuff"
-  })
+  return mistypedWords.reduce((accumulator, { string }) => {
+    if(accumulator[string]) {
+      accumulator[string].sumOfMistypes++;
+    } else {
+      accumulator[string] = {
+        timestamps: [Date.now()],
+        sumOfMistypes: 1
+      }
+    }
+    return accumulator;
+  }, {} as MistypedWordsLog)
 };
 
+export const saveMistypedWords = (mistypedWords: WordObject[]) => {
+  const localStorageMistypedWords = localStorage.getItem(LOCAL_STORAGE_KEY);
+  const savedMistypedWords = localStorageMistypedWords
+    ? JSON.parse(localStorageMistypedWords) as MistypedWordsLog
+    : null;
+  const mistypedWordsLog = createMistypedWordsLog(mistypedWords);
+
+  if(savedMistypedWords) {
+    Object.entries(mistypedWordsLog).forEach(([key, value]) => {
+      if(savedMistypedWords[key]) {
+        savedMistypedWords[key].sumOfMistypes += value.sumOfMistypes;
+        savedMistypedWords[key].timestamps.push(...value.timestamps);
+      } else {
+        savedMistypedWords[key] = value;
+      }
+    })
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(savedMistypedWords));
+    return savedMistypedWords;
+  } else {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(mistypedWordsLog));
+  }
+};
