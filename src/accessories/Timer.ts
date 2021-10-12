@@ -26,7 +26,6 @@ export default class Timer {
 
     this.startTime = new Date().getTime();
     this.isRunning = true;
-    console.log({startTime: this.time})
   }
   
   stop() {
@@ -38,7 +37,6 @@ export default class Timer {
     const decimalPoint = 1000 / divisor;
     
     this.time += Math.round(dividend / divisor) / decimalPoint;
-    console.log({stopTime: this.time})
     this.isRunning = false;
   }
 

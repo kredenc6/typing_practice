@@ -1,15 +1,12 @@
 import { calcWordLength, lineEndersRegexp } from "./transformTextToSymbolRows";
 import { Row, SymbolWidths } from "../types/symbolTypes";
-import { getWordObjectByWordPosition } from "../components/TextDisplay/helpFunctions";
+import { getMaxWordPosition, getWordObjectByWordPosition } from "../components/TextDisplay/helpFunctions";
 
 export default function adjustRowsToNewFontData(
   previousRows: Row[],
   maxLineLength: number,
   symbolWidths: SymbolWidths
 ) {
-  const spaceLength = calcWordLength(" ", symbolWidths);
-  console.log("spaceLength")
-  console.dir(spaceLength)
   
   let newRows: Row[] = [];
   let currentTextLineLength = 0;
@@ -22,14 +19,20 @@ export default function adjustRowsToNewFontData(
     previousRow.words.forEach(wordObject => {
       // there can be several consecutive line enders - calc their length so we don't overflow the row
       const calcLineEnderLengths = (nextWordPosition: number, lineEnderLengths = 0): number => {
-        const nextWord = getWordObjectByWordPosition(previousRows, nextWordPosition);
-        if(nextWord && lineEndersRegexp.test(nextWord.string)) {
-          lineEnderLengths += calcWordLength(nextWord.string, symbolWidths);
+        if(nextWordPosition > getMaxWordPosition(previousRows)) {
+          return lineEnderLengths;
+        }
+
+        const nextWordObj = getWordObjectByWordPosition(previousRows, nextWordPosition).obj;
+
+        if(lineEndersRegexp.test(nextWordObj.string)) {
+          lineEnderLengths += calcWordLength(nextWordObj.string, symbolWidths);
           return calcLineEnderLengths(nextWordPosition + 1, lineEnderLengths);
         } else {
           return lineEnderLengths;
         }
       };
+
       const unsortedWord = wordObject.string;
       const unsortedWordLength = calcWordLength(unsortedWord, symbolWidths);
       const lineEndersLengths = calcLineEnderLengths(wordObject.wordPosition + 1);

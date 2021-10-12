@@ -78,7 +78,10 @@ export default function TypingResults({ resultObj }: Props) {
           </SpecificResult>
           <SpecificResult Icon={TopSpeed} description="Rychlost">
             <Typography component="h6" variant="h4">
-              {resultObj.typingSpeed} úderů za minutu ({resultObj.wpm} slov za minutu).
+              {resultObj.typingSpeed >= 0
+                ? `${resultObj.typingSpeed} úderů za minutu (${resultObj.wpm} slov za minutu).`
+                : `Příliš mnoho překlepů.`
+              }
             </Typography>
           </SpecificResult>
           <SpecificResult Icon={Target} description="Přesnost">

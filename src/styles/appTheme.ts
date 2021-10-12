@@ -1,4 +1,4 @@
-import { createMuiTheme, responsiveFontSizes, ThemeOptions } from "@material-ui/core";
+import { createTheme, responsiveFontSizes, ThemeOptions } from "@material-ui/core";
 import { TextDisplayTheme } from "../types/themeTypes";
 import { defaultTextDisplayTheme } from "./textDisplayTheme/textDisplayData";
 
@@ -16,7 +16,7 @@ const settings = {
   textDisplayTheme: determinedTextDisplayTheme,
 };
 
-let appTheme = createMuiTheme(settings);
+let appTheme = createTheme(settings);
 appTheme = responsiveFontSizes(appTheme);
 
 export default appTheme;
@@ -27,7 +27,7 @@ export const createUpdatedAppTheme = (update: ThemeOptions) => {
     ...update
   };
 
-  let updatedAppTheme = createMuiTheme(updateSettings);
+  let updatedAppTheme = createTheme(updateSettings);
   updatedAppTheme = responsiveFontSizes(updatedAppTheme);
 
   return updatedAppTheme;

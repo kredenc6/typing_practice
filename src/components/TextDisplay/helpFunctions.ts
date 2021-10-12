@@ -1,5 +1,6 @@
+//TODO this is a copy of TradeDisplay component helpFunctions - when finished delete the old ones
+
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
-import Timer from "../../accessories/Timer";
 import { calcTypingPrecision, calcTypingSpeedInKeystrokes } from "../../helpFunctions/calcTypigSpeed";
 import { FontData, Offset } from "../../types/themeTypes";
 import { Row, SymbolCorrectness, SymbolWidths, WordObject } from "../../types/symbolTypes";
@@ -7,12 +8,6 @@ import { AllowedMistype, GameStatus, Results } from "../../types/otherTypes";
 import { secondsToMMSS } from "../../helpFunctions/secondsToMMSS";
 
 export const LOCAL_STORAGE_KEY = "typingPractice_mistypedWords";
-
-interface WordTimeObject {
-  rowPosition: number;
-  wordPosition: number;
-  wordTime: number;
-}
 
 export const updateSymbolCorrectness = (
   symbolRows: Row[], rowPosition: number, textPosition: number, correctness: SymbolCorrectness
@@ -29,39 +24,37 @@ export const updateSymbolCorrectness = (
   return { ...row, words: updatedWords };
 };
 
-// export const getWordObject = (symbolRows: Row[], rowPosition: number, wordPosition: number) => {
-//   const activeWordObject = symbolRows[rowPosition].words.find(
-//     ({ wordPosition: iteratedWordPosition }) => wordPosition === iteratedWordPosition);
-//   return activeWordObject || null;
-// };
-
-export const getWordObjectByWordPosition = (symbolRows: Row[], wordPosition: number, rowIndex?: number) => {
-  let foundWordObject: WordObject | undefined;
-  
-  if(rowIndex !== undefined) {
-    foundWordObject = symbolRows[rowIndex].words.find(
-      ({ wordPosition: iteratedWordPosition }) => wordPosition === iteratedWordPosition);
-    return foundWordObject || null;
-  }
-
-  for(const symbolRow of symbolRows) {
-    foundWordObject = symbolRow.words.find(
-      ({ wordPosition: iteratedWordPosition }) => wordPosition === iteratedWordPosition);
-    if(foundWordObject) break;
-  }
-
-  return foundWordObject || null;
+export const getMaxWordPosition = (symbolRows: Row[]) => {
+  const lastRowWordsLength = symbolRows[symbolRows.length - 1].words.length;
+  return symbolRows[symbolRows.length - 1].words[lastRowWordsLength - 1].wordPosition;
 };
 
-export const updateRowWithWordTime = (row: Row, wordPosition: number, wordTime: number): Row => {
-  const updatedWords = row.words.map(word => {
-    if(word.wordPosition === wordPosition) {
-      return {...word, typedSpeed: wordTime };
-    }
-    return word;
-  });
+export const getWordObjectByWordPosition = (symbolRows: Row[], wordPosition: number, rowIndex?: number) => {
+  let foundWordObjIndex = -1;
 
-  return { ...row, words: updatedWords };
+  if(rowIndex !== undefined) {
+    foundWordObjIndex = symbolRows[rowIndex].words.findIndex(wordObj => {
+      return wordObj.wordPosition === wordPosition;
+    });
+  } else {
+    for(rowIndex = 0; rowIndex < symbolRows.length; rowIndex++) {
+      foundWordObjIndex = symbolRows[rowIndex].words.findIndex(wordObj => {
+        return wordObj.wordPosition === wordPosition;
+      });
+  
+      if(foundWordObjIndex !== -1) break;
+    }
+  }
+
+  if(foundWordObjIndex === -1) {
+    throw new Error(`Cound not find the desired word at wordPosition: ${wordPosition}, rowPosition: ${rowIndex}.`);
+  }
+
+  return {
+    obj: symbolRows[rowIndex].words[foundWordObjIndex],
+    rowPosition: rowIndex,
+    wordRowIndex: foundWordObjIndex
+  }
 };
 
 export const updateSymbolRows = (setSymbolRows: React.Dispatch<React.SetStateAction<Row[]>>, updatedRow: Row, updatedRowIndex: number) => {
@@ -164,55 +157,33 @@ export const getPositions = (cursorPosition: number, symbolRows: Row[], rowStart
   return result;
 };
 
-export const getWordTimeObject = (wordTimer: Timer, symbolRows: Row[], rowPosition: number, wordPosition: number ) => {
-  if(!symbolRows.length) {
-    return null;
-  }
+export const getWordProp = <T extends keyof WordObject>(
+  symbolRows: Row[],
+  wordProp: T,
+  wordPosition: number,
+  rowPosition?: number
+) => {
+  const { obj: wordObj } = getWordObjectByWordPosition(symbolRows, wordPosition, rowPosition);
+  return wordObj[wordProp];
+};
 
-  let tempRowPosition = rowPosition;
-  let wordObject = getWordObjectByWordPosition(symbolRows, wordPosition, rowPosition);
-  // let wordObject = getWordObject(symbolRows, rowPosition, wordPosition);
-
-  if(!wordObject && tempRowPosition > 0) { // it's possible we've already moved to the next row - check the previous one
-    tempRowPosition -= 1;
-    wordObject = getWordObjectByWordPosition(symbolRows, wordPosition, tempRowPosition);
-    // wordObject = getWordObject(symbolRows, tempRowPosition, wordPosition);
-  }
-  if(!wordObject) {
-    throw new Error("Did not get the needed word object.");
-  }
-
-  if(wordTimer.isRunning && wordObject.type !== "word") {
-    wordTimer.stop();
-    const wordTime = wordTimer.getTime();
-    const previousWordPosition = wordObject.wordPosition - 1;
-    
-    return {
-      rowPosition: tempRowPosition,
-      wordPosition: previousWordPosition,
-      wordTime
-    };
-  }
-
-  if(!wordTimer.isRunning && wordObject.type === "word") {
-    const previousTypedSpeed = Math.max(0, wordObject.typedSpeed);
-    console.log({typedSpeed: wordObject.typedSpeed})
-    wordTimer.start(wordObject.typedSpeed);
-    // wordTimer.start(previousTypedSpeed);
-  }
-  return null;
-}
-
-export const updateWordTime =
-(
+export const updateWordProp = <K extends keyof WordObject>(
   symbolRows: Row[],
   setSymbolRows: React.Dispatch<React.SetStateAction<Row[]>>,
-  wordTimeOject: WordTimeObject
+  wordObjProp: K,
+  wordInfo: { value: WordObject[K]; wordPosition: number; rowPosition?: number; }
 ) => {
-  const { rowPosition, wordPosition, wordTime } = wordTimeOject;
-  
-  const updatedRow = updateRowWithWordTime(symbolRows[rowPosition], wordPosition, wordTime);
-  updateSymbolRows(setSymbolRows, updatedRow, rowPosition);
+  const { rowPosition, wordPosition, value } = wordInfo;
+  const {
+    wordRowIndex,
+    rowPosition: rowIndex
+  } = getWordObjectByWordPosition(symbolRows, wordPosition, rowPosition);
+
+  setSymbolRows( prev => {
+    const newRows = [ ...prev ];
+    newRows[rowIndex].words[wordRowIndex][wordObjProp] = value;
+    return newRows;
+  });
 };
 
 export const createSymbolWidthsObject = (

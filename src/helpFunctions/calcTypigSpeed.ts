@@ -2,7 +2,6 @@ import { Row } from "../types/symbolTypes";
 
 const PENALTY_COEFFICIENT = 10;
 
-
 export const calcTypingSpeedInKeystrokes = (seconds: number, symbolRows: Row[]) => {
   if(!seconds) return 0;
   let textBestKeyStrokeCount = 0;

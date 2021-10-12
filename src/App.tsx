@@ -104,6 +104,7 @@ export default function App() {
   );
 }
 
+// TODO save last 3 mistype(finish) results in the json
 // TODO add typing sounds
 // TODO add $nbsp; after prepositions
 

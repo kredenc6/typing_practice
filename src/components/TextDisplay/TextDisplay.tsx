@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import classNames from "classnames";
-import { makeStyles, useTheme } from "@material-ui/core";
+import { makeStyles, Theme, useTheme } from "@material-ui/core";
 import {
-  createSymbolWidthsObject, getWordTimeObject, getPositions,getWordObjectByWordPosition,
-  updateSymbolCorrectness, updateWordTime, updateSymbolRows, getIndexes, isAllowedKey,
-  isAllowedToMoveToNextSymbolOnMistake, createResultObj, isPlayingGameStatus,
-  saveMistypedWords, LOCAL_STORAGE_KEY
+  createSymbolWidthsObject, getPositions, updateSymbolCorrectness, updateWordProp,
+  updateSymbolRows, getIndexes, isAllowedKey, isAllowedToMoveToNextSymbolOnMistake,
+  createResultObj, isPlayingGameStatus, saveMistypedWords, LOCAL_STORAGE_KEY, getWordProp
 } from "./helpFunctions";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import adjustRowsToNewFontData from "../../textFunctions/adjustRowsToNewFontData";
@@ -16,7 +15,7 @@ import { Row, SymbolCorrectness } from "../../types/symbolTypes";
 import { ThemeContext } from "../../styles/themeContext";
 import { transformTextToSymbolRows } from "../../textFunctions/transformTextToSymbolRows";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
-import { AllowedMistype, GameStatus, Results } from "../../types/otherTypes";
+import { AllowedMistype, GameStatus, Results, WordTimeObj } from "../../types/otherTypes";
 import { shouldStartSelfType } from "../../admin/selfTypeSymbol";
 
 const LINE_MOVEMENT_MIN_POSITION = 3;
@@ -46,7 +45,7 @@ interface MakeStylesProps {
 }
 
 // TODO try dynamic width?
-const useStyles = makeStyles(({ textDisplayTheme }) => ({
+const useStyles = makeStyles(({ textDisplayTheme }: Theme) => ({
   textWindow: {
     boxSizing: "content-box",
     position: "absolute",
@@ -92,7 +91,10 @@ export default function TextDisplay({
   const { transitions } = useTheme();
   const classes = useStyles({ fontData, lineCount, rowHeight: cssCalculatedRowHeight });
   const { state: { textDisplayTheme } } = useContext(ThemeContext);
-  const wordTimer = useRef(new Timer(2));
+  const wordTimerObj = useRef<WordTimeObj>({
+    timer: new Timer(2),
+    wordPosition: 0
+  });
   const textDisplayRef: React.MutableRefObject<null | HTMLDivElement> = useRef(null);
   const fontDataAndTextRef: React.MutableRefObject<FontDataAndTextRef> = useRef({ fontData, text });
   const gameHasStartedRef = useRef(false);
@@ -123,8 +125,9 @@ export default function TextDisplay({
   useEffect(() => {
     if(!gameHasStartedRef.current && enteredSymbol) {
       timer.start();
-      if(getWordObjectByWordPosition(symbolRows, 0, 0)?.type === "word") {
-        wordTimer.current.start();
+      const typeOfTheFirstWord = getWordProp(symbolRows, "type", 0, 0);
+      if(typeOfTheFirstWord === "word") {
+        wordTimerObj.current.timer.start();
       }
       gameHasStartedRef.current = true;
       if(gameStatus !== "selfType") {
@@ -139,7 +142,7 @@ export default function TextDisplay({
         setCursorPosition(cursorPosition - 1);
       }
       const resultObj = createResultObj(symbolRows, timer.getTime(), keyStrokeCount);
-      console.log({resultObj})
+      
       saveMistypedWords(resultObj.mistypedWords);
       const localStorageMistypedWords = localStorage.getItem(LOCAL_STORAGE_KEY) || "";
       console.dir(JSON.parse(localStorageMistypedWords));
@@ -289,17 +292,34 @@ export default function TextDisplay({
   useEffect(() => {
     if(!symbolRows.length || !isPlayingGameStatus(gameStatus)) return;
     
-    const wordTimeObject = getWordTimeObject(wordTimer.current, symbolRows, rowPosition, wordPosition);
-    if(!wordTimeObject) return;
+    if(wordPosition === wordTimerObj.current.wordPosition) return;
 
-    updateWordTime(symbolRows, setSymbolRows, wordTimeObject);
+    const {
+      timer,
+      wordPosition: timerWordPosition
+    } = wordTimerObj.current;
+    
+    const typeOfTheNewWord = getWordProp(symbolRows, "type", wordPosition);
+    
+    if(typeOfTheNewWord !== "word") {
+      timer.stop();
+      const wordTime = timer.getTime();
+      timer.reset();
+      updateWordProp(symbolRows, setSymbolRows, "typedSpeed", { value: wordTime, wordPosition: timerWordPosition });
+    } else {
+      const previousTypedSpeed = getWordProp(symbolRows, "typedSpeed", wordPosition);
+      const typedSpeedStartTime = Math.max(0, previousTypedSpeed);
+      timer.start(typedSpeedStartTime);
+    }
+
+    wordTimerObj.current.wordPosition = wordPosition;
   }, [gameStatus, symbolRows, rowPosition, wordPosition])
 
   // on restart
   useEffect(() => {
     if(!restart) return;
     timer.reset();
-    wordTimer.current.reset();
+    wordTimerObj.current.timer.reset();
     setCursorPosition(0);
     setWordPosition(0);
     setRowPosition(0);

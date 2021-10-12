@@ -1,3 +1,4 @@
+import Timer from "../accessories/Timer";
 import { WordObject } from "./symbolTypes";
 
 export interface AllowedMistype {
@@ -23,3 +24,9 @@ export type Results = {
 export type Unsafe_Entries<T> = {
   [K in keyof T]: [K, T[K]]
 }[keyof T][]
+
+
+export type WordTimeObj = {
+  timer: Timer;
+  wordPosition: number;
+}
