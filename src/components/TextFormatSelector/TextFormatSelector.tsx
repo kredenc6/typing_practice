@@ -1,5 +1,5 @@
 import React from "react";
-import { Divider, makeStyles } from "@material-ui/core";
+import { Box, Divider, makeStyles } from "@material-ui/core";
 import FontSizeSelector from "./FontSizeSelector/FontSizeSelector";
 import FontFaceSelector from "./FontFaceSelector/FontFaceSelector";
 import { FontData, FontFamily, FontSize } from "../../types/themeTypes";
@@ -38,7 +38,7 @@ export default function TextFormatSelector({
   };
 
   return(
-    <div className={classes.textFormat}>
+    <Box className={classes.textFormat}>
       <FontSizeSelector
         activeFontSize={activeFontSize}
         handleFontSizeChange={handleFontSizeChange} />
@@ -47,7 +47,7 @@ export default function TextFormatSelector({
         activeFontFamily={activeFontFamily}
         handleFontFamilyChange={handleFontFamilyChange}
         isFontDataLoading={isFontDataLoading} />
-    </div>
+    </Box>
   );
 }
 

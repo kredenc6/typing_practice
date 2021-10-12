@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Badge, Button, makeStyles, Typography } from "@material-ui/core";
+import { Badge, Box, Button, makeStyles, Typography } from "@material-ui/core";
 import TextInput from "../TextInput/TextInput";
 import TextNormalizeSwitches from "./TextNormalizeSwitches/TextNormalizeSwitches";
 import adjustTextGeneral from "../../textFunctions/adjustTextGeneral";
@@ -118,7 +118,7 @@ export default function TextFieldSection({ setTextInput, textInput }: Props) {
   }, [])
 
   return (
-    <div className={classes.textFieldSection}>
+    <Box className={classes.textFieldSection}>
       <Typography
         className={classes.textFieldHeading}
         variant="h5"
@@ -138,7 +138,7 @@ export default function TextFieldSection({ setTextInput, textInput }: Props) {
           value={textInput}
           variant="outlined" />
       </Badge>
-      <div className={classes.switchWrapper}>
+      <Box className={classes.switchWrapper}>
         <TextNormalizeSwitches
           adjustText={adjustText}
           setAdjustText={setAdjustText}
@@ -151,7 +151,7 @@ export default function TextFieldSection({ setTextInput, textInput }: Props) {
         >
           Uprav text
         </Button>
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

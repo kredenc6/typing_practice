@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from "react";
-import { ClickAwayListener, Grid, makeStyles, Popper, Typography } from "@material-ui/core";
+import { Box, ClickAwayListener, Grid, makeStyles, Popper, Typography } from "@material-ui/core";
 import Spinner from "../../Spinner/Spinner";
 import FakeSelect from "../../FakeSelect/FakeSelect";
 import { fontFamilies } from "../../../styles/textDisplayTheme/textDisplayData";
@@ -97,7 +97,7 @@ export default function FontFaceSelector({
       </Grid>
       <Grid item>
         <ClickAwayListener onClickAway={() => handleClickaway(isPopperOpen)}>
-          <div>
+          <Box>
             <FakeSelect
               className={classes.select}
               id="faceSelectorPopperAnchor"
@@ -113,7 +113,7 @@ export default function FontFaceSelector({
               {FontFamilyComponents}
               <Spinner isLoading={isFontDataLoading} />
             </Popper>
-          </div>
+          </Box>
         </ClickAwayListener>
       </Grid>
     </Grid>

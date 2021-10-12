@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles, Typography } from "@material-ui/core";
+import { Box, makeStyles, Typography } from "@material-ui/core";
 
 interface Props {
   Icon: React.FunctionComponent<React.SVGProps<SVGSVGElement> & {
@@ -31,12 +31,12 @@ export default function SpecificResult({ Icon, description, children }: Props) {
   const classes = useStyles();
 
   return (
-    <div className={classes.results}>
-      <div className={classes.resultDescription}>
+    <Box className={classes.results}>
+      <Box className={classes.resultDescription}>
         <Icon className={classes.icon} />
         <Typography component="h6" variant="h4">{description}</Typography>
-      </div>
+      </Box>
       {children}
-    </div>
+    </Box>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { makeStyles, useTheme } from "@material-ui/core";
+import { Box, makeStyles, useTheme } from "@material-ui/core";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import DisplayedSymbol from "../DisplayedSymbol/DisplayedSymbol";
 import FadeAway from "../transitions/FadeAway/FadeAway";
@@ -59,7 +59,7 @@ function DisplayedSymbolWrapper({
   },[animateMistypedSymbol, symbolPosition, transitions.duration.complex])
 
   return(
-    <div className={classes.displayedSymbolWrapper}>
+    <Box className={classes.displayedSymbolWrapper}>
       <DisplayedSymbol symbol={symbol} symbolStyle={symbolStyle} />
         <FadeAway
           className={classes.invalidSymbol}
@@ -74,7 +74,7 @@ function DisplayedSymbolWrapper({
           }
         </FadeAway>
       {TextCursor}
-    </div>
+    </Box>
   );
 }
 

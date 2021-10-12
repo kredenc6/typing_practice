@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import classNames from "classnames";
-import { makeStyles, Theme, useTheme } from "@material-ui/core";
+import { Box, makeStyles, Theme, useTheme } from "@material-ui/core";
 import {
   createSymbolWidthsObject, getPositions, updateSymbolCorrectness, updateWordProp,
   updateSymbolRows, getIndexes, isAllowedKey, isAllowedToMoveToNextSymbolOnMistake,
-  createPartialResultObj, isPlayingGameStatus, saveMistypedWords, LOCAL_STORAGE_KEY, getWordProp
+  createPartialResultObj, isPlayingGameStatus, getWordProp
 } from "./helpFunctions";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import adjustRowsToNewFontData from "../../textFunctions/adjustRowsToNewFontData";
@@ -374,8 +374,9 @@ export default function TextDisplay({
   );
 
   return(
-    <div className={classes.textWindow} ref={textDisplayRef}>
+    // with mui typescript ref bug workaroud @https://github.com/mui-org/material-ui/issues/17010
+    <Box className={classes.textWindow} {...{ ref: textDisplayRef } as any}>
       {DisplayedRowComponents}
-    </div>
+    </Box>
   );
 };

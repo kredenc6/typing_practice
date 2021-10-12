@@ -1,6 +1,6 @@
 import React from "react";
 import Simplebar from "simplebar-react";
-import { makeStyles, Paper, Typography, useTheme } from "@material-ui/core";
+import { Box, makeStyles, Paper, Typography, useTheme } from "@material-ui/core";
 import { Results } from "../../types/otherTypes";
 import MistypedWord from "./MistypedWord/MistypedWord";
 import SpecificResult from "./SpecificResult/SpecificResult";
@@ -67,10 +67,10 @@ export default function TypingResults({ resultObj }: Props) {
   });
 
   return (
-    <div className={classes.resultsWrapper}>
+    <Box className={classes.resultsWrapper}>
       {resultObj &&
       <>
-        <div className={classes.typingResultsWrapper}>
+        <Box className={classes.typingResultsWrapper}>
           <SpecificResult Icon={Clock} description="Čas">
             <Typography component="h6" variant="h4">
               {resultObj.time}
@@ -95,9 +95,9 @@ export default function TypingResults({ resultObj }: Props) {
               {MistypedWordsComponents.length > 0 ?
                 <Paper className={classes.mistypedWordsWrapper} variant="outlined" elevation={0}>
                   <Simplebar style={{ maxHeight: "100%" }} autoHide={false}>
-                    <div className={classes.mistypedWords}>
+                    <Box className={classes.mistypedWords}>
                       {MistypedWordsComponents}
-                    </div>
+                    </Box>
                   </Simplebar>
                 </Paper>
                 :
@@ -108,9 +108,9 @@ export default function TypingResults({ resultObj }: Props) {
               }
             </SpecificResult>
           }
-        </div>
+        </Box>
       </>
       }
-    </div>
+    </Box>
   );
 }

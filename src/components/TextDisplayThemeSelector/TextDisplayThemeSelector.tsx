@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core";
+import { Box, makeStyles } from "@material-ui/core";
 import SelectTextDisplayThemeButton from "./SelectTextDisplayThemeButton/SelectTextDisplayThemeButton";
 import * as availableTextDisplayPalettes from "../../styles/textDisplayPaletes";
 import { TextDisplayTheme } from "../../types/themeTypes";
@@ -34,8 +34,8 @@ export default function TextDisplayThemeSelector({ handleTextDisplayThemeChange,
   ));
 
   return (
-    <div className={classes.themeSelector}>
+    <Box className={classes.themeSelector}>
       {ThemeButtonComponents}
-    </div>
+    </Box>
   );
 }

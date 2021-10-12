@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { makeStyles, Fade } from "@material-ui/core";
+import { makeStyles, Fade, Box } from "@material-ui/core";
 import PlaySettings from "../../components/PlaySettings/PlaySettings";
 import TextDisplay from "../../components/TextDisplay/TextDisplay";
 import TypingResults from "../../components/TypingResults/TypingResults";
@@ -61,7 +61,7 @@ export default function PlayPage({
   }, [resultObj])
 
   return (
-    <div className={classes.playPage}>
+    <Box className={classes.playPage}>
       <PlaySettings
         fontData={fontData}
         handleFontDataChange={handleFontDataChange}
@@ -81,10 +81,10 @@ export default function PlayPage({
         setGameStatus={setGameStatus}
         setResultObj={setResultObj} />
       <Fade in={gameStatus === "finished"}>
-        <div className={classes.resultWrapper}>
+        <Box className={classes.resultWrapper}>
           <TypingResults resultObj={resultObj} />
-        </div>
+        </Box>
       </Fade>
-    </div>
+    </Box>
   );
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles, Paper } from "@material-ui/core";
+import { Box, makeStyles, Paper } from "@material-ui/core";
 import Simplebar from "simplebar-react";
 import LoadedParagraph from "../LoadedParagraph/LoadedParagraph";
 
@@ -34,9 +34,9 @@ export default function LoadedParagraphSummary({
   return (
     <Paper className={classes.paragraphSummary} variant="outlined">
       <Simplebar style={{ maxHeight: "100%" }} autoHide={false}>
-        <div className={classes.paragraphWrapper}>
+        <Box className={classes.paragraphWrapper}>
           {LoadedParagraphComponents}
-        </div>
+        </Box>
       </Simplebar>
     </Paper>
   );

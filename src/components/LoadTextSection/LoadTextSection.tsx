@@ -1,7 +1,7 @@
 import React from "react";
 import {
   makeStyles, Paper, Typography, ButtonGroup, Button, FormControlLabel, Checkbox,
-  TextField
+  TextField, Box
 } from "@material-ui/core";
 import LoadedParagraphSummary from "../LoadedParagraphSummary/LoadedParagraphSummary";
 import { InsertTextOnLoad } from "../../pages/MainMenu/MainMenu";
@@ -73,7 +73,7 @@ export default function LoadTextSection({
 
   return (
     <Paper className={classes.loadTextSection} elevation={0}>
-      <div className={classes.loadOptions}>
+      <Box className={classes.loadOptions}>
         <ButtonGroup variant="outlined" color="primary" orientation="vertical">
           <Button
             onClick={() => handleLoadArcticle("/randomWiki")}
@@ -98,7 +98,7 @@ export default function LoadTextSection({
               color="primary"
               onChange={toggleInsertTextOnLoadBooleanChange} />}
           label={
-            <div>
+            <Box>
               Při načtení článku rovnou vlož text o přibližné délce&nbsp;
               <TextField
                 className={classes.textFieldNumber}
@@ -110,14 +110,14 @@ export default function LoadTextSection({
                 onBlur={e => handleInsertTextOnLoadLengthBlur(Number(e.target.value))}
                 onWheel={handleNumberInputWheel} />
               &nbsp;znaků.
-            </div>} />
-      </div>
-      <div className={classes.loadedParagraphsOptions}>
+            </Box>} />
+      </Box>
+      <Box className={classes.loadedParagraphsOptions}>
         <Typography component="h6" variant="h5">Nalezené odstavce</Typography>
         <LoadedParagraphSummary
           loadedParagraphs={loadedParagraphs}
           handleInsertParagraph={handleInsertParagraph} />
-      </div>
+      </Box>
     </Paper>
   );
 }

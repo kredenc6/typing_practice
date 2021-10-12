@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles, useTheme } from "@material-ui/core";
+import { Box, makeStyles, useTheme } from "@material-ui/core";
 import { BarLoader } from "react-spinners";
 
 interface Props {
@@ -33,8 +33,8 @@ export default function Spinner({ isLoading, offset }: Props) {
   const { palette } = useTheme();
   
   return (
-    <div className={classes.spinner}>
+    <Box className={classes.spinner}>
       <BarLoader color={palette.info.main} loading={true} width="50%" />
-    </div>
+    </Box>
   );
 }

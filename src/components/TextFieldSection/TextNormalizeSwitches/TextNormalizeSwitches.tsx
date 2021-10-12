@@ -1,5 +1,5 @@
 import React from "react";
-import { FormControlLabel, makeStyles, Switch } from "@material-ui/core";
+import { Box, FormControlLabel, makeStyles, Switch } from "@material-ui/core";
 import { AdjustText } from "../TextFieldSection";
 
 interface Props {
@@ -22,7 +22,7 @@ export default function TextNormalizeSwitches({
 }: Props) {
   const classes = useStyles();
   return (
-    <div className={classes.switchWrapper}>
+    <Box className={classes.switchWrapper}>
       <FormControlLabel
         control={<Switch checked={adjustText.general.boolean} color="primary" disabled name="general" />}
         label="obecné úpravy textu"
@@ -42,6 +42,6 @@ export default function TextNormalizeSwitches({
             onChange={e => handleSwitchChange("forCzechKeyboard", e.target.checked)} />}
         label="uprav text pro českou klávesnici"
         labelPlacement="end" />
-    </div>
+    </Box>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useContext, useLayoutEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ClickAwayListener, IconButton, makeStyles } from "@material-ui/core";
+import { Box, ClickAwayListener, IconButton, makeStyles } from "@material-ui/core";
 import { FormatSize, Menu, Palette, Refresh, Settings } from "@material-ui/icons";
 import TextFormatSelector from "../TextFormatSelector/TextFormatSelector";
 import TextDisplayThemeSelector from "../TextDisplayThemeSelector/TextDisplayThemeSelector";
@@ -121,12 +121,12 @@ export default function PlaySettings({
       <Link to="/mainMenu">
         <Menu className={classes.iconButton} />
       </Link>
-      <div>
+      <Box>
         <IconButton className={classes.iconButton} disabled={restart} onClick={() => setRestart(true)}>
           <Refresh />
         </IconButton>
         <ClickAwayListener onClickAway={handleClickAway}>
-          <div className={classes.clickAwayWrapper} id="clickAwayWrapper">
+          <Box className={classes.clickAwayWrapper} id="clickAwayWrapper">
             <IconButton className={classes.iconButton} id="formatFontBtt" onClick={e => handleClick(e.currentTarget.id)}>
               <FormatSize />
             </IconButton>
@@ -143,9 +143,9 @@ export default function PlaySettings({
                   children={popperChildren}
                   open={isPopperOpen} />
             }
-          </div>
+          </Box>
         </ClickAwayListener>
-      </div>
+      </Box>
     </header>
   );
 }

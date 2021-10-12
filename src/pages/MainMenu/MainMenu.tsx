@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, makeStyles } from "@material-ui/core";
+import { Box, Button, makeStyles } from "@material-ui/core";
 import normalizeParagraphTexts from "../../textFunctions/normalizeParagraphTexts";
 import LoadTextSection from "../../components/LoadTextSection/LoadTextSection";
 import TextFieldSection from "../../components/TextFieldSection/TextFieldSection";
@@ -88,7 +88,7 @@ export default function MainMenu({ setText, knownSymbols }: Props) {
   },[])
 
   return (
-    <div className={classes.mainMenu}>
+    <Box className={classes.mainMenu}>
       <TextFieldSection setTextInput={setTextInput} textInput={textInput} />
       <LoadTextSection
         handleLoadArcticle={handleLoadArcticle}
@@ -108,6 +108,6 @@ export default function MainMenu({ setText, knownSymbols }: Props) {
         Start
       </Button>
       <InvalidSymbolsMessage invalidSymbols={getInvalidSymbols(textInput, knownSymbols)} />
-    </div>
+    </Box>
   );
 }

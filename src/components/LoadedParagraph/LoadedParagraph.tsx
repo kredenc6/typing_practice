@@ -1,5 +1,5 @@
 import React from "react";
-import { IconButton, makeStyles, Typography, Tooltip, Badge } from "@material-ui/core";
+import { IconButton, makeStyles, Typography, Tooltip, Badge, Box } from "@material-ui/core";
 import Simplebar from "simplebar-react";
 import { PlaylistAdd } from "@material-ui/icons";
 
@@ -40,7 +40,7 @@ export default function LoadedParagraph({
   const classes = useStyles();
 
   return (
-    <div className={classes.loadedParagraph}>
+    <Box className={classes.loadedParagraph}>
       <IconButton
         className={classes.addParagraphButton}
         color="primary"
@@ -73,6 +73,6 @@ export default function LoadedParagraph({
         >
           <Typography className={classes.paragraphText} noWrap>{loadedParagraph}</Typography>
         </Tooltip>
-    </div>
+    </Box>
   );
 }

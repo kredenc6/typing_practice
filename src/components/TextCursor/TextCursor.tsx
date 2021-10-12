@@ -1,5 +1,5 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core";
+import { Box, makeStyles } from "@material-ui/core";
 
 interface Props {
   height: string;
@@ -22,6 +22,6 @@ export default function TextCursor({ height }: Props) {
   const classes = useStyles({ height });
 
   return (
-    <div className={classes.textCursor}></div>
+    <Box className={classes.textCursor}></Box>
   );
 }
