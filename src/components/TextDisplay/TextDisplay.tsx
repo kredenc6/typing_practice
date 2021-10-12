@@ -4,7 +4,7 @@ import { makeStyles, Theme, useTheme } from "@material-ui/core";
 import {
   createSymbolWidthsObject, getPositions, updateSymbolCorrectness, updateWordProp,
   updateSymbolRows, getIndexes, isAllowedKey, isAllowedToMoveToNextSymbolOnMistake,
-  createResultObj, isPlayingGameStatus, saveMistypedWords, LOCAL_STORAGE_KEY, getWordProp
+  createPartialResultObj, isPlayingGameStatus, saveMistypedWords, LOCAL_STORAGE_KEY, getWordProp
 } from "./helpFunctions";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import adjustRowsToNewFontData from "../../textFunctions/adjustRowsToNewFontData";
@@ -141,11 +141,12 @@ export default function TextDisplay({
       if(cursorPosition === text.length) { // return cursor position to valid index
         setCursorPosition(cursorPosition - 1);
       }
-      const resultObj = createResultObj(symbolRows, timer.getTime(), keyStrokeCount);
+      const resultObj: Results = {
+        ...createPartialResultObj(symbolRows, timer.getTime(), keyStrokeCount),
+        textLength: text.length,
+        timestamp: Date.now()
+      };
       
-      saveMistypedWords(resultObj.mistypedWords);
-      const localStorageMistypedWords = localStorage.getItem(LOCAL_STORAGE_KEY) || "";
-      console.dir(JSON.parse(localStorageMistypedWords));
       setResultObj(resultObj);
     }
   },[cursorPosition, text, keyStrokeCount, timer, symbolRows, gameStatus, setGameStatus, setResultObj, enteredSymbol])

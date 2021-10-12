@@ -14,6 +14,8 @@ export type Results = {
   wpm: number;
   precision: number;
   time: string;
+  textLength: number;
+  timestamp: number;
 };
 
 /**

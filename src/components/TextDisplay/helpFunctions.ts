@@ -294,9 +294,9 @@ export const isAllowedToMoveToNextSymbolOnMistake = (
   return false;
 };
 
-export const createResultObj = (
+export const createPartialResultObj = (
   symbolRows: Row[], time: number, keyStrokeCount: number
-): Results => {
+): Pick<Results, "mistypedWords" | "typingSpeed" | "wpm" | "precision" | "time"> => {
   const mistypedWords = collectMistypedWords(symbolRows);
   const mistakeCount = collectSymbolPositionsByCorrectness(symbolRows, "mistyped").length;
   const correctedCount = collectSymbolPositionsByCorrectness(symbolRows, "corrected").length;
@@ -310,7 +310,7 @@ export const createResultObj = (
     typingSpeed,
     wpm,
     precision: calcTypingPrecision(keyStrokeCount, errorCount),
-    time: secondsToMMSS(time)
+    time: secondsToMMSS(time),
   };
 };
 

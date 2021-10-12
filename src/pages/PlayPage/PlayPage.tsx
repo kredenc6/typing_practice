@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles, Fade } from "@material-ui/core";
 import PlaySettings from "../../components/PlaySettings/PlaySettings";
 import TextDisplay from "../../components/TextDisplay/TextDisplay";
@@ -6,6 +6,7 @@ import TypingResults from "../../components/TypingResults/TypingResults";
 import { FontData } from "../../types/themeTypes";
 import Timer from "../../accessories/Timer";
 import { AllowedMistype, GameStatus, Results } from "../../types/otherTypes";
+import { saveMistypedWords } from "../../components/TextDisplay/helpFunctions";
 
 interface Props {
   fontData: FontData;
@@ -44,6 +45,20 @@ export default function PlayPage({
   const [restart , setRestart] = useState(false);
   const [gameStatus, setGameStatus] = useState<GameStatus>("settingUp");
   const [resultObj, setResultObj] = useState<Results | null>(null);
+
+  useEffect(() => {
+    if(!resultObj) return;
+    
+    saveMistypedWords(resultObj.mistypedWords);
+    const last3ResultsString = localStorage.getItem("typingPracticeLast3Results") || "[]";
+    const last3Results = [
+        ...JSON.parse(last3ResultsString),
+        resultObj
+      ]
+      .slice(0, 3);
+
+    localStorage.setItem("typingPracticeLast3Results", JSON.stringify(last3Results));
+  }, [resultObj])
 
   return (
     <div className={classes.playPage}>

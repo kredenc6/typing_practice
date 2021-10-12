@@ -107,6 +107,9 @@ export default function App() {
 // TODO save last 3 mistype(finish) results in the json
 // TODO add typing sounds
 // TODO add $nbsp; after prepositions
+// TODO create a text difficulty assesment function
+//  - at first it can be based on symbol difficulty, later on on the symbol combination
+//  - and finally both?
 
 // TODO handle failed font fetch
 
