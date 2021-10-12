@@ -4,9 +4,11 @@ import PlaySettings from "../../components/PlaySettings/PlaySettings";
 import TextDisplay from "../../components/TextDisplay/TextDisplay";
 import TypingResults from "../../components/TypingResults/TypingResults";
 import { FontData } from "../../types/themeTypes";
+import { Redirect } from "react-router";
 import Timer from "../../accessories/Timer";
 import { AllowedMistype, GameStatus, Results } from "../../types/otherTypes";
 import { saveMistypedWords } from "../../components/TextDisplay/helpFunctions";
+import { LAST_RESULTS_SAVE_COUNT, LOCAL_STORAGE_KEYS } from "../../constants/constants";
 
 interface Props {
   fontData: FontData;
@@ -50,41 +52,43 @@ export default function PlayPage({
     if(!resultObj) return;
     
     saveMistypedWords(resultObj.mistypedWords);
-    const last3ResultsString = localStorage.getItem("typingPracticeLast3Results") || "[]";
-    const last3Results = [
-        ...JSON.parse(last3ResultsString),
+    const lastResultsString = localStorage.getItem(LOCAL_STORAGE_KEYS.LAST_RESULTS) || "[]";
+    const lastResults = [
+        ...JSON.parse(lastResultsString),
         resultObj
       ]
-      .slice(0, 3);
+      .slice(0, LAST_RESULTS_SAVE_COUNT);
 
-    localStorage.setItem("typingPracticeLast3Results", JSON.stringify(last3Results));
+    localStorage.setItem(LOCAL_STORAGE_KEYS.LAST_RESULTS, JSON.stringify(lastResults));
   }, [resultObj])
 
   return (
-    <Box className={classes.playPage}>
-      <PlaySettings
-        fontData={fontData}
-        handleFontDataChange={handleFontDataChange}
-        isFontDataLoading={isFontDataLoading}
-        restart={restart}
-        setRestart={setRestart}
-        setAllowedMistype={setAllowedMistype}
-        allowedMistype={allowedMistype} />
-      <TextDisplay
-        fontData={fontData}
-        restart={restart}
-        setRestart={setRestart}
-        text={text}
-        timer={timer}
-        allowedMistype={allowedMistype}
-        gameStatus={gameStatus}
-        setGameStatus={setGameStatus}
-        setResultObj={setResultObj} />
-      <Fade in={gameStatus === "finished"}>
-        <Box className={classes.resultWrapper}>
-          <TypingResults resultObj={resultObj} />
+    !text
+      ? <Redirect to="/mainMenu" />
+      : <Box className={classes.playPage}>
+          <PlaySettings
+            fontData={fontData}
+            handleFontDataChange={handleFontDataChange}
+            isFontDataLoading={isFontDataLoading}
+            restart={restart}
+            setRestart={setRestart}
+            setAllowedMistype={setAllowedMistype}
+            allowedMistype={allowedMistype} />
+          <TextDisplay
+            fontData={fontData}
+            restart={restart}
+            setRestart={setRestart}
+            text={text}
+            timer={timer}
+            allowedMistype={allowedMistype}
+            gameStatus={gameStatus}
+            setGameStatus={setGameStatus}
+            setResultObj={setResultObj} />
+          <Fade in={gameStatus === "finished"}>
+            <Box className={classes.resultWrapper}>
+              <TypingResults resultObj={resultObj} />
+            </Box>
+          </Fade>
         </Box>
-      </Fade>
-    </Box>
   );
 }

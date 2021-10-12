@@ -32,3 +32,10 @@ export type WordTimeObj = {
   timer: Timer;
   wordPosition: number;
 }
+
+export type MistypedWordsLog = {
+  [word: string]: {
+    timestamps: number[];
+    sumOfMistypes: number;
+  }
+}

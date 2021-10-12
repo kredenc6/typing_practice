@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Redirect, Route, Switch } from "react-router-d
 import { ThemeProvider as MuiThemeProvider } from "@material-ui/core";
 import PlayPage from "./pages/PlayPage/PlayPage";
 import MainMenu from "./pages/MainMenu/MainMenu";
+import Statistics from "./components/Statistics/Statistics";
 import Timer from "./accessories/Timer";
 import getFontData from "./async/getFontData";
 import loadFont from "./async/loadFont";
@@ -13,6 +14,7 @@ import { createUpdatedAppTheme } from "./styles/appTheme";
 import { AllowedMistype } from "./types/otherTypes";
 import { getKnownSymbols } from "./helpFunctions/getKnownSymbols";
 import "simplebar/dist/simplebar.min.css";
+import { LOCAL_STORAGE_KEYS } from "./constants/constants";
 
 export default function App() {
   const [fontData, setFontData] = useState(defaultTextDisplayFontData);
@@ -54,16 +56,16 @@ export default function App() {
           setIsFontDataLoading(false);
         });
       }
-      localStorage.setItem("typingPracticeFontData", JSON.stringify(newFontData));
+      localStorage.setItem(LOCAL_STORAGE_KEYS.FONT_DATA, JSON.stringify(newFontData));
       return;
     }
     
     setFontData(newFontData);
-    localStorage.setItem("typingPracticeFontData", JSON.stringify(newFontData));
+    localStorage.setItem(LOCAL_STORAGE_KEYS.FONT_DATA, JSON.stringify(newFontData));
   };
 
   useEffect(() => {
-    const localFontData = localStorage.getItem("typingPracticeFontData");
+    const localFontData = localStorage.getItem(LOCAL_STORAGE_KEYS.FONT_DATA);
     const determinedFontData = localFontData ? JSON.parse(localFontData) as FontData : fontData;
     const { fontFamily, fontSize } = determinedFontData;
     getFontData(fontFamily, fontSize)
@@ -71,7 +73,7 @@ export default function App() {
         if(!newFontData) return;
         handleFontDataChange(newFontData);
       });
-    const loadedMistypeSetting = localStorage.getItem("typingPracticeMistypeSettings");
+    const loadedMistypeSetting = localStorage.getItem(LOCAL_STORAGE_KEYS.MISTYPE_SETTINGS);
     if(loadedMistypeSetting) {
       setAllowedMistype(JSON.parse(loadedMistypeSetting) as AllowedMistype);
     }
@@ -98,6 +100,9 @@ export default function App() {
               setAllowedMistype={setAllowedMistype}
               allowedMistype={allowedMistype} />
           </Route>
+          <Route path="/statistics">
+            <Statistics />
+          </Route>
         </Switch>
       </Router>
     </MuiThemeProvider>
@@ -118,3 +123,6 @@ export default function App() {
 // TODO make links and comments for used sources like wiki and osel(here I should probably ask for permision)
 // TODO display url of the loaded article
 // BUG word times are most likely incorect when the word is "backspaced"
+// TODO for performance - I could split the text to the visible part and make a symbol...
+// ...row object just from that. The rest of the symbol row object would be stored and...
+// ...updated(on the row change?) separately from the render function

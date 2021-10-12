@@ -1,13 +1,10 @@
-//TODO this is a copy of TradeDisplay component helpFunctions - when finished delete the old ones
-
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 import { calcTypingPrecision, calcTypingSpeedInKeystrokes } from "../../helpFunctions/calcTypigSpeed";
 import { FontData, Offset } from "../../types/themeTypes";
 import { Row, SymbolCorrectness, SymbolWidths, WordObject } from "../../types/symbolTypes";
-import { AllowedMistype, GameStatus, Results } from "../../types/otherTypes";
+import { AllowedMistype, GameStatus, MistypedWordsLog, Results } from "../../types/otherTypes";
 import { secondsToMMSS } from "../../helpFunctions/secondsToMMSS";
-
-export const LOCAL_STORAGE_KEY = "typingPractice_mistypedWords";
+import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
 
 export const updateSymbolCorrectness = (
   symbolRows: Row[], rowPosition: number, textPosition: number, correctness: SymbolCorrectness
@@ -318,13 +315,6 @@ export const isPlayingGameStatus = (gameStatus: GameStatus) => {
   return ["playing", "selfType"].includes(gameStatus)
 };
 
-type MistypedWordsLog = {
-  [propName: string]: {
-    timestamps: number[];
-    sumOfMistypes: number;
-  }
-}
-
 export const createMistypedWordsLog = (mistypedWords: WordObject[]) => {
   return mistypedWords.reduce((accumulator, { string }) => {
     if(accumulator[string]) {
@@ -340,7 +330,7 @@ export const createMistypedWordsLog = (mistypedWords: WordObject[]) => {
 };
 
 export const saveMistypedWords = (mistypedWords: WordObject[]) => {
-  const localStorageMistypedWords = localStorage.getItem(LOCAL_STORAGE_KEY);
+  const localStorageMistypedWords = localStorage.getItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS);
   const savedMistypedWords = localStorageMistypedWords
     ? JSON.parse(localStorageMistypedWords) as MistypedWordsLog
     : null;
@@ -355,9 +345,9 @@ export const saveMistypedWords = (mistypedWords: WordObject[]) => {
         savedMistypedWords[key] = value;
       }
     })
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(savedMistypedWords));
+    localStorage.setItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS, JSON.stringify(savedMistypedWords));
     return savedMistypedWords;
   } else {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(mistypedWordsLog));
+    localStorage.setItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS, JSON.stringify(mistypedWordsLog));
   }
 };
