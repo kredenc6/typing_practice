@@ -227,10 +227,9 @@ export default function TextDisplay({
   useEffect(() => {
     if(enteredSymbol || gameStatus !== "selfType") return;
 
-    const MISTYPE_EVERY_NTH_SYMBOL = 10;
+    const MISTYPE_EVERY_NTH_SYMBOL = 15;
     const SELFTYPE_SYMBOL_DELAY_MS = 50;
-    const shouldMistype = !(cursorPosition % MISTYPE_EVERY_NTH_SYMBOL);
-    // const shouldMistype = !(keyStrokeCount % MISTYPE_EVERY_NTH_SYMBOL);
+    const shouldMistype = !(Math.round(Math.random() * 100) / MISTYPE_EVERY_NTH_SYMBOL % 1);
     
     const selfType = () => {
       if(shouldMistype) {

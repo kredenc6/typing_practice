@@ -119,6 +119,8 @@ export default function App() {
 //  - and finally both?
 
 // TODO handle failed font fetch
+// TODO be able to save a text and load it
+// TODO limit a text to 10000? symbols
 
 // TODO make links and comments for used sources like wiki and osel(here I should probably ask for permision)
 // TODO display url of the loaded article

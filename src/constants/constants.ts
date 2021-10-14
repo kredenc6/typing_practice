@@ -1,4 +1,4 @@
-export const LAST_RESULTS_SAVE_COUNT = 3;
+export const LAST_RESULTS_SAVE_COUNT = 10;
 export const LOCAL_STORAGE_KEYS = {
   LAST_RESULTS: "typingPracticeLastResults",
   FONT_DATA: "typingPracticeFontData",

@@ -57,8 +57,8 @@ export default function PlayPage({
         ...JSON.parse(lastResultsString),
         resultObj
       ]
-      .slice(0, LAST_RESULTS_SAVE_COUNT);
-
+      .slice(-LAST_RESULTS_SAVE_COUNT);
+      
     localStorage.setItem(LOCAL_STORAGE_KEYS.LAST_RESULTS, JSON.stringify(lastResults));
   }, [resultObj])
 
