@@ -1,8 +1,8 @@
 import { ApexOptions } from "apexcharts";
 import dateFormat from "dateformat";
 
-const defaultLastResultsChartOptions: ApexOptions = {
-  colors: ["rgba(0, 143, 251, 0.9)", "rgba(91, 209, 215, 0.9)", "rgba(240, 91, 76, 0.9)"],
+export const defaultLastResultsChartOptions: ApexOptions = {
+  colors: ["rgba(0, 143, 251, 0.9)", "rgba(0, 227, 150, 0.9)", "rgba(254, 176, 25, 0.9)"],
   chart: {
     id: "lastResultsChart",
     toolbar: {
@@ -12,9 +12,20 @@ const defaultLastResultsChartOptions: ApexOptions = {
       enabled: false
     }
   },
+  markers: {
+    size: 5
+  },
+  legend: {
+    // offsetY: -8
+  },
   stroke: {
-    colors: ["rgba(0, 143, 251, 0)", "rgba(91, 209, 215, 0)", "rgba(240, 91, 76, 0.9)"],
-    lineCap: "round"
+    colors: ["rgba(0, 143, 251, 0.9)", "rgba(0, 227, 150, 0.9)", "rgba(254, 176, 25, 0.9)"],
+    curve: "smooth",
+    lineCap: "round",
+    width: 2
+  },
+  dataLabels: {
+    enabled: false
   },
   tooltip: {
     y: {
@@ -25,12 +36,18 @@ const defaultLastResultsChartOptions: ApexOptions = {
     }
   },
   xaxis: {
+    crosshairs: {
+      show: false
+    },
     tooltip: {
       enabled: false
     }
   },
   yaxis: [
     {
+      crosshairs: {
+        show: false
+      },
       title: {
         text: "přesnost"
       },
@@ -39,6 +56,9 @@ const defaultLastResultsChartOptions: ApexOptions = {
       }
     },
     {
+      crosshairs: {
+        show: false
+      },
       opposite: true,
       title: {
         text: "rychlost (úhozy za minutu)"
@@ -48,6 +68,9 @@ const defaultLastResultsChartOptions: ApexOptions = {
       }
     },
     {
+      crosshairs: {
+        show: false
+      },
       show: false
     }
   ]
@@ -55,25 +78,25 @@ const defaultLastResultsChartOptions: ApexOptions = {
 
 export const mistypedWordsChartDefaultOptions: ApexOptions = {
   chart: {
+    offsetY: -3,
     id: "mistypedWordsChart",
     toolbar: {
       show: false
     }
   },
+  plotOptions: {
+    treemap: {
+      shadeIntensity: 0.3,
+      useFillColorAsStroke: true
+    }
+  },
+  tooltip: {
+    marker: {
+      show: false
+    }
+  }
 };
 
 export const timestampsToXAxisCategories = (timestamps: number[]) => {
   return timestamps.map(timestamp => dateFormat(timestamp, "d. m. HH:MM"));
 };
-
-export const updateXAxisCategories = (previousOptions : ApexOptions, categories: string[]): ApexOptions => {
-  // TODO use lodash for general update since I have it?
-  return {
-    ...previousOptions,
-    xaxis: {
-      ...previousOptions.xaxis,
-      categories
-  }};
-};
-
-export default defaultLastResultsChartOptions;
