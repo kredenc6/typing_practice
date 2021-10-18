@@ -17,7 +17,8 @@ export const calcTypingSpeedInKeystrokes = (seconds: number, symbolRows: Row[]) 
     )
   );
 
-  return Math.round((textBestKeyStrokeCount - uncorrectedMistakeCount * PENALTY_COEFFICIENT) / seconds * 60);
+  const typingSpeed = Math.round((textBestKeyStrokeCount - uncorrectedMistakeCount * PENALTY_COEFFICIENT) / seconds * 60);
+  return Math.max(0, typingSpeed);
 };
 
 export const calcTypingPrecision = (keyStrokeCount: number, mistakeCount: number) => {
