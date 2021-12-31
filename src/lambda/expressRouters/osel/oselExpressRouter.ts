@@ -6,7 +6,7 @@ import cutOselHtml from "./helpFunctions/cutOselHtml";
 const router = express.Router();
 
 // TODO max historic page number: 195
-// TODO filter out links, comments, etc. on the end of the page
+// TODO filter out links, comments, etc. in the end of the page
 // TODO osel articles have &nbsp; after prepositions, which get filtered out
 
 // router.get("/randomOsel", (_, res) => {

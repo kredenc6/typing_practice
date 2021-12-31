@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Badge, Box, Button, makeStyles, Typography } from "@material-ui/core";
 import TextInput from "../TextInput/TextInput";
 import TextNormalizeSwitches from "./TextNormalizeSwitches/TextNormalizeSwitches";
@@ -8,7 +8,8 @@ import adjustTextForCzechKeyboard from "../../textFunctions/adjustTextForCzechKe
 import { Unsafe_Entries } from "../../types/otherTypes";
 
 interface Props {
-  setTextInput: React.Dispatch<React.SetStateAction<string>>;
+  setTextInput: (text: string) => void;
+  // setTextInput: React.Dispatch<React.SetStateAction<string>>;
   textInput: string;
 }
 

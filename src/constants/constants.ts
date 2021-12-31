@@ -5,3 +5,4 @@ export const LOCAL_STORAGE_KEYS = {
   MISTYPE_SETTINGS: "typingPracticeMistypeSettings",
   MISTYPED_WORDS: "mistypedWordsChartWidth"
 };
+export const MAXIMUM_TEXT_LENGTH = 1500;

@@ -10,6 +10,7 @@ import extractParagraphsFromHtml from "../../textFunctions/extractParagraphsFrom
 import adjustLoadedTextLength from "../../textFunctions/adjustLoadedTextLength";
 import { getInvalidSymbols } from "../../helpFunctions/getInvalidSymbols";
 import adjustTextGeneral from "../../textFunctions/adjustTextGeneral";
+import { useTextToTextField } from "../../customHooks/useTextToTextField";
 
 interface Props {
   setText: React.Dispatch<React.SetStateAction<string>>;
@@ -38,11 +39,12 @@ const useStyles = makeStyles({
 // TODO setText maximum length
 export default function MainMenu({ setText, knownSymbols }: Props) {
   const classes = useStyles();
-  const [textInput, setTextInput] = useState("");
   const [loadedParagraphs, setLoadedParagraphs] = useState<string[]>([]);
   const [insertTextOnLoad, setInsertTextOnLoad] = useState<InsertTextOnLoad>({
-    length: 1000, boolean: true
+    length: 100, boolean: true
   });
+  const [textInput, setTextInput] = useTextToTextField();
+
 
   const handleStart = async () => {
     const cleanedText = await adjustTextGeneral(textInput);
@@ -65,13 +67,14 @@ export default function MainMenu({ setText, knownSymbols }: Props) {
   };
 
   const handleInsertParagraph = (paragraph: string) => {
-    setTextInput(prev => {
-      let newTextInput = prev;
-      if(prev.length) {
-        newTextInput += " ";
-      }
-      return newTextInput + paragraph;
-    });
+    let newTextInput = textInput;
+    
+    if(textInput.length) {
+      newTextInput += " ";
+    }
+
+    newTextInput += paragraph;
+    setTextInput(newTextInput);
   };
 
   const handleInsertTextOnLoadChange = (changeObj: Partial<InsertTextOnLoad>) => {
