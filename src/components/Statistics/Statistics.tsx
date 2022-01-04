@@ -1,15 +1,29 @@
-import React, { useEffect, useState } from "react";
-import { Box } from "@material-ui/core";
+import { useEffect, useState } from "react";
+import { Box, makeStyles } from "@material-ui/core";
 import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
 import { MistypedWordsLog, Results } from "../../types/otherTypes";
 import { calcMistypedWordsChartWidth, sortMistypedWords } from "./helpFunction";
 import MistypedWordsChartWrapper from "../MistypedWordsChartWrapper/MistypedWordsChartWrapper";
-import LastResultsChart from "../LastResultsChart/LastResultsChart";
+import LatestResultsChart from "../LatestResultsChart/LatestResultsChart";
+import ThemeSwitch from "../ThemeSwith/ThemeSwith";
 
 const MISTYPE_WORDS_CHART_MIN_HEIGHT = 150;
 const MISTYPE_WORDS_CHART_MIN_WIDTH = 250;
 
+const useStyles = makeStyles(({ palette }) => ({
+  statistics: {
+    height: "100vh",
+    display: "grid",
+    gridTemplateColumns: "1fr",
+    gridTemplateRows: "50% 50%",
+    textAlign: "center",
+    color: palette.text.primary,
+    backgroundColor: palette.background.default
+  }
+}));
+
 export default function Statistics() {
+  const classes = useStyles();
   const [precision, setPrecision] = useState<number[]>([]);
   const [typingSpeed, setTypingSpeed] = useState<number[]>([]);
   const [textLength, setTextLength] = useState<number[]>([]);
@@ -61,8 +75,9 @@ export default function Statistics() {
   }, [])
 
   return (
-    <Box sx={{ height: "100vh", display: "grid", gridTemplateColumns: "1fr", gridTemplateRows: "50% 50%", textAlign: "center" }}>
-      <LastResultsChart
+    <Box className={classes.statistics}>
+      <ThemeSwitch />
+      <LatestResultsChart
         precision={precision}
         textLength={textLength}
         timestamps={timestamps}

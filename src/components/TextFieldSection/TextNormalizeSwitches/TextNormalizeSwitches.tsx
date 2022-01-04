@@ -12,7 +12,8 @@ interface Props {
 const useStyles = makeStyles({
   switchWrapper: {
     display: "flex",
-    flexFlow: "column"
+    flexFlow: "column",
+    alignItems: "start"
   }
 });
 

@@ -1,26 +1,29 @@
-import React from "react";
+import React, { useContext } from "react";
 import { makeStyles, FormControlLabel, Switch, Box, Divider } from "@material-ui/core";
 import { AllowedMistype } from "../../../types/otherTypes";
 import SettingsButton from "../SettingsButton/SettingsButton";
+import { PlayPageThemeContext } from "../../../styles/themeContexts";
+import { TextDisplayTheme } from "../../../types/themeTypes";
 
 interface Props {
   setAllowedMistype: React.Dispatch<React.SetStateAction<AllowedMistype>>;
   allowedMistype: AllowedMistype;
 }
 
-const useStyles = makeStyles(({  textDisplayTheme }) => ({
+const useStyles = makeStyles({
   button: {
     fontSize: "2rem",
-    color: `${textDisplayTheme.text.secondary}`,
+    color: (  textDisplayTheme: TextDisplayTheme) => `${textDisplayTheme.text.secondary}`,
     height: "auto"
   },
   switchLabel: {
-    color: `${textDisplayTheme.text.secondary}`
+    color: (  textDisplayTheme: TextDisplayTheme) => `${textDisplayTheme.text.secondary}`
   }
-}));
+});
 
 export default function MistypeSettings({ allowedMistype, setAllowedMistype }: Props) {
-  const classes = useStyles();
+  const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
+  const classes = useStyles(textDisplayTheme);
 
   const toggleMistype = () => {
     setAllowedMistype(prev => {

@@ -1,16 +1,15 @@
 // import { Theme as OriginalMuiTheme, ThemeOptions, Duration } from "@material-ui/core";
-import { TextDisplayTheme } from "./types/themeTypes";
+import React from "react";
+import { ThemeType } from "./types/themeTypes";
 
 declare module "@material-ui/core" {
   export interface Theme {
-    textDisplayTheme: TextDisplayTheme
+    updateTheme: (themeType: ThemeType) => React.Dispatch<React.SetStateAction<Theme>>;
   }
 }
 
-
-// TODO later on textDisplayTheme could have separate updates? - see ThemeOptions in createMuiTheme.d.ts
 declare module "@material-ui/core" {
   export interface ThemeOptions {
-    textDisplayTheme?: TextDisplayTheme
+    updateTheme?: (themeType: ThemeType) => React.Dispatch<React.SetStateAction<Theme>>;
   }
 }

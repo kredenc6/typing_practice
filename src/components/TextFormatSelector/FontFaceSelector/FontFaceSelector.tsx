@@ -1,9 +1,10 @@
-import React, { useLayoutEffect, useState } from "react";
+import { useContext, useLayoutEffect, useState } from "react";
 import { Box, ClickAwayListener, Grid, makeStyles, Popper, Typography } from "@material-ui/core";
 import Spinner from "../../Spinner/Spinner";
 import FakeSelect from "../../FakeSelect/FakeSelect";
 import { fontFamilies } from "../../../styles/textDisplayTheme/textDisplayData";
-import { FontFamily } from "../../../types/themeTypes";
+import { FontFamily, TextDisplayTheme } from "../../../types/themeTypes";
+import { PlayPageThemeContext } from "../../../styles/themeContexts";
 
 interface Props {
   activeFontFamily: FontFamily;
@@ -11,7 +12,7 @@ interface Props {
   isFontDataLoading: boolean;
 }
 
-const useStyles = makeStyles(({ palette, typography, textDisplayTheme }) => ({
+const useStyles = makeStyles(({ palette, typography }) => ({
   select: {
     color: "inherit",
     "& .MuiSelect-icon": {
@@ -24,7 +25,7 @@ const useStyles = makeStyles(({ palette, typography, textDisplayTheme }) => ({
     gridTemplateColumns: "1fr 1fr 1fr",
     padding: "1rem",
     backgroundColor: "white",
-    border: `1px solid ${textDisplayTheme.text.secondary}`,
+    border: (textDisplayTheme: TextDisplayTheme) => `1px solid ${textDisplayTheme.text.secondary}`,
     zIndex: 3
   },
   fontFamilyItem: {
@@ -54,7 +55,8 @@ const useStyles = makeStyles(({ palette, typography, textDisplayTheme }) => ({
 export default function FontFaceSelector({
   activeFontFamily, handleFontFamilyChange, isFontDataLoading
 }: Props) {
-  const classes = useStyles();
+  const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
+  const classes = useStyles(textDisplayTheme);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [isPopperOpen, setIsPopperOpen] = useState(false);
 

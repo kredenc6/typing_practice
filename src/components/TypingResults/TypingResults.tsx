@@ -1,6 +1,5 @@
-import React from "react";
 import Simplebar from "simplebar-react";
-import { Box, makeStyles, Paper, Typography, useTheme } from "@material-ui/core";
+import { Box, makeStyles, Paper, Typography } from "@material-ui/core";
 import { Results } from "../../types/otherTypes";
 import MistypedWord from "./MistypedWord/MistypedWord";
 import SpecificResult from "./SpecificResult/SpecificResult";
@@ -9,12 +8,15 @@ import { ReactComponent as Target } from "../../svg/target.svg";
 import { ReactComponent as ErrorCircle } from "../../svg/error-circle.svg";
 import { ReactComponent as ThumbUp } from "../../svg/thumb-up.svg";
 import { ReactComponent as Clock } from "../../svg/time.svg";
+import { useContext } from "react";
+import { PlayPageThemeContext } from "../../styles/themeContexts";
+import { TextDisplayTheme } from "../../types/themeTypes";
 
 interface Props {
   resultObj: Results | null;
 }
 
-const useStyles = makeStyles(({ textDisplayTheme, typography, palette }) => ({
+const useStyles = makeStyles(({ typography, palette }) => ({
   resultsWrapper: {
     width: "100%",
     height: "100%",
@@ -22,8 +24,8 @@ const useStyles = makeStyles(({ textDisplayTheme, typography, palette }) => ({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    color: textDisplayTheme.text.main,
-    backgroundColor: textDisplayTheme.background.main
+    color: (textDisplayTheme: TextDisplayTheme) => textDisplayTheme.text.main,
+    backgroundColor: (textDisplayTheme: TextDisplayTheme) => textDisplayTheme.background.main
   },
   typingResultsWrapper: {
     display: "grid",
@@ -32,8 +34,8 @@ const useStyles = makeStyles(({ textDisplayTheme, typography, palette }) => ({
   mistypedWordsWrapper: {
     height: "200px",
     padding: "10px",
-    color: textDisplayTheme.text.main,
-    backgroundColor: textDisplayTheme.background.main,
+    color: (textDisplayTheme: TextDisplayTheme) => textDisplayTheme.text.main,
+    backgroundColor: (textDisplayTheme: TextDisplayTheme) => textDisplayTheme.background.main,
     border: `1px solid ${palette.divider}`,
     overflow: "hidden"
   },
@@ -48,13 +50,13 @@ const useStyles = makeStyles(({ textDisplayTheme, typography, palette }) => ({
   thumbUp: {
     width: typography.h2.fontSize,
     height: typography.h2.fontSize,
-    fill: textDisplayTheme.text.main
+    fill: (textDisplayTheme: TextDisplayTheme) => textDisplayTheme.text.main
   }
 }));
 
 export default function TypingResults({ resultObj }: Props) {
-  const classes = useStyles();
-  const { textDisplayTheme } = useTheme();
+  const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
+  const classes = useStyles(textDisplayTheme);
 
   const MistypedWordsComponents = resultObj?.mistypedWords.map((mistypedWord, i) => {
     if(i === resultObj?.mistypedWords.length - 1) { // don't add a comma after the last word

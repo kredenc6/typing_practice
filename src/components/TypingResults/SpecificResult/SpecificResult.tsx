@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, makeStyles, Typography } from "@material-ui/core";
+import { PlayPageThemeContext } from "../../../styles/themeContexts";
+import { TextDisplayTheme } from "../../../types/themeTypes";
 
 interface Props {
   Icon: React.FunctionComponent<React.SVGProps<SVGSVGElement> & {
@@ -9,7 +11,7 @@ interface Props {
   children?: React.ReactNode;
 }
 
-const useStyles = makeStyles(({ textDisplayTheme }) => ({
+const useStyles = makeStyles({
   results: {
     display: "grid",
     gridTemplateColumns: "1fr 2fr",
@@ -23,12 +25,13 @@ const useStyles = makeStyles(({ textDisplayTheme }) => ({
     alignItems: "center"
   },
   icon: {
-    fill: textDisplayTheme.text.main
+    fill: (textDisplayTheme: TextDisplayTheme) => textDisplayTheme.text.main
   }
-}));
+});
 
 export default function SpecificResult({ Icon, description, children }: Props) {
-  const classes = useStyles();
+  const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
+  const classes = useStyles(textDisplayTheme);
 
   return (
     <Box className={classes.results}>

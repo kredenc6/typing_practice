@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import classNames from "classnames";
-import { Box, makeStyles, Theme, useTheme } from "@material-ui/core";
+import { Box, makeStyles, useTheme } from "@material-ui/core";
 import {
   createSymbolWidthsObject, getPositions, updateSymbolCorrectness, updateWordProp,
   updateSymbolRows, getIndexes, isAllowedKey, isAllowedToMoveToNextSymbolOnMistake,
@@ -10,9 +10,9 @@ import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import adjustRowsToNewFontData from "../../textFunctions/adjustRowsToNewFontData";
 import Timer from "../../accessories/Timer";
 import DisplayedRow from "../DisplayedRow/DisplayedRow";
-import { FontData, AnimateMistyped } from "../../types/themeTypes";
+import { FontData, AnimateMistyped, TextDisplayTheme } from "../../types/themeTypes";
 import { Row, SymbolCorrectness } from "../../types/symbolTypes";
-import { ThemeContext } from "../../styles/themeContext";
+import { PlayPageThemeContext } from "../../styles/themeContexts";
 import { transformTextToSymbolRows } from "../../textFunctions/transformTextToSymbolRows";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 import { AllowedMistype, GameStatus, Results, WordTimeObj } from "../../types/otherTypes";
@@ -39,13 +39,14 @@ interface FontDataAndTextRef {
 }
 
 interface MakeStylesProps {
+  textDisplayTheme: TextDisplayTheme;
   fontData: FontData;
   lineCount: number;
   rowHeight: number;
 }
 
 // TODO try dynamic width?
-const useStyles = makeStyles(({ textDisplayTheme }: Theme) => ({
+const useStyles = makeStyles({
   textWindow: {
     boxSizing: "content-box",
     position: "absolute",
@@ -54,24 +55,31 @@ const useStyles = makeStyles(({ textDisplayTheme }: Theme) => ({
     transform: "translate(-50%, -50%)",
     width: "800px",
     height: ({ lineCount, rowHeight }: MakeStylesProps) => `${rowHeight * lineCount}px`,
-    ...textDisplayTheme.offset.display,
+    marginTop: ({ textDisplayTheme }: MakeStylesProps) => textDisplayTheme.offset.display.marginTop,
+    marginRight: ({ textDisplayTheme }: MakeStylesProps) => textDisplayTheme.offset.display.marginRight,
+    marginBottom: ({ textDisplayTheme }: MakeStylesProps) => textDisplayTheme.offset.display.marginBottom,
+    marginLeft: ({ textDisplayTheme }: MakeStylesProps) => textDisplayTheme.offset.display.marginLeft,
+    paddingTop: ({ textDisplayTheme }: MakeStylesProps) => textDisplayTheme.offset.display.paddingTop,
+    paddingRight: ({ textDisplayTheme }: MakeStylesProps) => textDisplayTheme.offset.display.paddingRight,
+    paddingBottom: ({ textDisplayTheme }: MakeStylesProps) => textDisplayTheme.offset.display.paddingBottom,
+    paddingLeft: ({ textDisplayTheme }: MakeStylesProps) => textDisplayTheme.offset.display.paddingLeft,
     fontFamily: ({ fontData }: MakeStylesProps) => fontData.fontFamily,
     fontSize: ({ fontData }: MakeStylesProps) => fontData.fontSize,
-    borderTop: `1px solid ${textDisplayTheme.text.main}`,
-    borderBottom: `1px solid ${textDisplayTheme.text.main}`,
+    borderTop: ({ textDisplayTheme }: MakeStylesProps) => `1px solid ${textDisplayTheme.text.main}`,
+    borderBottom: ({ textDisplayTheme }: MakeStylesProps) => `1px solid ${textDisplayTheme.text.main}`,
     whiteSpace: "nowrap",
     overflow: "hidden"
   },
   topHiddenRow: {
-    marginTop: ({ rowHeight }: MakeStylesProps) => (
+    marginTop: ({ rowHeight, textDisplayTheme }: MakeStylesProps) => (
       `-${rowHeight + transformPixelSizeToNumber(textDisplayTheme.offset.display.paddingTop)}px`
     ),
-    paddingBottom: textDisplayTheme.offset.display.paddingTop
+    paddingBottom: ({ textDisplayTheme }: MakeStylesProps) => textDisplayTheme.offset.display.paddingTop
   },
   bottomHiddenRow: {
     marginTop: "5px"
   }
-}));
+});
 
 export default function TextDisplay({
   fontData, restart, setRestart, text, timer, allowedMistype, gameStatus,
@@ -89,8 +97,8 @@ export default function TextDisplay({
   const [animateMistypedSymbol, setAnimateMistypedSymbol] = useState<AnimateMistyped | null>(null);
 
   const { transitions } = useTheme();
-  const classes = useStyles({ fontData, lineCount, rowHeight: cssCalculatedRowHeight });
-  const { state: { textDisplayTheme } } = useContext(ThemeContext);
+  const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
+  const classes = useStyles({ textDisplayTheme, fontData, lineCount, rowHeight: cssCalculatedRowHeight });
   const wordTimerObj = useRef<WordTimeObj>({
     timer: new Timer(2),
     wordPosition: 0

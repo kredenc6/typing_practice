@@ -1,34 +1,36 @@
-import { createTheme, responsiveFontSizes, ThemeOptions } from "@material-ui/core";
-import { TextDisplayTheme } from "../types/themeTypes";
-import { defaultTextDisplayTheme } from "./textDisplayTheme/textDisplayData";
+import { createTheme } from "@material-ui/core";
+import { LOCAL_STORAGE_KEYS } from "../constants/constants";
+import { ThemeType } from "../types/themeTypes";
 
-const localTextDisplayTheme = localStorage.getItem("typingPracticeTextDisplayTheme");
-const determinedTextDisplayTheme =
-  (localTextDisplayTheme && JSON.parse(localTextDisplayTheme) as TextDisplayTheme) ||
-  defaultTextDisplayTheme;
-
-const settings = {
+const themeSettings = {
   props: {
     MuiButtonBase: {
       disableRipple: true
     }
-  },
-  textDisplayTheme: determinedTextDisplayTheme,
+  }
 };
 
-let appTheme = createTheme(settings);
-appTheme = responsiveFontSizes(appTheme);
+const darkThemeOptions = {
+  palette: {
+    type: "dark",
+    background: {
+      paper: "#343434"
+    }
+  }
+};
 
-export default appTheme;
+export const createAppTheme = (type?: ThemeType) => {
+  const themeType = type
+    ? type
+    : localStorage.getItem(LOCAL_STORAGE_KEYS.THEME_TYPES);
+  
 
-export const createUpdatedAppTheme = (update: ThemeOptions) => {
-  const updateSettings = {
-    ...settings,
-    ...update
-  };
+  console.log(`theme type: ${themeType}`)
+  let themeOptions = themeSettings;
 
-  let updatedAppTheme = createTheme(updateSettings);
-  updatedAppTheme = responsiveFontSizes(updatedAppTheme);
+  if(themeType === "dark") {
+    themeOptions = { ...themeOptions, ...darkThemeOptions }
+  }
 
-  return updatedAppTheme;
+  return createTheme(themeOptions);
 };

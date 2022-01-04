@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Box, makeStyles, useTheme } from "@material-ui/core";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import DisplayedSymbol from "../DisplayedSymbol/DisplayedSymbol";
 import FadeAway from "../transitions/FadeAway/FadeAway";
 import { SymbolStyle, AnimateMistyped } from "../../types/themeTypes";
 import { getSymbolStyle } from "../DisplayedRow/helpFunctions";
+import { PlayPageThemeContext } from "../../styles/themeContexts";
 
 interface Props {
   TextCursor: JSX.Element | null;
@@ -35,7 +36,8 @@ function DisplayedSymbolWrapper({
   animateMistypedSymbol, symbolStyle, symbolPosition
 }: Props) {
   const classes = useStyles();
-  const { transitions, textDisplayTheme } = useTheme();
+  const { transitions } = useTheme();
+  const { state: textDisplayTheme } = useContext(PlayPageThemeContext)
   const [displayInvalid, setDisplayInvalid] = useState(false);
   const timeoutIdRef = useRef(-1);
 

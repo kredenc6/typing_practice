@@ -1,5 +1,6 @@
-import React from "react";
 import { Button, ButtonProps, makeStyles } from "@material-ui/core";
+import { useContext } from "react";
+import { PlayPageThemeContext } from "../../../styles/themeContexts";
 import { TextDisplayTheme } from "../../../types/themeTypes";
 
 const BUTTON_TEXT = "barevné téma";
@@ -10,12 +11,13 @@ interface Props extends ButtonProps {
 
 interface UseStylesProps {
   themeToSelect: Props["themeToSelect"];
+  textDisplayTheme: TextDisplayTheme;
 }
 
-const useStyles = makeStyles(({ palette, textDisplayTheme }) => ({
+const useStyles = makeStyles(({ palette }) => ({
   paletteButton: {
     backgroundColor: ({ themeToSelect }: UseStylesProps) => themeToSelect.background.main,
-    border: `1px solid ${textDisplayTheme.text.secondary}`,
+    border: ({ textDisplayTheme }: UseStylesProps) => `1px solid ${textDisplayTheme.text.secondary}`,
     "&.Mui-disabled": {
       border: `2px solid ${palette.info.dark}`
     },
@@ -46,7 +48,8 @@ const useStyles = makeStyles(({ palette, textDisplayTheme }) => ({
 export default function SelectTextDisplayThemeButton(
   { themeToSelect: availableTextDisplayTheme, ...buttonProps }: Props)
 {
-  const classes = useStyles({ themeToSelect: availableTextDisplayTheme });
+  const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
+  const classes = useStyles({ themeToSelect: availableTextDisplayTheme, textDisplayTheme });
 
   const ButtonSpanComponents = BUTTON_TEXT
     .split("")

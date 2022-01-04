@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { BrowserRouter as Router, Redirect, Route, Switch } from "react-router-dom";
 import { ThemeProvider as MuiThemeProvider } from "@material-ui/core";
 import PlayPage from "./pages/PlayPage/PlayPage";
@@ -8,9 +8,9 @@ import Timer from "./accessories/Timer";
 import getFontData from "./async/getFontData";
 import loadFont from "./async/loadFont";
 import { defaultTextDisplayFontData } from "./styles/textDisplayTheme/textDisplayData";
-import { FontData } from "./types/themeTypes";
-import { ThemeContext } from "./styles/themeContext";
-import { createUpdatedAppTheme } from "./styles/appTheme";
+import { FontData, ThemeType } from "./types/themeTypes";
+import { PlayPageThemeContext, PlayPageThemeProvider } from "./styles/themeContexts";
+import { createAppTheme } from "./styles/appTheme";
 import { AllowedMistype } from "./types/otherTypes";
 import { getKnownSymbols } from "./helpFunctions/getKnownSymbols";
 import "simplebar/dist/simplebar.min.css";
@@ -20,7 +20,8 @@ export default function App() {
   const [fontData, setFontData] = useState(defaultTextDisplayFontData);
   const [isFontDataLoading, setIsFontDataLoading] = useState(false);
   const [text, setText] = useState("");
-  const { state: theme } = useContext(ThemeContext);
+  const [appTheme, setAppTheme] = useState(createAppTheme());
+  const { state: playPageTheme, update: updatePlayPageTheme } = useContext(PlayPageThemeContext);
   const [allowedMistype, setAllowedMistype] = useState<AllowedMistype>({
     count: 1, isAllowed: true
   });
@@ -36,11 +37,11 @@ export default function App() {
     setIsFontDataLoading(true);
     
     if(updatedFields.includes("fontSize")) {
-      const updatedTextDisplayTheme = { ...theme.textDisplayTheme };
+      const updatedTextDisplayTheme = { ...playPageTheme };
       const updatedSidePadding = fontSize;
       updatedTextDisplayTheme.offset.display.paddingRight = updatedSidePadding;
       updatedTextDisplayTheme.offset.display.paddingLeft = updatedSidePadding;
-      createUpdatedAppTheme({ textDisplayTheme: updatedTextDisplayTheme });
+      updatePlayPageTheme(updatedTextDisplayTheme);
       callback && callback();
       setIsFontDataLoading(false);
     }
@@ -81,7 +82,15 @@ export default function App() {
   }, [])
 
   return (
-    <MuiThemeProvider theme={theme}>
+    <MuiThemeProvider
+      theme={{
+        ...appTheme,
+        updateTheme: (themeType: ThemeType) => {
+          setAppTheme(createAppTheme(themeType)) ;
+          localStorage.setItem(LOCAL_STORAGE_KEYS.THEME_TYPES, themeType);
+        }
+      }}
+    >
       <Router>
         <Switch>
           <Route exact path="/">
@@ -91,14 +100,16 @@ export default function App() {
             <MainMenu setText={setText} knownSymbols={getKnownSymbols(fontData)} />
           </Route>
           <Route path="/playArea">
-            <PlayPage
-              fontData={fontData}
-              handleFontDataChange={handleFontDataChange}
-              isFontDataLoading={isFontDataLoading}
-              text={text}
-              timer={timer.current}
-              setAllowedMistype={setAllowedMistype}
-              allowedMistype={allowedMistype} />
+            <PlayPageThemeProvider>
+              <PlayPage
+                fontData={fontData}
+                handleFontDataChange={handleFontDataChange}
+                isFontDataLoading={isFontDataLoading}
+                text={text}
+                timer={timer.current}
+                setAllowedMistype={setAllowedMistype}
+                allowedMistype={allowedMistype} />
+            </PlayPageThemeProvider>
           </Route>
           <Route path="/statistics">
             <Statistics />
@@ -128,3 +139,4 @@ export default function App() {
 // TODO for performance - I could split the text to the visible part and make a symbol...
 // ...row object just from that. The rest of the symbol row object would be stored and...
 // ...updated(on the row change?) separately from the render function
+// BUG in playArea menu button are selectable - if some of them stays active it de/pops the menu on spacebar (annoying during typing)

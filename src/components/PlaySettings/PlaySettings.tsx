@@ -7,9 +7,9 @@ import TextDisplayThemeSelector from "../TextDisplayThemeSelector/TextDisplayThe
 import MistypeSettings from "./MistypeSettings/MistypeSettings";
 import PlaySettingsPopper from "./PlaySettingsPopper/PlaySettingsPopper";
 import { FontData, TextDisplayTheme } from "../../types/themeTypes";
-import { ThemeContext } from "../../styles/themeContext";
-import { createUpdatedAppTheme } from "../../styles/appTheme";
+import { PlayPageThemeContext } from "../../styles/themeContexts";
 import { AllowedMistype } from "../../types/otherTypes";
+import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
 
 interface Props {
   fontData: FontData;
@@ -21,24 +21,24 @@ interface Props {
   allowedMistype: AllowedMistype;
 }
 
-const useStyles = makeStyles(({ textDisplayTheme }) => ({
+const useStyles = makeStyles({
   header: {
     display: "grid",
     justifyContent: "space-between",
     alignItems: "center",
     gridTemplateColumns: "auto auto",
     padding: "0.5rem 4rem",
-    backgroundColor: textDisplayTheme.background.secondary,
-    color: textDisplayTheme.text.main,
-    borderBottom: `1px solid ${textDisplayTheme.text.secondary}`
+    backgroundColor: (textDisplayTheme: TextDisplayTheme) => textDisplayTheme.background.secondary,
+    color: (textDisplayTheme: TextDisplayTheme) => textDisplayTheme.text.main,
+    borderBottom: (textDisplayTheme: TextDisplayTheme) => `1px solid ${textDisplayTheme.text.secondary}`
   },
   iconButton: {
-    color: textDisplayTheme.text.secondary
+    color: (textDisplayTheme: TextDisplayTheme) => textDisplayTheme.text.secondary
   },
   clickAwayWrapper: {
     display: "inline-block"
   }
-}));
+});
 
 export default function PlaySettings({
   fontData,
@@ -49,24 +49,22 @@ export default function PlaySettings({
   allowedMistype,
   setAllowedMistype
 }: Props) {
-  const classes = useStyles();
-  const { state: theme, update: updateTheme } = useContext(ThemeContext);
+  const { state: textDisplayTheme, update: updateTextDisplayTheme } = useContext(PlayPageThemeContext);
+  const classes = useStyles(textDisplayTheme);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [popperOpenedBy, setPopperOpenedBy] = useState("");
   
   const handleTextDisplayThemeChange = (newTheme: Omit<TextDisplayTheme, "offset">) => {
-    const updatedTextDisplaytheme = { ...theme.textDisplayTheme, ...newTheme };
-    const updatedAppTheme = createUpdatedAppTheme({ textDisplayTheme: updatedTextDisplaytheme });
-    updateTheme(updatedAppTheme);
-    localStorage.setItem("typingPracticeTextDisplayTheme", JSON.stringify(updatedTextDisplaytheme));
+    const updatedTextDisplaytheme = { ...textDisplayTheme, ...newTheme };
+    updateTextDisplayTheme(updatedTextDisplaytheme);
+    localStorage.setItem(LOCAL_STORAGE_KEYS.TEXT_DISPLAY_THEME, JSON.stringify(updatedTextDisplaytheme));
   };
 
   const adjustSymbolRightMargin = (marginRight: string) => {
-    const updatedTextDisplaytheme = { ...theme.textDisplayTheme };
+    const updatedTextDisplaytheme = { ...textDisplayTheme };
     updatedTextDisplaytheme.offset.symbol.marginRight = marginRight;
     
-    const updatedAppTheme = createUpdatedAppTheme({ textDisplayTheme: updatedTextDisplaytheme });
-    updateTheme(updatedAppTheme);
+    updateTextDisplayTheme(updatedTextDisplaytheme);
   };
 
   const handleClick = (buttonId: string) => {
@@ -96,7 +94,7 @@ export default function PlaySettings({
       return (
         <TextDisplayThemeSelector
           handleTextDisplayThemeChange={handleTextDisplayThemeChange}
-          textDisplayTheme={theme.textDisplayTheme} />
+          textDisplayTheme={textDisplayTheme} />
       );
     }
     if(popperOpenedBy === "gameSettings") {

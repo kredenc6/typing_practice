@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Box, Typography, makeStyles } from "@material-ui/core";
+import { useEffect, useState } from "react";
+import { Box, Typography, makeStyles, useTheme } from "@material-ui/core";
 import ReactApexCharts from "react-apexcharts";
-import { defaultLastResultsChartOptions, timestampsToXAxisCategories } from "../Statistics/chartOptions";
+import { createLastResultsChartOptions, defaultLastResultsChartOptions as defaultLatestResultsChartOptions, timestampsToXAxisCategories } from "../Statistics/chartOptions";
 
 const LAST_RESULTS_CHART_MINIMAL_WIDTH = 500;
 
@@ -29,22 +29,29 @@ const useStyles = makeStyles({
   }
 });
 
-export default function LastResultsChart({ precision, typingSpeed, textLength, timestamps }: Props) {
+export default function LatestResultsChart({ precision, typingSpeed, textLength, timestamps }: Props) {
+  const theme = useTheme();
   const classes = useStyles();
   const chartWidth = `${Math.max(LAST_RESULTS_CHART_MINIMAL_WIDTH, typingSpeed.length * 120)}px`;
-  const [lastResultsChartOptions, setLastResultsChartOptions] = useState(defaultLastResultsChartOptions);
+  const [latestResultsChartOptions, setLatestResultsChartOptions] = useState(createLastResultsChartOptions(theme));
 
   useEffect(() => {
     const xAxisCategories = timestampsToXAxisCategories(timestamps);
-    setLastResultsChartOptions(prev => {
+    setLatestResultsChartOptions(prev => {
       return {
         ...prev,
+        chart: {
+          ...prev.chart, foreColor: theme.palette.text.primary
+        },
+        tooltip: {
+          ...prev.tooltip, theme: theme.palette.type
+        },
         xaxis: {
           ...prev.xaxis, categories: xAxisCategories
         }
       }
     });
-  }, [timestamps])
+  }, [timestamps, theme])
 
   return (
     <Box className={classes.lastResultsChartWrapper}>
@@ -56,7 +63,7 @@ export default function LastResultsChart({ precision, typingSpeed, textLength, t
             </Box>
           : <ReactApexCharts
               id="lastResultsChart"
-              options={lastResultsChartOptions}
+              options={latestResultsChartOptions}
               series={[
                 { name: "přesnost", data: precision, type: "bar" },
                 { name: "rychlost", data: typingSpeed, type: "bar" },

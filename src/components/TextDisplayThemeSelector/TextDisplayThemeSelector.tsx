@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, makeStyles } from "@material-ui/core";
 import SelectTextDisplayThemeButton from "./SelectTextDisplayThemeButton/SelectTextDisplayThemeButton";
 import * as availableTextDisplayPalettes from "../../styles/textDisplayPaletes";
@@ -9,18 +8,18 @@ interface Props {
   textDisplayTheme: TextDisplayTheme
 }
 
-const useStyles = makeStyles(({ textDisplayTheme }) => ({
+const useStyles = makeStyles({
   themeSelector: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
     gap: "1.5rem",
     padding: "1rem",
-    backgroungColor: textDisplayTheme.background.secondary
+    backgroungColor: ( textDisplayTheme: TextDisplayTheme) => textDisplayTheme.background.secondary
   }
-}));
+});
 
 export default function TextDisplayThemeSelector({ handleTextDisplayThemeChange, textDisplayTheme }: Props) {
-  const classes = useStyles();
+  const classes = useStyles(textDisplayTheme);
   const handleClick = (palette: Omit<TextDisplayTheme, "offset">) => {
     handleTextDisplayThemeChange(palette);
   };

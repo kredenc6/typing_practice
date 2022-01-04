@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { makeStyles, Fade, Box } from "@material-ui/core";
 import PlaySettings from "../../components/PlaySettings/PlaySettings";
 import TextDisplay from "../../components/TextDisplay/TextDisplay";
 import TypingResults from "../../components/TypingResults/TypingResults";
-import { FontData } from "../../types/themeTypes";
+import { FontData, TextDisplayTheme } from "../../types/themeTypes";
 import { Redirect } from "react-router";
 import Timer from "../../accessories/Timer";
 import { AllowedMistype, GameStatus, Results } from "../../types/otherTypes";
 import { saveMistypedWords } from "../../components/TextDisplay/helpFunctions";
 import { LAST_RESULTS_SAVE_COUNT, LOCAL_STORAGE_KEYS } from "../../constants/constants";
+import { PlayPageThemeContext } from "../../styles/themeContexts";
 
 interface Props {
   fontData: FontData;
@@ -20,19 +21,19 @@ interface Props {
   allowedMistype: AllowedMistype;
 }
 
-const useStyles = makeStyles(({ textDisplayTheme }) => ({
+const useStyles = makeStyles({
   playPage: {
     position: "relative",
     display: "flex",
     flexDirection: "column",
     height: "100vh",
-    backgroundColor: textDisplayTheme.background.main
+    backgroundColor: ({ background} : TextDisplayTheme) => background.main
   },
   resultWrapper: {
     flexGrow: 1,
     zIndex: 2
   }
-}));
+});
 
 export default function PlayPage({
   fontData,
@@ -43,7 +44,8 @@ export default function PlayPage({
   setAllowedMistype,
   allowedMistype
 }: Props) {
-  const classes = useStyles();
+  const { state: playPageTheme } = useContext(PlayPageThemeContext); 
+  const classes = useStyles(playPageTheme);
   const [restart , setRestart] = useState(false);
   const [gameStatus, setGameStatus] = useState<GameStatus>("settingUp");
   const [resultObj, setResultObj] = useState<Results | null>(null);

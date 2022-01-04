@@ -1,7 +1,9 @@
-import React from "react";
+import { useContext } from "react";
 import { makeStyles, Popper, PopperProps } from "@material-ui/core";
+import { PlayPageThemeContext } from "../../../styles/themeContexts";
+import { TextDisplayTheme } from "../../../types/themeTypes";
 
-const useStyles = makeStyles(({ textDisplayTheme }) => ({
+const useStyles = makeStyles({
   popper: {
     width: "23rem",
     display: "flex",
@@ -9,17 +11,18 @@ const useStyles = makeStyles(({ textDisplayTheme }) => ({
     alignItems: "center",
     marginTop: "-1px",
     padding: "0.5rem",
-    backgroundColor: textDisplayTheme.background.secondary,
-    borderTop: `1px solid ${textDisplayTheme.background.secondary}`,
-    borderRight: `1px solid ${textDisplayTheme.text.secondary}`,
-    borderBottom: `1px solid ${textDisplayTheme.text.secondary}`,
-    borderLeft: `1px solid ${textDisplayTheme.text.secondary}`,
+    backgroundColor: (textDisplayTheme: TextDisplayTheme) => textDisplayTheme.background.secondary,
+    borderTop: (textDisplayTheme: TextDisplayTheme) => `1px solid ${textDisplayTheme.background.secondary}`,
+    borderRight: (textDisplayTheme: TextDisplayTheme) => `1px solid ${textDisplayTheme.text.secondary}`,
+    borderBottom: (textDisplayTheme: TextDisplayTheme) => `1px solid ${textDisplayTheme.text.secondary}`,
+    borderLeft: (textDisplayTheme: TextDisplayTheme) => `1px solid ${textDisplayTheme.text.secondary}`,
     zIndex: 3
   }
-}));
+});
 
 export default function PlaySettingPopper({ children, ...popperProps }: PopperProps) {
-  const classes = useStyles();
+  const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
+  const classes = useStyles(textDisplayTheme);
 
   return (
     <Popper

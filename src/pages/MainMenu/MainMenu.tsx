@@ -11,6 +11,7 @@ import adjustLoadedTextLength from "../../textFunctions/adjustLoadedTextLength";
 import { getInvalidSymbols } from "../../helpFunctions/getInvalidSymbols";
 import adjustTextGeneral from "../../textFunctions/adjustTextGeneral";
 import { useTextToTextField } from "../../customHooks/useTextToTextField";
+import ThemeSwitch from "../../components/ThemeSwith/ThemeSwith";
 
 interface Props {
   setText: React.Dispatch<React.SetStateAction<string>>;
@@ -22,19 +23,34 @@ export interface InsertTextOnLoad {
   boolean: boolean;
 }
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ palette }) => ({
   mainMenu: {
     maxWidth: "1920px",
     width: "100vw",
     height: "100vh",
     display: "flex",
     flexFlow: "column",
-    margin: "0 auto"
+    margin: "0 auto",
+    backgroundColor: palette.background.default,
+    color: palette.text.primary
   },
   startButton: {
     margin: "1rem auto"
   }
-});
+}));
+// const useStyles = makeStyles({
+//   mainMenu: {
+//     maxWidth: "1920px",
+//     width: "100vw",
+//     height: "100vh",
+//     display: "flex",
+//     flexFlow: "column",
+//     margin: "0 auto"
+//   },
+//   startButton: {
+//     margin: "1rem auto"
+//   }
+// });
 
 // TODO setText maximum length
 export default function MainMenu({ setText, knownSymbols }: Props) {
@@ -92,6 +108,7 @@ export default function MainMenu({ setText, knownSymbols }: Props) {
 
   return (
     <Box className={classes.mainMenu}>
+      <ThemeSwitch />
       <TextFieldSection setTextInput={setTextInput} textInput={textInput} />
       <LoadTextSection
         handleLoadArcticle={handleLoadArcticle}
