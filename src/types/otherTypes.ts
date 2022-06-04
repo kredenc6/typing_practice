@@ -39,3 +39,5 @@ export type MistypedWordsLog = {
     sumOfMistypes: number;
   }
 }
+
+export type SortBy = "count:desc" | "count:asc" | "time:desc" | "time:asc";

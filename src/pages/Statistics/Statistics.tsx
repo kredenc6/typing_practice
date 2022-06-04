@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { Box, makeStyles } from "@material-ui/core";
 import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
-import { MistypedWordsLog, Results } from "../../types/otherTypes";
-import { calcMistypedWordsChartWidth, sortMistypedWords } from "./helpFunction";
-import MistypedWordsChartWrapper from "../MistypedWordsChartWrapper/MistypedWordsChartWrapper";
-import LatestResultsChart from "../LatestResultsChart/LatestResultsChart";
-import ThemeSwitch from "../ThemeSwith/ThemeSwith";
+import { MistypedWordsLog, Results, SortBy } from "../../types/otherTypes";
+import { sortMistypedWords, transformMistypeWordsToSeries } from "./helpFunction";
+import MistypedWordsChartWrapper from "../../components/MistypedWordsChartWrapper/MistypedWordsChartWrapper";
+import LatestResultsChart from "../../components/LatestResultsChart/LatestResultsChart";
+import ThemeSwitch from "../../components/ThemeSwith/ThemeSwith";
 
-const MISTYPE_WORDS_CHART_MIN_HEIGHT = 150;
-const MISTYPE_WORDS_CHART_MIN_WIDTH = 250;
+const DEAFULT_SORT_BY = "count:desc";
 
 const useStyles = makeStyles(({ palette }) => ({
   statistics: {
@@ -28,9 +27,9 @@ export default function Statistics() {
   const [typingSpeed, setTypingSpeed] = useState<number[]>([]);
   const [textLength, setTextLength] = useState<number[]>([]);
   const [timestamps, setTimestamps] = useState<number[]>([]);
+  const [mistypedWords, setMistypedWords] = useState<MistypedWordsLog>({});
   const [mistypedWordsSeries, setMistypedWordsSeries] = useState<{x: string; y: number; }[]>([]);
-  const [mistypedWordsChartHeight, setMistypedWordsChartHeight] = useState(MISTYPE_WORDS_CHART_MIN_HEIGHT);
-  const [mistypedWordsChartWidth, setMistypedWordsChartWidth] = useState(`${MISTYPE_WORDS_CHART_MIN_WIDTH}px`);
+  const [sortBy, setSortBy] = useState<SortBy>(DEAFULT_SORT_BY);
 
   useEffect(() => {
     const lastResultsFromStorage = localStorage.getItem(LOCAL_STORAGE_KEYS.LAST_RESULTS);
@@ -59,20 +58,15 @@ export default function Statistics() {
 
     if(mistypedWordsFromStorage) {
       const savedMistypedWords = JSON.parse(mistypedWordsFromStorage) as MistypedWordsLog;
-      const sortedMistypedWordsKeyValue = sortMistypedWords(savedMistypedWords);
-      
-      let mistypesCount = 0;
-      const mistypedWordsSeries = sortedMistypedWordsKeyValue
-        .map(([key, { sumOfMistypes }]) => {
-          mistypesCount += sumOfMistypes;  
-          return { x: key, y: sumOfMistypes };
-        });
-      setMistypedWordsSeries(mistypedWordsSeries);
-      setMistypedWordsChartHeight( Math.max(MISTYPE_WORDS_CHART_MIN_HEIGHT, mistypesCount * 3));
-      const calculatedMistypedWordsChartWidth = calcMistypedWordsChartWidth(mistypesCount);
-      setMistypedWordsChartWidth(calculatedMistypedWordsChartWidth);
+      setMistypedWords(savedMistypedWords);
     }
   }, [])
+
+  useEffect(() => {
+    const sortedMistypedWordsKeyValue = sortMistypedWords(mistypedWords, sortBy);
+    const mistypedWordsSeries = transformMistypeWordsToSeries(sortedMistypedWordsKeyValue);
+    setMistypedWordsSeries(mistypedWordsSeries);
+  },[sortBy, mistypedWords]);
 
   return (
     <Box className={classes.statistics}>
@@ -83,9 +77,14 @@ export default function Statistics() {
         timestamps={timestamps}
         typingSpeed={typingSpeed} />
       <MistypedWordsChartWrapper
-        mistypedWordsChartHeight={mistypedWordsChartHeight}
-        mistypedWordsChartWidth={mistypedWordsChartWidth}
+        sortBy={sortBy}
+        handleSortChange={setSortBy}
         mistypedWordsSeries={mistypedWordsSeries} />
     </Box>
   );
 }
+
+// TODO already sorted results could be saved in state
+// TODO try to switch text length line for bar and the other two for line (in the chart)
+// TODO add alphabetical sorting
+// TODO add text filtering

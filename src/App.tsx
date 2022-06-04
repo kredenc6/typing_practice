@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Redirect, Route, Switch } from "react-router-d
 import { ThemeProvider as MuiThemeProvider } from "@material-ui/core";
 import PlayPage from "./pages/PlayPage/PlayPage";
 import MainMenu from "./pages/MainMenu/MainMenu";
-import Statistics from "./components/Statistics/Statistics";
+import Statistics from "./pages/Statistics/Statistics";
 import Timer from "./accessories/Timer";
 import getFontData from "./async/getFontData";
 import loadFont from "./async/loadFont";
@@ -140,3 +140,9 @@ export default function App() {
 // ...row object just from that. The rest of the symbol row object would be stored and...
 // ...updated(on the row change?) separately from the render function
 // BUG in playArea menu button are selectable - if some of them stays active it de/pops the menu on spacebar (annoying during typing)
+
+// TODO  add descriptions to main menu text adjustments
+// TODO add text adjustment for czech and english keyboard
+// TODO blue color in dark theme is poorly readable
+// TODO style scrollbar along with  theme
+// TODO save sorting selection(in statistics) permanently

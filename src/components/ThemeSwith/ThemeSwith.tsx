@@ -16,9 +16,10 @@ const useStyles = makeStyles( ({ palette, transitions }) => ({
     border: `1px solid ${palette.divider}`,
     borderRadius: "30px",
     backgroundColor: palette.background.default,
+    zIndex: 1,
     "&:hover": {
       cursor: "pointer"
-    },
+    }
   },
   themeSwitchIcon: {
     color: palette.text.primary

@@ -116,3 +116,5 @@ export default function TypingResults({ resultObj }: Props) {
     </Box>
   );
 }
+
+// BUG there's a body scrollbar on notebook screen
