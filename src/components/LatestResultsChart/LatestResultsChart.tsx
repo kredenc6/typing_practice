@@ -27,8 +27,7 @@ const useStyles = makeStyles({
   },
   chart: {
     width: "min-content",
-    margin: "0 auto",
-    border: "1px solid blue"
+    margin: "0 auto"
   }
 });
 

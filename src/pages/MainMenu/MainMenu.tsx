@@ -38,19 +38,6 @@ const useStyles = makeStyles(({ palette }) => ({
     margin: "1rem auto"
   }
 }));
-// const useStyles = makeStyles({
-//   mainMenu: {
-//     maxWidth: "1920px",
-//     width: "100vw",
-//     height: "100vh",
-//     display: "flex",
-//     flexFlow: "column",
-//     margin: "0 auto"
-//   },
-//   startButton: {
-//     margin: "1rem auto"
-//   }
-// });
 
 // TODO setText maximum length
 export default function MainMenu({ setText, knownSymbols }: Props) {

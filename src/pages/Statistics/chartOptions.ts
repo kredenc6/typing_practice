@@ -101,6 +101,9 @@ export const createMistypedWordsChartOptions = (theme: Theme): ApexOptions => ({
       horizontal: true
     }
   },
+  dataLabels: {
+    formatter: value => `${value}x`
+  },
   tooltip: {
     y: {
       title: {

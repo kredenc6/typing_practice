@@ -40,4 +40,4 @@ export type MistypedWordsLog = {
   }
 }
 
-export type SortBy = "count:desc" | "count:asc" | "time:desc" | "time:asc";
+export type SortBy = "alphabetical:desc" | "alphabetical:asc" | "count:desc" | "count:asc" | "time:desc" | "time:asc";

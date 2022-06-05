@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
 import { Box, makeStyles } from "@material-ui/core";
 import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
-import { MistypedWordsLog, Results, SortBy } from "../../types/otherTypes";
-import { sortMistypedWords, transformMistypeWordsToSeries } from "./helpFunction";
+import { MistypedWordsLog, Results } from "../../types/otherTypes";
 import MistypedWordsChartWrapper from "../../components/MistypedWordsChartWrapper/MistypedWordsChartWrapper";
 import LatestResultsChart from "../../components/LatestResultsChart/LatestResultsChart";
 import ThemeSwitch from "../../components/ThemeSwith/ThemeSwith";
-
-const DEAFULT_SORT_BY = "count:desc";
 
 const useStyles = makeStyles(({ palette }) => ({
   statistics: {
@@ -28,8 +25,6 @@ export default function Statistics() {
   const [textLength, setTextLength] = useState<number[]>([]);
   const [timestamps, setTimestamps] = useState<number[]>([]);
   const [mistypedWords, setMistypedWords] = useState<MistypedWordsLog>({});
-  const [mistypedWordsSeries, setMistypedWordsSeries] = useState<{x: string; y: number; }[]>([]);
-  const [sortBy, setSortBy] = useState<SortBy>(DEAFULT_SORT_BY);
 
   useEffect(() => {
     const lastResultsFromStorage = localStorage.getItem(LOCAL_STORAGE_KEYS.LAST_RESULTS);
@@ -62,12 +57,6 @@ export default function Statistics() {
     }
   }, [])
 
-  useEffect(() => {
-    const sortedMistypedWordsKeyValue = sortMistypedWords(mistypedWords, sortBy);
-    const mistypedWordsSeries = transformMistypeWordsToSeries(sortedMistypedWordsKeyValue);
-    setMistypedWordsSeries(mistypedWordsSeries);
-  },[sortBy, mistypedWords]);
-
   return (
     <Box className={classes.statistics}>
       <ThemeSwitch />
@@ -77,9 +66,7 @@ export default function Statistics() {
         timestamps={timestamps}
         typingSpeed={typingSpeed} />
       <MistypedWordsChartWrapper
-        sortBy={sortBy}
-        handleSortChange={setSortBy}
-        mistypedWordsSeries={mistypedWordsSeries} />
+        mistypedWords={mistypedWords} />
     </Box>
   );
 }

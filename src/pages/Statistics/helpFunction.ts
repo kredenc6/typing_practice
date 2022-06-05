@@ -27,6 +27,17 @@ export const sortMistypedWords = (mistypedWords: MistypedWordsLog, sortBy: SortB
     );
   }
 
+  if(sort === "alphabetical") {
+    const sortingCoefficient = direction === "asc" ? 1 : -1;
+    return Object.entries(mistypedWords)
+      .sort(([wordA], [wordB]) => {
+        return (
+          sortingCoefficient *
+          new Intl.Collator("cz").compare(wordA, wordB)
+        );
+      });
+  }
+
   // default fallback
   return _.orderBy(
     Object.entries(mistypedWords),
@@ -53,13 +64,22 @@ export const transformMistypeWordsToSeries = (mistypedwords: ReturnType<typeof s
   });
 };
 
-export const calculateHeight_MistypedWordsChart = (wordCount: number) => {
+export const getMistypedWordsChartHeight = (wrapperHeight: number) => {
   const MIN_HEIGHT_PX = 250;
-  const HEIGHT_PER_WORD_PX = 30;
-  const calculatedHeight = wordCount * HEIGHT_PER_WORD_PX;
+  const LINE_COUNT = 10;
+  const WRAPPER_HEIGHT_DIVIDER = 11.5;
+  const calculatedHeight = Math.round(wrapperHeight / WRAPPER_HEIGHT_DIVIDER * LINE_COUNT);
 
   return `${Math.max(MIN_HEIGHT_PX, calculatedHeight)}px`;
 };
+
+// export const calculateHeight_MistypedWordsChart = (wordCount: number) => {
+//   const MIN_HEIGHT_PX = 250;
+//   const HEIGHT_PER_WORD_PX = 32;
+//   const calculatedHeight = wordCount * HEIGHT_PER_WORD_PX;
+
+//   return `${Math.max(MIN_HEIGHT_PX, calculatedHeight)}px`;
+// };
 
 export const getLastMistypeFromChartOptions = (options: any) => {
   const { dataPointIndex, w: { config: { series } } } = options;

@@ -24,8 +24,6 @@ export const createAppTheme = (type?: ThemeType) => {
     ? type
     : localStorage.getItem(LOCAL_STORAGE_KEYS.THEME_TYPES);
   
-
-  console.log(`theme type: ${themeType}`)
   let themeOptions = themeSettings;
 
   if(themeType === "dark") {

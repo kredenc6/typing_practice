@@ -53,6 +53,17 @@ export default function MistypedWordsFilter({ sortBy, handleSortChange }: Props)
   return (
     <Box className={classes.mistypedWordsFilter}>
       <Box className={classes.filterOption}>
+        <Typography variant="body2">abecedně</Typography>
+        <Box className={classes.arrowWrapper}>
+          <KeyboardArrowUp
+            className={classNames(classes.arrowIcon, sortBy==="alphabetical:asc" && classes.arrowIconActive) }
+            onClick={() => handleSortChange("alphabetical:asc")} />
+          <KeyboardArrowDown
+            className={classNames(classes.arrowIcon, sortBy==="alphabetical:desc" && classes.arrowIconActive) }
+            onClick={() => handleSortChange("alphabetical:desc")} />
+        </Box>
+      </Box>
+      <Box className={classes.filterOption}>
         <Typography variant="body2">nedávné</Typography>
         <Box className={classes.arrowWrapper}>
           <KeyboardArrowUp
