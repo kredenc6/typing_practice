@@ -47,7 +47,7 @@ const useStyles = makeStyles(({palette}) => ({
   }
 }));
 
-export default function MistypedWordsFilter({ sortBy, handleSortChange }: Props) {
+export default function MistypedWordsSorter({ sortBy, handleSortChange }: Props) {
   const classes = useStyles();
 
   return (

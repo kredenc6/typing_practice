@@ -51,7 +51,6 @@ export const sortMistypedWords = (mistypedWords: MistypedWordsLog, sortBy: SortB
 
 export const transformMistypeWordsToSeries = (mistypedwords: ReturnType<typeof sortMistypedWords>) => {
   return mistypedwords
-    // .slice(0, 5)
     .map(([key, { timestamps }]) => {
       return {
         x: key,
@@ -65,25 +64,32 @@ export const transformMistypeWordsToSeries = (mistypedwords: ReturnType<typeof s
 };
 
 export const getMistypedWordsChartHeight = (wrapperHeight: number) => {
-  const MIN_HEIGHT_PX = 250;
   const LINE_COUNT = 10;
+  const MIN_HEIGHT_PX = 250;
   const WRAPPER_HEIGHT_DIVIDER = 11.5;
   const calculatedHeight = Math.round(wrapperHeight / WRAPPER_HEIGHT_DIVIDER * LINE_COUNT);
 
   return `${Math.max(MIN_HEIGHT_PX, calculatedHeight)}px`;
 };
 
-// export const calculateHeight_MistypedWordsChart = (wordCount: number) => {
-//   const MIN_HEIGHT_PX = 250;
-//   const HEIGHT_PER_WORD_PX = 32;
-//   const calculatedHeight = wordCount * HEIGHT_PER_WORD_PX;
-
-//   return `${Math.max(MIN_HEIGHT_PX, calculatedHeight)}px`;
-// };
-
 export const getLastMistypeFromChartOptions = (options: any) => {
   const { dataPointIndex, w: { config: { series } } } = options;
   const timestamps = series[0]?.data[dataPointIndex]?.timestamps?.array;
   const lastMistype = new Date(timestamps[timestamps.length - 1]);
   return dateFormat(lastMistype, "d.m. H:MM");
+};
+
+
+export const filterMistypedWords = (
+  mistypedWords: MistypedWordsLog, filter: string
+): MistypedWordsLog => {
+  if(filter === "") {
+    return mistypedWords;
+  }
+
+  return _.flow([
+    Object.entries,
+    arr => arr.filter(([key]: [string]) => key.includes(filter)),
+    Object.fromEntries
+  ])(mistypedWords);
 };

@@ -1,15 +1,15 @@
 import { useState, useRef, useEffect } from "react";
-import { Box, Paper, Typography, makeStyles } from "@material-ui/core";
-import MistypedWordsFilter from "../MistypedWordsFilter/MistypedWordsFilter";
+import { Box, Paper, Typography, makeStyles, TextField } from "@material-ui/core";
+import MistypedWordsSorter from "../MistypedWordsSorter/MistypedWordsSorter";
 import MistypedWordsChart from "../MistypedWordsChart/MistypedWordsChart";
 import { MistypedWordsLog, SortBy } from "../../types/otherTypes";
-import { getMistypedWordsChartHeight, sortMistypedWords, transformMistypeWordsToSeries } from "../../pages/Statistics/helpFunction";
+import { filterMistypedWords, getMistypedWordsChartHeight, sortMistypedWords, transformMistypeWordsToSeries } from "../../pages/Statistics/helpFunction";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 
 const DEFAULT_SORT_BY = "count:desc";
 const SHOWED_MISTYPED_WORDS_COUNT = 10;
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(({ palette }) => ({
   mistypedWordsWrapper: {
     position: "relative",
     width: "90vw",
@@ -28,8 +28,32 @@ const useStyles = makeStyles({
     display: "inline-block",
     fontSize: "0.7rem",
     verticalAlign: "top"
+  },
+  filter: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    zIndex: 1,
+    "& .MuiFormLabel-root": {
+      padding: "0 0.3rem",
+      background: palette.background.paper,
+      borderRadius: "0.2rem"
+    },
+    "& .MuiFormLabel-root.Mui-focused": {
+      color: palette.info.main
+    },
+    "& input + fieldset": {
+      borderTop: "none",
+      borderLeft: "none"
+    },
+    "& input:hover + fieldset": {
+      borderColor: `${palette.info.main} !important`
+    },
+    "& input:focus + fieldset": {
+      borderColor: `${palette.info.main} !important`
+    }
   }
-});
+}));
 
 interface Props {
   mistypedWords: MistypedWordsLog;
@@ -37,11 +61,12 @@ interface Props {
 
 export default function MistypedWordsChartWrapper({ mistypedWords }: Props) {
   const classes = useStyles();
-  const [mistypedWordsCount, setMistypedWordsCount] = useState(0);
-  const [mistypedWordsSeries, setMistypedWordsSeries] = useState<{x: string; y: number; }[]>([]);
+  const [filteredMistypedWords, setFilteredMistypedWords] = useState<any[]>([]);
+  const [displayedMistypedWordsSeries, setDisplayedMistypedWordsSeries] = useState<{x: string; y: number; }[]>([]);
   const [displayedMistypedWordsRange, setDisplayedMistypedWordsRange] = useState<[number, number]>([0, SHOWED_MISTYPED_WORDS_COUNT]);
   const [sortBy, setSortBy] = useState<SortBy>(DEFAULT_SORT_BY);
   const [chartHeight, setChartHeight] = useState("0px");
+  const [filter, setFilter] = useState("");
 
   const testRef = useRef<null | HTMLElement>(null);
 
@@ -53,10 +78,10 @@ export default function MistypedWordsChartWrapper({ mistypedWords }: Props) {
       })
     }
     else {
-      const mistypedWordCount = Object.keys(mistypedWords).length;
+      const filteredMistypedWordCount = filteredMistypedWords.length;
       setDisplayedMistypedWordsRange(prev => {
         const arrIndexStart = Math.min(
-          mistypedWordCount - SHOWED_MISTYPED_WORDS_COUNT,
+          filteredMistypedWordCount - SHOWED_MISTYPED_WORDS_COUNT,
           prev[0] + SHOWED_MISTYPED_WORDS_COUNT
         );
         return [arrIndexStart, arrIndexStart + SHOWED_MISTYPED_WORDS_COUNT];
@@ -68,16 +93,20 @@ export default function MistypedWordsChartWrapper({ mistypedWords }: Props) {
     setSortBy(value);
   };
 
-  useEffect(() => {
-    setMistypedWordsCount(Object.keys(mistypedWords).length);
-  }, [mistypedWords])
+  const handleFilterChange = (value: string) => {
+    setFilter(value);
+  };
 
   useEffect(() => {
-    const sortedMistypedWordsKeyValue = sortMistypedWords(mistypedWords, sortBy);
+    const filteredMistypedWordsSeries = filterMistypedWords(mistypedWords, filter);
+    const sortedMistypedWordsKeyValue = sortMistypedWords(filteredMistypedWordsSeries, sortBy);
+    setFilteredMistypedWords(sortedMistypedWordsKeyValue);
+
     const croppedMistypedWords = sortedMistypedWordsKeyValue.slice(...displayedMistypedWordsRange);
     const mistypedWordsSeries = transformMistypeWordsToSeries(croppedMistypedWords);
-    setMistypedWordsSeries(mistypedWordsSeries);
-  },[sortBy, mistypedWords, displayedMistypedWordsRange]);
+
+    setDisplayedMistypedWordsSeries(mistypedWordsSeries);
+  },[sortBy, mistypedWords, displayedMistypedWordsRange, filter]);
 
   useEffect(() => {
     if(testRef.current) {
@@ -88,23 +117,32 @@ export default function MistypedWordsChartWrapper({ mistypedWords }: Props) {
     }
   },[])
 
+
+
   return (
     <Paper ref={testRef} variant="outlined" className={classes.mistypedWordsWrapper}>
       <Typography variant="h6" align="center">
         Chybně napsaná slova
         <Typography variant="body2" className={classes.mistypedWordsRange}>
-          {`${displayedMistypedWordsRange[0] + 1} - ${displayedMistypedWordsRange[1]}/${mistypedWordsCount}`}
+          {`${displayedMistypedWordsRange[0] + 1} - ${displayedMistypedWordsRange[1]}/${filteredMistypedWords.length}`}
         </Typography>
       </Typography>
-      {mistypedWordsSeries?.length > 1 &&
-        <MistypedWordsFilter sortBy={sortBy} handleSortChange={handleSortChange} />
+      <TextField
+        value={filter}
+        label="najdi"
+        variant="outlined"
+        size="small"
+        onChange={e => handleFilterChange(e.target.value)}
+        className={classes.filter} />
+      {displayedMistypedWordsSeries?.length > 1 &&
+        <MistypedWordsSorter sortBy={sortBy} handleSortChange={handleSortChange} />
       }
-      {!mistypedWordsSeries?.length
+      {!displayedMistypedWordsSeries?.length
         ? <Box className={classes.noDataWrapper}>
             <Typography>...žádná nenalezena</Typography>
           </Box>
         : <MistypedWordsChart
-            mistypedWordsSeries={mistypedWordsSeries}
+            mistypedWordsSeries={displayedMistypedWordsSeries}
             handleWheel={handleWheel}
             chartHeight={chartHeight} />
       }
