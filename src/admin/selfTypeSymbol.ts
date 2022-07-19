@@ -1,3 +1,5 @@
+import { GameStatus } from "../types/otherTypes";
+
 interface SelfTypeOptions {
   delay: number,
 
@@ -16,8 +18,18 @@ export const selfTypeSymbol = (
   setTimeout(() => setEnteredSymbol(symbol), options.delay);
 };
 
-export const shouldStartSelfType = (ctrlKey: boolean, key: string) => {
+export const shouldStartSelfType = (ctrlKey: boolean, key: string, gameStatus: GameStatus) => {
   return (
+    gameStatus !== "selfType" &&
+    ctrlKey &&
+    key.toLowerCase() === "arrowdown" &&
+    process.env.NODE_ENV === "development"
+  ); 
+};
+
+export const shouldStopSelfType = (ctrlKey: boolean, key: string, gameStatus: GameStatus) => {
+  return (
+    gameStatus === "selfType" &&
     ctrlKey &&
     key.toLowerCase() === "arrowdown" &&
     process.env.NODE_ENV === "development"

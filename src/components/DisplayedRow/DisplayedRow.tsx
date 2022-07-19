@@ -11,7 +11,8 @@ import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeTo
 interface Props extends React.HTMLProps<HTMLDivElement> {
   fontSize: FontSize;
   row: Row;
-  setRowHeight?: React.Dispatch<React.SetStateAction<number>>;
+  setRowHeight: React.Dispatch<React.SetStateAction<number>>;
+  shouldSetRowHeight: boolean;
   textPosition: number;
   theme: TextDisplayTheme;
   enteredSymbol: string;
@@ -32,6 +33,7 @@ export default function DisplayedRow({
   fontSize,
   row: { words },
   setRowHeight,
+  shouldSetRowHeight,
   textPosition,
   theme,
   enteredSymbol,
@@ -43,7 +45,7 @@ export default function DisplayedRow({
   const divRef: React.MutableRefObject<null | HTMLDivElement> = useRef(null);
 
   useLayoutEffect(() => {
-    if(divRef.current && setRowHeight) {
+    if(divRef.current && shouldSetRowHeight) {
         const rowHeight = getComputedStyle(divRef.current!).height;
         setRowHeight(transformPixelSizeToNumber(rowHeight));
     }
@@ -58,7 +60,7 @@ export default function DisplayedRow({
           key={symbolPosition}
           symbolStyle={getSymbolStyle(correctness, relativePosition, theme)} // for memo
           symbol={symbol}
-          TextCursor={relativePosition === "active" ? <TextCursor height={fontSize === "20px" ? "2px" : "3px"} /> : null}
+          // TextCursor={relativePosition === "active" ? <TextCursor height={fontSize === "20px" ? "2px" : "3px"} /> : null}
           setAnimateMistypedSymbol={setAnimateMistypedSymbol}
           symbolPosition={symbolPosition}
           animateMistypedSymbol={animateMistypedSymbol} />

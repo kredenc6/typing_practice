@@ -2,9 +2,10 @@ import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeTo
 import { calcTypingPrecision, calcTypingSpeedInKeystrokes } from "../../helpFunctions/calcTypigSpeed";
 import { FontData, Offset } from "../../types/themeTypes";
 import { Row, SymbolCorrectness, SymbolWidths, WordObject } from "../../types/symbolTypes";
-import { AllowedMistype, GameStatus, MistypedWordsLog, Results } from "../../types/otherTypes";
+import { AllowedMistype, GameStatus, Results, MistypedWordsLogV2 } from "../../types/otherTypes";
 import { secondsToMMSS } from "../../helpFunctions/secondsToMMSS";
 import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
+import _ from "lodash";
 
 export const updateSymbolCorrectness = (
   symbolRows: Row[], rowPosition: number, textPosition: number, correctness: SymbolCorrectness
@@ -315,39 +316,130 @@ export const isPlayingGameStatus = (gameStatus: GameStatus) => {
   return ["playing", "selfType"].includes(gameStatus)
 };
 
-export const createMistypedWordsLog = (mistypedWords: WordObject[]) => {
+// export const createMistypedWordsLog = (mistypedWords: WordObject[]) => {
+//   return mistypedWords.reduce((accumulator, { string }) => {
+//     if(accumulator[string]) {
+//       accumulator[string].sumOfMistypes++;
+//     } else {
+//       accumulator[string] = {
+//         timestamps: [Date.now()],
+//         sumOfMistypes: 1
+//       }
+//     }
+//     return accumulator;
+//   }, {} as MistypedWordsLog)
+// };
+
+// export const saveMistypedWords = (mistypedWords: WordObject[]) => {
+//   const localStorageMistypedWords = localStorage.getItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS);
+//   const savedMistypedWords = localStorageMistypedWords
+//     ? JSON.parse(localStorageMistypedWords) as MistypedWordsLog
+//     : null;
+//   const mistypedWordsLog = createMistypedWordsLog(mistypedWords);
+
+//   if(savedMistypedWords) {
+//     Object.entries(mistypedWordsLog).forEach(([key, value]) => {
+//       if(savedMistypedWords[key]) {
+//         savedMistypedWords[key].sumOfMistypes += value.sumOfMistypes;
+//         savedMistypedWords[key].timestamps.push(...value.timestamps);
+//       } else {
+//         savedMistypedWords[key] = value;
+//       }
+//     })
+//     localStorage.setItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS, JSON.stringify(savedMistypedWords));
+//     return savedMistypedWords;
+//   } else {
+//     localStorage.setItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS, JSON.stringify(mistypedWordsLog));
+//   }
+// };
+
+const extractMistypedWords = (mistypedWords: WordObject[]) => {
   return mistypedWords.reduce((accumulator, { string }) => {
+    const timestamp = Date.now();
+    
     if(accumulator[string]) {
-      accumulator[string].sumOfMistypes++;
+      accumulator[string].push(timestamp);
     } else {
-      accumulator[string] = {
-        timestamps: [Date.now()],
-        sumOfMistypes: 1
-      }
+      accumulator[string] = [timestamp]
     }
+    
     return accumulator;
-  }, {} as MistypedWordsLog)
+  }, {} as {[key: string]: number[]})
 };
 
-export const saveMistypedWords = (mistypedWords: WordObject[]) => {
+export const saveMistypedWordsV2 = (mistypedWords: WordObject[]) => {
+  if(!mistypedWords.length) return;
+
   const localStorageMistypedWords = localStorage.getItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS);
   const savedMistypedWords = localStorageMistypedWords
-    ? JSON.parse(localStorageMistypedWords) as MistypedWordsLog
+    ? JSON.parse(localStorageMistypedWords) as MistypedWordsLogV2
     : null;
-  const mistypedWordsLog = createMistypedWordsLog(mistypedWords);
+  const mistypedWordsLog = extractMistypedWords(mistypedWords);
 
+  let mistypedWordsMap: Map<string, number[]> = new Map();
   if(savedMistypedWords) {
+    const mistypedWordsArr: [string, number[]][] = savedMistypedWords
+      .map(({ word, timestamps }) => [word, timestamps]);
+    mistypedWordsMap = new Map(mistypedWordsArr);
+    
     Object.entries(mistypedWordsLog).forEach(([key, value]) => {
-      if(savedMistypedWords[key]) {
-        savedMistypedWords[key].sumOfMistypes += value.sumOfMistypes;
-        savedMistypedWords[key].timestamps.push(...value.timestamps);
-      } else {
-        savedMistypedWords[key] = value;
-      }
-    })
-    localStorage.setItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS, JSON.stringify(savedMistypedWords));
-    return savedMistypedWords;
+      const timestamps = mistypedWordsMap.get(key) ?? [];
+      timestamps.push(...value);
+      mistypedWordsMap.set(key, timestamps);
+    });
+    
   } else {
-    localStorage.setItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS, JSON.stringify(mistypedWordsLog));
+    mistypedWordsMap = new Map(Object.entries(mistypedWordsLog));
   }
+
+  const newSavedMistypedWordsArr = Array.from(mistypedWordsMap);
+  const alphabetical: [number, string][] = []; // [index, word][]
+  const byTime: [number, number][] = []; // [index, lastMistype][]
+  const byMistypeCount: [number, number][] = [];  // [index, mistypeCount][]
+
+  for(let i=0; i<newSavedMistypedWordsArr.length; i++) {
+    const word = newSavedMistypedWordsArr[i][0];
+    alphabetical.push([i, word]);
+
+    const timestamps = newSavedMistypedWordsArr[i][1];
+    const lastMistype = timestamps[timestamps.length - 1]; 
+    byTime.push([i, lastMistype]);
+    
+    const mistypeCount = newSavedMistypedWordsArr[i][1].length;
+    byMistypeCount.push([i, mistypeCount]);
+  }
+
+  alphabetical.sort(([, wordA], [, wordB]) => wordA.localeCompare(wordB, "cz"));
+  byTime.sort(([, lastMistypeA], [, lastMistypeB]) => lastMistypeA - lastMistypeB);
+  byMistypeCount.sort(([, mistypeCountA], [, mistypeCountB]) => mistypeCountA - mistypeCountB);
+
+  const alphabeticalOrder: number[] = [];
+  const byTimeOrder: number[] = [];
+  const byMistypeCountOrder: number[] = [];
+  for(let i=0; i<newSavedMistypedWordsArr.length; i++) {
+    const alphabeticalOrderIndex = alphabetical[i][0];
+    const byTimeOrderIndex = byTime[i][0];
+    const byMistypeCountOrderIndex = byMistypeCount[i][0];
+
+    alphabeticalOrder[alphabeticalOrderIndex] = i
+    byTimeOrder[byTimeOrderIndex] = i
+    byMistypeCountOrder[byMistypeCountOrderIndex] = i
+  }
+
+  const newMistypedWordsLog: MistypedWordsLogV2 = newSavedMistypedWordsArr.map(([word, timestamps], i) => {
+    return {
+      word,
+      timestamps,
+      sorting: {
+        alphabetical: alphabeticalOrder[i],
+        byTime: byTimeOrder[i],
+        byMistypeCount: byMistypeCountOrder[i]
+      }
+    }
+  });
+
+  console.log({ newMistypedWordsLog, alphabetical })
+  localStorage.setItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS, JSON.stringify(newMistypedWordsLog));
+  // TODO add last update time for the whole saved object
+  // TODO make it async for performance reasons - create state to keep track if it is still computing (and display it where needed)
 };

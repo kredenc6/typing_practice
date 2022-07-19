@@ -16,7 +16,7 @@ import { PlayPageThemeContext } from "../../styles/themeContexts";
 import { transformTextToSymbolRows } from "../../textFunctions/transformTextToSymbolRows";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 import { AllowedMistype, GameStatus, Results, WordTimeObj } from "../../types/otherTypes";
-import { shouldStartSelfType } from "../../admin/selfTypeSymbol";
+import { shouldStartSelfType, shouldStopSelfType } from "../../admin/selfTypeSymbol";
 
 const LINE_MOVEMENT_MIN_POSITION = 3;
 const FIREFOX_PREVENTED_KEY_DEFAULTS = ["backspace", "'"];
@@ -214,9 +214,17 @@ export default function TextDisplay({
         e.preventDefault();
       }
 
+      const startSelfType = shouldStartSelfType(ctrlKey, key, gameStatus);
       // run self type
-      if( shouldStartSelfType(ctrlKey, key) ) {
+      if(startSelfType) {
         setGameStatus("selfType");
+        return;
+      }
+
+      const stopSelfType = shouldStopSelfType(ctrlKey, key, gameStatus);
+      // stop self type
+      if(stopSelfType) {
+        setGameStatus("playing");
         return;
       }
       
@@ -370,7 +378,8 @@ export default function TextDisplay({
           fontSize={fontData.fontSize}
           key={row.highestSymbolPosition}
           row={row}
-          setRowHeight={shouldSetRowHeight ? setCssCalculatedRowHeight : undefined}
+          setRowHeight={setCssCalculatedRowHeight}
+          shouldSetRowHeight={shouldSetRowHeight}
           textPosition={cursorPosition}
           theme={textDisplayTheme}
           enteredSymbol={enteredSymbol}

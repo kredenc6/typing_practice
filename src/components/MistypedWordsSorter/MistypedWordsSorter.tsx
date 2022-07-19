@@ -67,22 +67,22 @@ export default function MistypedWordsSorter({ sortBy, handleSortChange }: Props)
         <Typography variant="body2">nedávné</Typography>
         <Box className={classes.arrowWrapper}>
           <KeyboardArrowUp
-            className={classNames(classes.arrowIcon, sortBy==="time:asc" && classes.arrowIconActive) }
-            onClick={() => handleSortChange("time:asc")} />
+            className={classNames(classes.arrowIcon, sortBy==="byTime:asc" && classes.arrowIconActive) }
+            onClick={() => handleSortChange("byTime:asc")} />
           <KeyboardArrowDown
-            className={classNames(classes.arrowIcon, sortBy==="time:desc" && classes.arrowIconActive) }
-            onClick={() => handleSortChange("time:desc")} />
+            className={classNames(classes.arrowIcon, sortBy==="byTime:desc" && classes.arrowIconActive) }
+            onClick={() => handleSortChange("byTime:desc")} />
         </Box>
       </Box>
       <Box className={classes.filterOption}>
         <Typography variant="body2">počet</Typography>
         <Box className={classes.arrowWrapper}>
           <KeyboardArrowUp
-            className={classNames(classes.arrowIcon, sortBy==="count:asc" && classes.arrowIconActive) }
-            onClick={() => handleSortChange("count:asc")} />
+            className={classNames(classes.arrowIcon, sortBy==="byMistypeCount:asc" && classes.arrowIconActive) }
+            onClick={() => handleSortChange("byMistypeCount:asc")} />
           <KeyboardArrowDown 
-            className={classNames(classes.arrowIcon, sortBy==="count:desc" && classes.arrowIconActive) }
-            onClick={() => handleSortChange("count:desc")} />
+            className={classNames(classes.arrowIcon, sortBy==="byMistypeCount:desc" && classes.arrowIconActive) }
+            onClick={() => handleSortChange("byMistypeCount:desc")} />
         </Box>
       </Box>
     </Box>

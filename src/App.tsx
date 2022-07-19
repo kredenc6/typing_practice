@@ -146,3 +146,7 @@ export default function App() {
 // TODO blue color in dark theme is poorly readable
 // TODO style scrollbar along with  theme
 // TODO save sorting selection(in statistics) permanently
+// TODO set a maximum count for mistyped words (10000?)
+// TODO replace initial states(like empty string, array or object) with null where suitable
+// TODO minify resultObj which is saved/loaded from LS or DB
+// TODO move allowedMistype, setAllowedMistype state to PlayPage (if possible)

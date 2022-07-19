@@ -7,7 +7,7 @@ import { FontData, TextDisplayTheme } from "../../types/themeTypes";
 import { Redirect } from "react-router";
 import Timer from "../../accessories/Timer";
 import { AllowedMistype, GameStatus, Results } from "../../types/otherTypes";
-import { saveMistypedWords } from "../../components/TextDisplay/helpFunctions";
+import { saveMistypedWordsV2 } from "../../components/TextDisplay/helpFunctions";
 import { LAST_RESULTS_SAVE_COUNT, LOCAL_STORAGE_KEYS } from "../../constants/constants";
 import { PlayPageThemeContext } from "../../styles/themeContexts";
 
@@ -53,7 +53,7 @@ export default function PlayPage({
   useEffect(() => {
     if(!resultObj) return;
     
-    saveMistypedWords(resultObj.mistypedWords);
+    saveMistypedWordsV2(resultObj.mistypedWords);
     const lastResultsString = localStorage.getItem(LOCAL_STORAGE_KEYS.LAST_RESULTS) || "[]";
     const lastResults = [
         ...JSON.parse(lastResultsString),

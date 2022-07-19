@@ -33,11 +33,34 @@ export type WordTimeObj = {
   wordPosition: number;
 }
 
-export type MistypedWordsLog = {
-  [word: string]: {
-    timestamps: number[];
-    sumOfMistypes: number;
-  }
-}
+// export type MistypedWordsLogWithMap = {
+//   words: Map<string, number[]>; // <word, mistypeTimestamps[]>
+//   sorting: {
+//     alphabetical: number[];
+//     byTime: number[];
+//     byMistypeCount: number[];
+//   }
+// }
 
-export type SortBy = "alphabetical:desc" | "alphabetical:asc" | "count:desc" | "count:asc" | "time:desc" | "time:asc";
+// TODO it might be good to get back to this approach to save file size
+// TODO minimaze prop names for file size
+// export type MistypedWordsLog = {
+//   words: [string, number[]][]; // [word, mistypeTimestamps[]][]
+//   sorting: {
+//     alphabetical: number[];
+//     byTime: number[];
+//     byMistypeCount: number[];
+//   }
+// }
+
+export type MistypedWordsLogV2 = {
+  word: string;
+  timestamps: number[];
+  sorting: {
+    alphabetical: number;
+    byTime: number;
+    byMistypeCount: number;
+  }
+}[]
+
+export type SortBy = "alphabetical:desc" | "alphabetical:asc" | "byMistypeCount:desc" | "byMistypeCount:asc" | "byTime:desc" | "byTime:asc";

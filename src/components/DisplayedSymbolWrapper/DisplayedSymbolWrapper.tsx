@@ -8,7 +8,7 @@ import { getSymbolStyle } from "../DisplayedRow/helpFunctions";
 import { PlayPageThemeContext } from "../../styles/themeContexts";
 
 interface Props {
-  TextCursor: JSX.Element | null;
+  // TextCursor: JSX.Element | null;
   symbolStyle: SymbolStyle; // for memo
   setAnimateMistypedSymbol: React.Dispatch<React.SetStateAction<AnimateMistyped | null>>;
   symbolPosition: number;
@@ -32,7 +32,8 @@ const useStyles = makeStyles({
 });
 
 function DisplayedSymbolWrapper({
-  TextCursor, symbol, setAnimateMistypedSymbol,
+  symbol, setAnimateMistypedSymbol,
+  // TextCursor, symbol, setAnimateMistypedSymbol,
   animateMistypedSymbol, symbolStyle, symbolPosition
 }: Props) {
   const classes = useStyles();
@@ -63,19 +64,19 @@ function DisplayedSymbolWrapper({
   return(
     <Box className={classes.displayedSymbolWrapper}>
       <DisplayedSymbol symbol={symbol} symbolStyle={symbolStyle} />
-        <FadeAway
-          className={classes.invalidSymbol}
-          inProp={displayInvalid}
-          timeout={transitions.duration.complex}
-          onExited={() => setAnimateMistypedSymbol(null)}
-        >
-          {animateMistypedSymbol &&
-            <DisplayedSymbol
-              symbol={animateMistypedSymbol?.symbol}
-              symbolStyle={getSymbolStyle("invalid", "processed", textDisplayTheme)} />
-          }
-        </FadeAway>
-      {TextCursor}
+      <FadeAway
+        className={classes.invalidSymbol}
+        inProp={displayInvalid}
+        timeout={transitions.duration.complex}
+        onExited={() => setAnimateMistypedSymbol(null)}
+      >
+        {animateMistypedSymbol &&
+          <DisplayedSymbol
+            symbol={animateMistypedSymbol?.symbol}
+            symbolStyle={getSymbolStyle("invalid", "processed", textDisplayTheme)} />
+        }
+      </FadeAway>
+      {/* {TextCursor} */}
     </Box>
   );
 }
@@ -84,11 +85,11 @@ const isEqual = (prevProps: Props, nextProps: Props) => {
   if(!areObjectValuesSame(prevProps.symbolStyle, nextProps.symbolStyle)) {
     return false;
   }
-  if(prevProps.TextCursor && nextProps.TextCursor) {
-    if (prevProps.TextCursor.props.height !== nextProps.TextCursor.props.height) { // TextCursor height change
-      return false;
-    }
-  }
+  // if(prevProps.TextCursor && nextProps.TextCursor) {
+  //   if (prevProps.TextCursor.props.height !== nextProps.TextCursor.props.height) { // TextCursor height change
+  //     return false;
+  //   }
+  // }
   if(nextProps.animateMistypedSymbol?.symbolPosition === nextProps.symbolPosition) {
     return false;
   }

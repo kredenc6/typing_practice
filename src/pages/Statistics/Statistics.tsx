@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, makeStyles } from "@material-ui/core";
 import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
-import { MistypedWordsLog, Results } from "../../types/otherTypes";
+import { MistypedWordsLogV2, Results } from "../../types/otherTypes";
 import MistypedWordsChartWrapper from "../../components/MistypedWordsChartWrapper/MistypedWordsChartWrapper";
 import LatestResultsChart from "../../components/LatestResultsChart/LatestResultsChart";
 import ThemeSwitch from "../../components/ThemeSwith/ThemeSwith";
@@ -24,7 +24,7 @@ export default function Statistics() {
   const [typingSpeed, setTypingSpeed] = useState<number[]>([]);
   const [textLength, setTextLength] = useState<number[]>([]);
   const [timestamps, setTimestamps] = useState<number[]>([]);
-  const [mistypedWords, setMistypedWords] = useState<MistypedWordsLog>({});
+  const [mistypedWordsObj, setMistypedWordsObj] = useState<MistypedWordsLogV2 | null>(null);
 
   useEffect(() => {
     const lastResultsFromStorage = localStorage.getItem(LOCAL_STORAGE_KEYS.LAST_RESULTS);
@@ -52,8 +52,9 @@ export default function Statistics() {
     setTimestamps(savedResultTimestamps);
 
     if(mistypedWordsFromStorage) {
-      const savedMistypedWords = JSON.parse(mistypedWordsFromStorage) as MistypedWordsLog;
-      setMistypedWords(savedMistypedWords);
+      const savedMistypedWords = JSON.parse(mistypedWordsFromStorage) as MistypedWordsLogV2;
+      console.log(savedMistypedWords)
+      setMistypedWordsObj(savedMistypedWords);
     }
   }, [])
 
@@ -66,7 +67,7 @@ export default function Statistics() {
         timestamps={timestamps}
         typingSpeed={typingSpeed} />
       <MistypedWordsChartWrapper
-        mistypedWords={mistypedWords} />
+        mistypedWordsObj={mistypedWordsObj} />
     </Box>
   );
 }

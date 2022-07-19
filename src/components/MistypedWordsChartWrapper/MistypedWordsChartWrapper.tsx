@@ -2,11 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import { Box, Paper, Typography, makeStyles, TextField } from "@material-ui/core";
 import MistypedWordsSorter from "../MistypedWordsSorter/MistypedWordsSorter";
 import MistypedWordsChart from "../MistypedWordsChart/MistypedWordsChart";
-import { MistypedWordsLog, SortBy } from "../../types/otherTypes";
-import { filterMistypedWords, getMistypedWordsChartHeight, sortMistypedWords, transformMistypeWordsToSeries } from "../../pages/Statistics/helpFunction";
+import { MistypedWordsLogV2, SortBy } from "../../types/otherTypes";
+import { getFilteredMistypeWordIndexes, getMistypedWordsChartHeight, sortMistypedWords, transformMistypeWordsToSeries } from "../../pages/Statistics/helpFunction";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 
-const DEFAULT_SORT_BY = "count:desc";
+const DEFAULT_SORT_BY = "byMistypeCount:desc";
 const SHOWED_MISTYPED_WORDS_COUNT = 10;
 
 const useStyles = makeStyles(({ palette }) => ({
@@ -56,19 +56,19 @@ const useStyles = makeStyles(({ palette }) => ({
 }));
 
 interface Props {
-  mistypedWords: MistypedWordsLog;
+  mistypedWordsObj: MistypedWordsLogV2 | null;
 }
 
-export default function MistypedWordsChartWrapper({ mistypedWords }: Props) {
+export default function MistypedWordsChartWrapper({ mistypedWordsObj }: Props) {
   const classes = useStyles();
-  const [filteredMistypedWords, setFilteredMistypedWords] = useState<any[]>([]);
+  const [filteredIndexes, setFilteredIndexes] = useState<number[]>([]);
   const [displayedMistypedWordsSeries, setDisplayedMistypedWordsSeries] = useState<{x: string; y: number; }[]>([]);
   const [displayedMistypedWordsRange, setDisplayedMistypedWordsRange] = useState<[number, number]>([0, SHOWED_MISTYPED_WORDS_COUNT]);
   const [sortBy, setSortBy] = useState<SortBy>(DEFAULT_SORT_BY);
   const [chartHeight, setChartHeight] = useState("0px");
   const [filter, setFilter] = useState("");
 
-  const testRef = useRef<null | HTMLElement>(null);
+  const wrapperRef = useRef<null | HTMLElement>(null);
 
   const handleWheel = (e: WheelEvent) => {
     if(e.deltaY < 0) {
@@ -78,7 +78,9 @@ export default function MistypedWordsChartWrapper({ mistypedWords }: Props) {
       })
     }
     else {
-      const filteredMistypedWordCount = filteredMistypedWords.length;
+      const filteredMistypedWordCount = filter
+        ? filteredIndexes.length
+        : mistypedWordsObj?.length ?? 0;
       setDisplayedMistypedWordsRange(prev => {
         const arrIndexStart = Math.min(
           filteredMistypedWordCount - SHOWED_MISTYPED_WORDS_COUNT,
@@ -89,28 +91,29 @@ export default function MistypedWordsChartWrapper({ mistypedWords }: Props) {
     }
   };
 
-  const handleSortChange = (value: SortBy) => {
-    setSortBy(value);
-  };
-
-  const handleFilterChange = (value: string) => {
-    setFilter(value);
-  };
+  const handleSortChange = (value: SortBy) => setSortBy(value);
+  const handleFilterChange = (value: string) => setFilter(value);
 
   useEffect(() => {
-    const filteredMistypedWordsSeries = filterMistypedWords(mistypedWords, filter);
-    const sortedMistypedWordsKeyValue = sortMistypedWords(filteredMistypedWordsSeries, sortBy);
-    setFilteredMistypedWords(sortedMistypedWordsKeyValue);
+    if(mistypedWordsObj === null) return;
 
-    const croppedMistypedWords = sortedMistypedWordsKeyValue.slice(...displayedMistypedWordsRange);
+    // TODO don't filter again if the filter stays the same
+    const newFilteredIndexes = getFilteredMistypeWordIndexes(mistypedWordsObj, filter);
+    setFilteredIndexes(newFilteredIndexes);
+    // const filteredMistypedWordsSeries = filterMistypedWords(mistypedWords, filter);
+    // TODO when the sorting direction is changed just reverse the array
+    const sortedMistypedWords = sortMistypedWords(mistypedWordsObj, newFilteredIndexes, sortBy);
+    // setFilteredMistypedWords(sortedMistypedWords);
+
+    const croppedMistypedWords = sortedMistypedWords.slice(...displayedMistypedWordsRange);
     const mistypedWordsSeries = transformMistypeWordsToSeries(croppedMistypedWords);
 
     setDisplayedMistypedWordsSeries(mistypedWordsSeries);
-  },[sortBy, mistypedWords, displayedMistypedWordsRange, filter]);
+  },[sortBy, mistypedWordsObj, displayedMistypedWordsRange, filter]);
 
   useEffect(() => {
-    if(testRef.current) {
-      const wrapperHeight = getComputedStyle(testRef.current).height;
+    if(wrapperRef.current) {
+      const wrapperHeight = getComputedStyle(wrapperRef.current).height;
       const heightNumber = transformPixelSizeToNumber(wrapperHeight);
       const calculatedChartHeight = getMistypedWordsChartHeight(heightNumber);
       setChartHeight(calculatedChartHeight);
@@ -120,11 +123,11 @@ export default function MistypedWordsChartWrapper({ mistypedWords }: Props) {
 
 
   return (
-    <Paper ref={testRef} variant="outlined" className={classes.mistypedWordsWrapper}>
+    <Paper ref={wrapperRef} variant="outlined" className={classes.mistypedWordsWrapper}>
       <Typography variant="h6" align="center">
         Chybně napsaná slova
         <Typography variant="body2" className={classes.mistypedWordsRange}>
-          {`${displayedMistypedWordsRange[0] + 1} - ${displayedMistypedWordsRange[1]}/${filteredMistypedWords.length}`}
+          {`${displayedMistypedWordsRange[0] + 1} - ${displayedMistypedWordsRange[1]}/${filteredIndexes.length}`}
         </Typography>
       </Typography>
       <TextField
@@ -149,3 +152,6 @@ export default function MistypedWordsChartWrapper({ mistypedWords }: Props) {
     </Paper>
   );
 }
+
+// TODO don't scroll up when on top and vice versa
+// BUG reset scroll when filtering (shows no data when scrolled too much and adds filter)
