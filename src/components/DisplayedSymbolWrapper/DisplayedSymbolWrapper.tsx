@@ -6,9 +6,10 @@ import FadeAway from "../transitions/FadeAway/FadeAway";
 import { SymbolStyle, AnimateMistyped } from "../../types/themeTypes";
 import { getSymbolStyle } from "../DisplayedRow/helpFunctions";
 import { PlayPageThemeContext } from "../../styles/themeContexts";
+import TextCursor from "../TextCursor/TextCursor";
 
 interface Props {
-  // TextCursor: JSX.Element | null;
+  textCursorHeight: string | null;
   symbolStyle: SymbolStyle; // for memo
   setAnimateMistypedSymbol: React.Dispatch<React.SetStateAction<AnimateMistyped | null>>;
   symbolPosition: number;
@@ -32,8 +33,7 @@ const useStyles = makeStyles({
 });
 
 function DisplayedSymbolWrapper({
-  symbol, setAnimateMistypedSymbol,
-  // TextCursor, symbol, setAnimateMistypedSymbol,
+  textCursorHeight, symbol, setAnimateMistypedSymbol,
   animateMistypedSymbol, symbolStyle, symbolPosition
 }: Props) {
   const classes = useStyles();
@@ -76,7 +76,7 @@ function DisplayedSymbolWrapper({
             symbolStyle={getSymbolStyle("invalid", "processed", textDisplayTheme)} />
         }
       </FadeAway>
-      {/* {TextCursor} */}
+      {textCursorHeight && <TextCursor height={textCursorHeight} />}
     </Box>
   );
 }
@@ -85,11 +85,11 @@ const isEqual = (prevProps: Props, nextProps: Props) => {
   if(!areObjectValuesSame(prevProps.symbolStyle, nextProps.symbolStyle)) {
     return false;
   }
-  // if(prevProps.TextCursor && nextProps.TextCursor) {
-  //   if (prevProps.TextCursor.props.height !== nextProps.TextCursor.props.height) { // TextCursor height change
-  //     return false;
-  //   }
-  // }
+
+  if(prevProps.textCursorHeight !== nextProps.textCursorHeight) {
+    return false;
+  }
+
   if(nextProps.animateMistypedSymbol?.symbolPosition === nextProps.symbolPosition) {
     return false;
   }

@@ -119,7 +119,7 @@ export default function TextDisplay({
       rowPosition: newRowPosition,
       wordPosition: newWordPosition
     } = getPositions(newCursorPosition, symbolRows);
-    
+
     if(newRowPosition !== rowPosition) {
       setIsRowInTransition(true);
       setRowPosition(newRowPosition);
@@ -184,7 +184,7 @@ export default function TextDisplay({
         isAllowedToMoveToNextSymbol
       });
       
-      // on correctly typed symbol
+    // on correctly typed symbol
     } else {
       const { symbolIndex, wordIndex, rowIndex } = getIndexes(cursorPosition, symbolRows);
       const activeSymbolCorrectness = symbolRows[rowIndex].words[wordIndex].symbols[symbolIndex].correctness;
@@ -199,6 +199,7 @@ export default function TextDisplay({
       moveActiveSymbol(1);
     }
     setEnteredSymbol(""); // reset typed symbol
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[enteredSymbol])
 
@@ -347,7 +348,7 @@ export default function TextDisplay({
     setRestart(false);
   }, [restart, setRestart, timer, setGameStatus])
 
-  useEffect(() => {
+  useEffect(() => { // BUGprone - connect the timeount/transition delay into 1 variable
     if(isRowInTransition) {
       setTimeout(() => setIsRowInTransition(false), transitions.duration.complex);
     } // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -377,7 +378,7 @@ export default function TextDisplay({
           )}
           fontSize={fontData.fontSize}
           key={row.highestSymbolPosition}
-          row={row}
+          words={row.words}
           setRowHeight={setCssCalculatedRowHeight}
           shouldSetRowHeight={shouldSetRowHeight}
           textPosition={cursorPosition}

@@ -3,14 +3,14 @@ import classNames from "classnames";
 import { makeStyles } from "@material-ui/core";
 import TextCursor from "../TextCursor/TextCursor";
 import { getRelativePosition, getSymbolStyle } from "./helpFunctions";
-import { Row } from "../../types/symbolTypes";
+import { WordObject } from "../../types/symbolTypes";
 import { FontSize, TextDisplayTheme, AnimateMistyped } from "../../types/themeTypes";
 import DisplayedSymbolWrapper from "../DisplayedSymbolWrapper/DisplayedSymbolWrapper";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 
 interface Props extends React.HTMLProps<HTMLDivElement> {
   fontSize: FontSize;
-  row: Row;
+  words: WordObject[];
   setRowHeight: React.Dispatch<React.SetStateAction<number>>;
   shouldSetRowHeight: boolean;
   textPosition: number;
@@ -31,7 +31,7 @@ const useStyles = makeStyles(({ transitions }) => ({
 export default function DisplayedRow({
   className,
   fontSize,
-  row: { words },
+  words,
   setRowHeight,
   shouldSetRowHeight,
   textPosition,
@@ -54,13 +54,19 @@ export default function DisplayedRow({
   const DisplayedSymbolWrapperComponents = words.map(({ symbols: wordInSymbols }) => {
     return wordInSymbols.map(({ symbol, symbolPosition, correctness }) => {
       const relativePosition = getRelativePosition(textPosition, symbolPosition);
+      const symbolStyle = getSymbolStyle(correctness, relativePosition, theme);
 
       return (
         <DisplayedSymbolWrapper
           key={symbolPosition}
-          symbolStyle={getSymbolStyle(correctness, relativePosition, theme)} // for memo
+          symbolStyle={symbolStyle} // for memo
           symbol={symbol}
           // TextCursor={relativePosition === "active" ? <TextCursor height={fontSize === "20px" ? "2px" : "3px"} /> : null}
+          textCursorHeight={
+            relativePosition === "active"
+              ? fontSize === "20px" ? "2px" : "3px"
+              : null
+          }
           setAnimateMistypedSymbol={setAnimateMistypedSymbol}
           symbolPosition={symbolPosition}
           animateMistypedSymbol={animateMistypedSymbol} />
