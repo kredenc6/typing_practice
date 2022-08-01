@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { BrowserRouter as Router, Redirect, Route, Switch } from "react-router-dom";
 import { ThemeProvider as MuiThemeProvider } from "@material-ui/core";
 import PlayPage from "./pages/PlayPage/PlayPage";
@@ -25,6 +25,11 @@ export default function App() {
   const [allowedMistype, setAllowedMistype] = useState<AllowedMistype>({
     count: 1, isAllowed: true
   });
+
+  const updateTheme = useCallback((themeType: ThemeType) => {
+    setAppTheme(createAppTheme(themeType)) ;
+    localStorage.setItem(LOCAL_STORAGE_KEYS.THEME_TYPES, themeType);
+  }, []);
 
   const timer = useRef(new Timer());
 
@@ -82,15 +87,7 @@ export default function App() {
   }, [])
 
   return (
-    <MuiThemeProvider
-      theme={{
-        ...appTheme,
-        updateTheme: (themeType: ThemeType) => {
-          setAppTheme(createAppTheme(themeType)) ;
-          localStorage.setItem(LOCAL_STORAGE_KEYS.THEME_TYPES, themeType);
-        }
-      }}
-    >
+    <MuiThemeProvider theme={{ ...appTheme, updateTheme }}>
       <Router>
         <Switch>
           <Route exact path="/">
@@ -150,3 +147,4 @@ export default function App() {
 // TODO replace initial states(like empty string, array or object) with null where suitable
 // TODO minify resultObj which is saved/loaded from LS or DB
 // TODO move allowedMistype, setAllowedMistype state to PlayPage (if possible)
+// TODO add spinner when loading text from the internet
