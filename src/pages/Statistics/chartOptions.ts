@@ -1,4 +1,4 @@
-import { Theme } from "@material-ui/core";
+import { Theme } from "@mui/material";
 import { ApexOptions } from "apexcharts";
 import dateFormat from "dateformat";
 import { getLastMistypeFromChartOptions } from "./helpFunction";
@@ -38,7 +38,7 @@ export const createLatestResultsChartOptions = (theme: Theme): ApexOptions => ({
         return `${value}${suffixes[seriesIndex]}`;
       }
     },
-    theme: theme.palette.type
+    theme: theme.palette.mode
   },
   xaxis: {
     crosshairs: {
@@ -114,7 +114,7 @@ export const createMistypedWordsChartOptions = (theme: Theme): ApexOptions => ({
       }
     },
     followCursor: true,
-    theme: theme.palette.type
+    theme: theme.palette.mode
   },
   xaxis: {
     labels: {

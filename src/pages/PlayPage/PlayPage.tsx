@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
-import { makeStyles, Fade, Box } from "@material-ui/core";
+import { Fade, Box } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import PlaySettings from "../../components/PlaySettings/PlaySettings";
 import TextDisplay from "../../components/TextDisplay/TextDisplay";
 import TypingResults from "../../components/TypingResults/TypingResults";

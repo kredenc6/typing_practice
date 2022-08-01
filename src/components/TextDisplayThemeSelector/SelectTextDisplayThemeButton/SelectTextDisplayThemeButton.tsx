@@ -1,4 +1,5 @@
-import { Button, ButtonProps, makeStyles } from "@material-ui/core";
+import { Button, ButtonProps } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { useContext } from "react";
 import { PlayPageThemeContext } from "../../../styles/themeContexts";
 import { TextDisplayTheme } from "../../../types/themeTypes";

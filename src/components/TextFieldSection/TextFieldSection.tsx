@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Badge, Box, Button, makeStyles, Typography } from "@material-ui/core";
+import { Badge, Box, Button, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import TextInput from "../TextInput/TextInput";
 import TextNormalizeSwitches from "./TextNormalizeSwitches/TextNormalizeSwitches";
 import adjustTextGeneral from "../../textFunctions/adjustTextGeneral";

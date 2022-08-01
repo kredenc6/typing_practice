@@ -1,5 +1,5 @@
-import React from "react";
-import { makeStyles, OutlinedTextFieldProps, TextField } from "@material-ui/core";
+import { OutlinedTextFieldProps, TextField } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 
 interface Props extends OutlinedTextFieldProps {
   handleInputChange: (text: string) => void;
@@ -28,7 +28,7 @@ export default function TextInput({ handleInputChange, ...textFieldProps }: Prop
       rows={10}
       onChange={e => handleInputChange(e.target.value)}
       placeholder="zde můžete vložit vlastní text"
-      rowsMax={10}
+      maxRows={10}
       {...textFieldProps} />
   );
 }

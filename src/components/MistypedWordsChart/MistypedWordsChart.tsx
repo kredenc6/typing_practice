@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useTheme } from "@material-ui/core";
+import { useTheme } from "@mui/material";
 import ReactApexCharts from "react-apexcharts";
 import { createMistypedWordsChartOptions } from "../../pages/Statistics/chartOptions";
 // import { calculateHeight_MistypedWordsChart } from "../../pages/Statistics/helpFunction";
@@ -24,7 +24,7 @@ export default function MistypedWordsChart({
           ...prev.chart, foreColor: theme.palette.text.primary
         },
         tooltip: {
-          ...prev.tooltip, theme: theme.palette.type
+          ...prev.tooltip, theme: theme.palette.mode
         },
       }
     });

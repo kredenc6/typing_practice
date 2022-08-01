@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { useTheme } from "@material-ui/core";
+import { useTheme } from "@mui/material";
 import { Transition, TransitionStatus } from "react-transition-group";
 import { TransitionProps } from "react-transition-group/Transition";
 import classnames from "classnames";

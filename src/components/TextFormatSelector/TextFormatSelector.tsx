@@ -1,5 +1,6 @@
-import React, { useContext } from "react";
-import { Box, Divider, makeStyles } from "@material-ui/core";
+import { useContext } from "react";
+import { Box, Divider } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import FontSizeSelector from "./FontSizeSelector/FontSizeSelector";
 import FontFaceSelector from "./FontFaceSelector/FontFaceSelector";
 import { FontData, FontFamily, FontSize, TextDisplayTheme } from "../../types/themeTypes";

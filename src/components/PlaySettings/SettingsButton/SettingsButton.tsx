@@ -1,5 +1,5 @@
-import React from "react";
-import { Button, makeStyles, ButtonProps } from "@material-ui/core";
+import { Button, ButtonProps } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import classnames from "classnames";
 
 const useStyles = makeStyles(({ palette }) => ({

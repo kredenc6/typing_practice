@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@material-ui/core";
+import { Box } from "@mui/material";
 import DisplayedSymbol from "../../DisplayedSymbol/DisplayedSymbol";
 import { WordObject } from "../../../types/symbolTypes";
 import { getSymbolStyle } from "../../DisplayedRow/helpFunctions";

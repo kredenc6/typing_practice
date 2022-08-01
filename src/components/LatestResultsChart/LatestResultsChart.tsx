@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Box, Typography, Paper, makeStyles, useTheme } from "@material-ui/core";
+import { Box, Typography, Paper, useTheme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import ReactApexCharts from "react-apexcharts";
 import { createLatestResultsChartOptions, timestampsToXAxisCategories } from "../../pages/Statistics/chartOptions";
 
@@ -46,7 +47,7 @@ export default function LatestResultsChart({ precision, typingSpeed, textLength,
           ...prev.chart, foreColor: theme.palette.text.primary
         },
         tooltip: {
-          ...prev.tooltip, theme: theme.palette.type
+          ...prev.tooltip, theme: theme.palette.mode
         },
         xaxis: {
           ...prev.xaxis, categories: xAxisCategories

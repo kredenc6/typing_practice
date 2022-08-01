@@ -1,5 +1,6 @@
+import { PaletteMode } from "@mui/material";
 import dateFormat from "dateformat";
-import { PaletteType, Theme } from "@material-ui/core";
+// import { PaletteType, Theme } from "@mui/material";
 import "./customTooltip_mistypedWords.css";
 
 // TODO if not used/fixed - this file can be deleted
@@ -8,7 +9,7 @@ import "./customTooltip_mistypedWords.css";
 * @ not-working
 */
 export const customTooltip_mistypedWords = (
-  { series, dataPointIndex, w: { config } }: any, themeMode: PaletteType
+  { series, dataPointIndex, w: { config } }: any, themeMode: PaletteMode
 ) => {
   const tooltipNode = document.getElementsByClassName("apexcharts-tooltip")[0];
   console.dir(tooltipNode)

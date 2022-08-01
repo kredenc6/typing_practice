@@ -1,6 +1,11 @@
-import { createTheme } from "@material-ui/core";
+import { createTheme } from "@mui/material";
+import { Theme } from '@mui/material/styles';
 import { LOCAL_STORAGE_KEYS } from "../constants/constants";
 import { ThemeType } from "../types/themeTypes";
+
+declare module "@mui/styles/defaultTheme" {
+  interface DefaultTheme extends Theme {}
+}
 
 const themeSettings = {
   props: {
@@ -30,5 +35,6 @@ export const createAppTheme = (type?: ThemeType) => {
     themeOptions = { ...themeOptions, ...darkThemeOptions }
   }
 
-  return createTheme(themeOptions);
+  // return createTheme(themeOptions); // BUG Mui v.5
+  return createTheme();
 };

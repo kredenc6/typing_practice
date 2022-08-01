@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import classNames from "classnames";
-import { Box, makeStyles, useTheme } from "@material-ui/core";
+import { Box, useTheme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import {
   createSymbolWidthsObject, getPositions, updateSymbolCorrectness, updateWordProp,
   updateSymbolRows, getIndexes, isAllowedKey, isAllowedToMoveToNextSymbolOnMistake,

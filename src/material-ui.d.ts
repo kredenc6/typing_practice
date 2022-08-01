@@ -1,14 +1,14 @@
-// import { Theme as OriginalMuiTheme, ThemeOptions, Duration } from "@material-ui/core";
+// import { Theme as OriginalMuiTheme, ThemeOptions, Duration } from "@mui/material";
 import React from "react";
 import { ThemeType } from "./types/themeTypes";
 
-declare module "@material-ui/core" {
+declare module "@mui/material" {
   export interface Theme {
     updateTheme: (themeType: ThemeType) => React.Dispatch<React.SetStateAction<Theme>>;
   }
 }
 
-declare module "@material-ui/core" {
+declare module "@mui/material" {
   export interface ThemeOptions {
     updateTheme?: (themeType: ThemeType) => React.Dispatch<React.SetStateAction<Theme>>;
   }

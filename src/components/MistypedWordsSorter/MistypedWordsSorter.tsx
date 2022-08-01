@@ -1,4 +1,5 @@
-import { Box, makeStyles, Typography } from "@material-ui/core";
+import { Box, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@material-ui/icons";
 import classNames from "classnames";
 import { SortBy } from "../../types/otherTypes";

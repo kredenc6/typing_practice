@@ -1,5 +1,5 @@
-import React from "react";
-import { Box, makeStyles, useTheme } from "@material-ui/core";
+import { Box, useTheme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { BarLoader } from "react-spinners";
 
 interface Props {

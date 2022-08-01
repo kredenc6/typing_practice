@@ -1,6 +1,7 @@
-import React, { HTMLProps } from "react";
+import { HTMLProps } from "react";
 import classNames from "classnames";
-import { Box, makeStyles } from "@material-ui/core";
+import { Box } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { ArrowDropDown } from "@material-ui/icons";
 
 interface Props extends HTMLProps<HTMLDivElement> {
@@ -32,8 +33,11 @@ export default function FakeSelect({ className, value, ...divProps }: Props) {
   const classes = useStyles();
 
   return (
-    <Box className={classNames(classes.fakeSelect, className)} {...divProps}>
+    <Box className={classNames(classes.fakeSelect, className)}>
       {value} <ArrowDropDown />
     </Box>
+    // <Box className={classNames(classes.fakeSelect, className)} {...divProps}>
+    //   {value} <ArrowDropDown />
+    // </Box>
   );
 }

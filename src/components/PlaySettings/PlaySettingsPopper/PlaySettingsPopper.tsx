@@ -1,5 +1,6 @@
 import { useContext } from "react";
-import { makeStyles, Popper, PopperProps } from "@material-ui/core";
+import { Popper, PopperProps } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { PlayPageThemeContext } from "../../../styles/themeContexts";
 import { TextDisplayTheme } from "../../../types/themeTypes";
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Box, makeStyles } from "@material-ui/core";
+import { Box } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
 import { MistypedWordsLogV2, Results } from "../../types/otherTypes";
 import MistypedWordsChartWrapper from "../../components/MistypedWordsChartWrapper/MistypedWordsChartWrapper";

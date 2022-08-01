@@ -1,5 +1,6 @@
 import Simplebar from "simplebar-react";
-import { Box, makeStyles, Paper, Typography } from "@material-ui/core";
+import { Box, Paper, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { Results } from "../../types/otherTypes";
 import MistypedWord from "./MistypedWord/MistypedWord";
 import SpecificResult from "./SpecificResult/SpecificResult";

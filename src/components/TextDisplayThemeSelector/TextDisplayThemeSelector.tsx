@@ -1,4 +1,5 @@
-import { Box, makeStyles } from "@material-ui/core";
+import { Box } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import SelectTextDisplayThemeButton from "./SelectTextDisplayThemeButton/SelectTextDisplayThemeButton";
 import * as availableTextDisplayPalettes from "../../styles/textDisplayPaletes";
 import { TextDisplayTheme } from "../../types/themeTypes";

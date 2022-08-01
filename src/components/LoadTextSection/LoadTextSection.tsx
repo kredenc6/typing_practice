@@ -1,8 +1,9 @@
 import React from "react";
 import {
-  makeStyles, Paper, Typography, ButtonGroup, Button, FormControlLabel, Checkbox,
+  Paper, Typography, ButtonGroup, Button, FormControlLabel, Checkbox,
   TextField, Box
-} from "@material-ui/core";
+} from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import LoadedParagraphSummary from "../LoadedParagraphSummary/LoadedParagraphSummary";
 import { InsertTextOnLoad } from "../../pages/MainMenu/MainMenu";
 

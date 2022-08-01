@@ -1,5 +1,5 @@
-import React from "react";
-import { Box, makeStyles, Paper } from "@material-ui/core";
+import { Box, Paper } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import Simplebar from "simplebar-react";
 import LoadedParagraph from "../LoadedParagraph/LoadedParagraph";
 

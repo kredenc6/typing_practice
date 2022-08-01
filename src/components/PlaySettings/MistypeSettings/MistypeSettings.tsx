@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
-import { makeStyles, FormControlLabel, Switch, Box, Divider } from "@material-ui/core";
+import { FormControlLabel, Switch, Box, Divider } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { AllowedMistype } from "../../../types/otherTypes";
 import SettingsButton from "../SettingsButton/SettingsButton";
 import { PlayPageThemeContext } from "../../../styles/themeContexts";

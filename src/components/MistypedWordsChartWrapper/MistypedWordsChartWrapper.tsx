@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { Box, Paper, Typography, makeStyles, TextField } from "@material-ui/core";
+import { Box, Paper, Typography, TextField } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import MistypedWordsSorter from "../MistypedWordsSorter/MistypedWordsSorter";
 import MistypedWordsChart from "../MistypedWordsChart/MistypedWordsChart";
 import { MistypedWordsLogV2, SortBy } from "../../types/otherTypes";
@@ -68,7 +69,7 @@ export default function MistypedWordsChartWrapper({ mistypedWordsObj }: Props) {
   const [chartHeight, setChartHeight] = useState("0px");
   const [filter, setFilter] = useState("");
 
-  const wrapperRef = useRef<null | HTMLElement>(null);
+  const wrapperRef = useRef<null | HTMLDivElement>(null);
 
   const handleWheel = (e: WheelEvent) => {
     if(e.deltaY < 0) {

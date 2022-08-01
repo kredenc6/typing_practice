@@ -1,5 +1,6 @@
 import { useContext, useLayoutEffect, useState } from "react";
-import { Box, ClickAwayListener, Grid, makeStyles, Popper, Typography } from "@material-ui/core";
+import { Box, ClickAwayListener, Grid, Popper, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import Spinner from "../../Spinner/Spinner";
 import FakeSelect from "../../FakeSelect/FakeSelect";
 import { fontFamilies } from "../../../styles/textDisplayTheme/textDisplayData";
@@ -93,7 +94,7 @@ export default function FontFaceSelector({
   },[])
 
   return(
-    <Grid alignItems="center" justify="space-around" container>
+    <Grid alignItems="center" justifyContent="space-around" container>
       <Grid item>
         <Typography className={classes.selectDescription}>Typ fontu:</Typography>
       </Grid>
@@ -108,7 +109,9 @@ export default function FontFaceSelector({
             <Popper
               anchorEl={anchorEl}
               className={classes.popper}
-              modifiers={{ offset: { enabled: true, offset: "-100%p + 100%, 5" } }}
+              // BUG //!Mui v.5 check the correct functionality of the offset
+              modifiers={[ { name: "offset", enabled: true, options: { offset: ["-100%p + 100%:", "5"]} } ]}
+              // modifiers={{ offset: { enabled: true, offset: "-100%p + 100%, 5" } }}
               open={isPopperOpen}
               placement="bottom-start"
             >

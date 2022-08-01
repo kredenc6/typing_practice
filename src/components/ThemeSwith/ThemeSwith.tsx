@@ -1,4 +1,5 @@
-import { Box, makeStyles, useTheme } from "@material-ui/core";
+import { Box, useTheme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { WbSunnyOutlined, NightsStay } from "@material-ui/icons";
 import classNames from "classnames";
 import { Transition } from "react-transition-group";
@@ -28,7 +29,7 @@ const useStyles = makeStyles( ({ palette, transitions }) => ({
     transition:
       `left ${transitions.duration.complex * 2}ms, ` +
       `transform ${transitions.duration.complex * 2}ms, ` +
-      (palette.type === "dark"
+      (palette.mode === "dark"
         ? `opacity ${transitions.duration.complex}ms ${transitions.duration.complex}ms`
         : `opacity ${transitions.duration.complex}ms`)
   },
@@ -36,7 +37,7 @@ const useStyles = makeStyles( ({ palette, transitions }) => ({
     transition:
       `right ${transitions.duration.complex * 2}ms, ` +
       `transform ${transitions.duration.complex * 2}ms, ` +
-      (palette.type === "light"
+      (palette.mode === "light"
         ? `opacity ${transitions.duration.complex}ms ${transitions.duration.complex}ms`
         : `opacity ${transitions.duration.complex}ms`)
   },
@@ -96,7 +97,7 @@ export default function ThemeSwitch() {
   const classes = useStyles();
   const { palette, transitions, updateTheme } = useTheme();
   const toggleTheme = () => {
-    updateTheme(palette.type === "light" ? "dark" : "light");
+    updateTheme(palette.mode === "light" ? "dark" : "light");
   };
   
   return (
@@ -105,14 +106,14 @@ export default function ThemeSwitch() {
       className={classes.themeSwitch}
       onClick={toggleTheme}
     >
-      <Transition in={palette.type === "light"} timeout={transitions.duration.complex * 2}>
+      <Transition in={palette.mode === "light"} timeout={transitions.duration.complex * 2}>
         {state => (
           <WbSunnyOutlined
             className={classNames(classes.themeSwitchIcon, classes.sunIcon)}
             style={{ ...sunTransitionStyles[state] }} />
         )}
       </Transition>
-      <Transition in={palette.type === "dark"} timeout={transitions.duration.complex * 2}>
+      <Transition in={palette.mode === "dark"} timeout={transitions.duration.complex * 2}>
         {state => (
           <NightsStay
             className={classNames(classes.themeSwitchIcon, classes.moonIcon)}

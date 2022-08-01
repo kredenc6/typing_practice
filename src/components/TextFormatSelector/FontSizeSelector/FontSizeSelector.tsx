@@ -1,5 +1,5 @@
 import React from "react";
-import { ButtonGroup, Grid } from "@material-ui/core";
+import { ButtonGroup, Grid } from "@mui/material";
 import SelectableFontSize from "../SelectableFontSize/SelectableFontSize";
 import { fontSizes } from "../../../styles/textDisplayTheme/textDisplayData";
 import { FontSize, FontStyle } from "../../../types/themeTypes";
@@ -51,7 +51,7 @@ export default function FontSizeSelector({ activeFontSize, handleFontSizeChange 
 
   return (
     <ButtonGroup size="small" variant="text">
-      <Grid container justify="space-between" spacing={3} wrap="nowrap">
+      <Grid container justifyContent="space-between" spacing={3} wrap="nowrap">
         {GridButtonComponents}
       </Grid>
     </ButtonGroup>

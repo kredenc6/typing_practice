@@ -1,5 +1,5 @@
-import React from "react";
-import { IconButton, makeStyles, Typography, Tooltip, Badge, Box } from "@material-ui/core";
+import { IconButton, Typography, Tooltip, Badge, Box } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import Simplebar from "simplebar-react";
 import { PlaylistAdd } from "@material-ui/icons";
 
@@ -81,7 +81,6 @@ export default function LoadedParagraph({
               </Simplebar>
             }
             arrow
-            interactive
             enterDelay={500}
             enterNextDelay={500}
             placement="top"

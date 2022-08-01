@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, TypographyProps } from "@material-ui/core";
+import { Box, Typography, TypographyProps } from "@mui/material";
 import { TypeDescription } from "../FontSizeSelector/FontSizeSelector";
 
 interface Props {

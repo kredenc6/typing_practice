@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Box, makeStyles, useTheme } from "@material-ui/core";
+import { Box, useTheme } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import DisplayedSymbol from "../DisplayedSymbol/DisplayedSymbol";
 import FadeAway from "../transitions/FadeAway/FadeAway";

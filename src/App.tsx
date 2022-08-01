@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { BrowserRouter as Router, Redirect, Route, Switch } from "react-router-dom";
-import { ThemeProvider as MuiThemeProvider } from "@material-ui/core";
+import { ThemeProvider as MuiThemeProvider } from "@mui/material";
 import PlayPage from "./pages/PlayPage/PlayPage";
 import MainMenu from "./pages/MainMenu/MainMenu";
 import Statistics from "./pages/Statistics/Statistics";

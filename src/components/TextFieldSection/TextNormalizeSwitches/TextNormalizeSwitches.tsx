@@ -1,5 +1,6 @@
 import React from "react";
-import { Box, FormControlLabel, makeStyles, Switch } from "@material-ui/core";
+import { Box, FormControlLabel, Switch } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { AdjustText } from "../TextFieldSection";
 
 interface Props {
