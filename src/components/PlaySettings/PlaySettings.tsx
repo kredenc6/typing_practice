@@ -2,7 +2,7 @@ import React, { useContext, useLayoutEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Box, ClickAwayListener, IconButton } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { FormatSize, Menu, Palette, Refresh, Settings } from "@material-ui/icons";
+import { FormatSize, Menu, Palette, Refresh, Settings } from "@mui/icons-material";
 import TextFormatSelector from "../TextFormatSelector/TextFormatSelector";
 import TextDisplayThemeSelector from "../TextDisplayThemeSelector/TextDisplayThemeSelector";
 import MistypeSettings from "./MistypeSettings/MistypeSettings";

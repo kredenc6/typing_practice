@@ -2,7 +2,7 @@ import { HTMLProps } from "react";
 import classNames from "classnames";
 import { Box } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { ArrowDropDown } from "@material-ui/icons";
+import { ArrowDropDown } from "@mui/icons-material";
 
 interface Props extends HTMLProps<HTMLDivElement> {
   value: string;

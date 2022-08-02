@@ -1,6 +1,6 @@
 import { Box, useTheme } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { WbSunnyOutlined, NightsStay } from "@material-ui/icons";
+import { WbSunnyOutlined, NightsStay } from "@mui/icons-material";
 import classNames from "classnames";
 import { Transition } from "react-transition-group";
 

@@ -1,7 +1,7 @@
 import { IconButton, Typography, Tooltip, Badge, Box } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Simplebar from "simplebar-react";
-import { PlaylistAdd } from "@material-ui/icons";
+import { PlaylistAdd } from "@mui/icons-material";
 
 interface Props {
   loadedParagraph: string;
