@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { BrowserRouter as Router, Redirect, Route, Switch } from "react-router-dom";
-import { ThemeProvider as MuiThemeProvider } from "@mui/material";
+import { PaletteMode, ThemeProvider as MuiThemeProvider } from "@mui/material";
 import PlayPage from "./pages/PlayPage/PlayPage";
 import MainMenu from "./pages/MainMenu/MainMenu";
 import Statistics from "./pages/Statistics/Statistics";
@@ -8,11 +8,12 @@ import Timer from "./accessories/Timer";
 import getFontData from "./async/getFontData";
 import loadFont from "./async/loadFont";
 import { defaultTextDisplayFontData } from "./styles/textDisplayTheme/textDisplayData";
-import { FontData, ThemeType } from "./types/themeTypes";
+import { FontData } from "./types/themeTypes";
 import { PlayPageThemeContext, PlayPageThemeProvider } from "./styles/themeContexts";
 import { createAppTheme } from "./styles/appTheme";
 import { AllowedMistype } from "./types/otherTypes";
 import { getKnownSymbols } from "./helpFunctions/getKnownSymbols";
+import CssBaseline from '@mui/material/CssBaseline';
 import "simplebar/dist/simplebar.min.css";
 import { LOCAL_STORAGE_KEYS } from "./constants/constants";
 
@@ -26,7 +27,7 @@ export default function App() {
     count: 1, isAllowed: true
   });
 
-  const updateTheme = useCallback((themeType: ThemeType) => {
+  const updateTheme = useCallback((themeType: PaletteMode) => {
     setAppTheme(createAppTheme(themeType)) ;
     localStorage.setItem(LOCAL_STORAGE_KEYS.THEME_TYPES, themeType);
   }, []);
@@ -88,6 +89,7 @@ export default function App() {
 
   return (
     <MuiThemeProvider theme={{ ...appTheme, updateTheme }}>
+      <CssBaseline /> {/* will also enable dark mode for the app's background. */}
       <Router>
         <Switch>
           <Route exact path="/">

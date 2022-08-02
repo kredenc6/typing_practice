@@ -1,40 +1,28 @@
-import { createTheme } from "@mui/material";
+import { createTheme, PaletteMode, ThemeOptions } from "@mui/material";
 import { Theme } from '@mui/material/styles';
 import { LOCAL_STORAGE_KEYS } from "../constants/constants";
-import { ThemeType } from "../types/themeTypes";
 
 declare module "@mui/styles/defaultTheme" {
   interface DefaultTheme extends Theme {}
 }
 
-const themeSettings = {
-  props: {
-    MuiButtonBase: {
-      disableRipple: true
-    }
-  }
-};
-
-const darkThemeOptions = {
+const darkThemeOptions: ThemeOptions = {
   palette: {
-    type: "dark",
+    mode: "dark",
     background: {
-      paper: "#343434"
+      paper: "#222"
     }
   }
 };
 
-export const createAppTheme = (type?: ThemeType) => {
-  const themeType = type
-    ? type
+export const createAppTheme = (mode?: PaletteMode) => {
+  const paletteMode = mode
+    ? mode
     : localStorage.getItem(LOCAL_STORAGE_KEYS.THEME_TYPES);
-  
-  let themeOptions = themeSettings;
 
-  if(themeType === "dark") {
-    themeOptions = { ...themeOptions, ...darkThemeOptions }
+  if(paletteMode === "dark") {
+    return createTheme(darkThemeOptions);
   }
 
-  // return createTheme(themeOptions); // BUG Mui v.5
   return createTheme();
 };

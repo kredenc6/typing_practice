@@ -123,3 +123,6 @@ export default function ThemeSwitch() {
     </Box>
   );
 }
+
+// TODO implement system preference:
+// https://mui.com/material-ui/customization/dark-mode/#system-preference
