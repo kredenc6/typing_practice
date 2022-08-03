@@ -8,7 +8,7 @@ import LoadedParagraphSummary from "../LoadedParagraphSummary/LoadedParagraphSum
 import { InsertTextOnLoad } from "../../pages/MainMenu/MainMenu";
 
 const MIN_TEXT_INSERT_LENGTH = 100;
-const MAX_TEXT_INSERT_LENGTH = 10000;
+const MAX_TEXT_INSERT_LENGTH = 9999;
 
 interface Props {
   handleLoadArcticle: (relativePath: string) => Promise<void>;
@@ -31,9 +31,6 @@ const useStyles = makeStyles({
     flexFlow: "column",
     justifyContent: "space-around",
     alignItems: "center"
-  },
-  textFieldNumber: {
-    width: "4rem"
   },
   loadedParagraphsOptions: {
     width: "35%",
@@ -99,10 +96,24 @@ export default function LoadTextSection({
               color="primary"
               onChange={toggleInsertTextOnLoadBooleanChange} />}
           label={
-            <Box>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
               Při načtení článku rovnou vlož text o přibližné délce&nbsp;
               <TextField
-                className={classes.textFieldNumber}
+                variant="standard"
+                margin="dense"
+                sx={{ 
+                      marginLeft: "0.1rem",
+                      marginRight: "0.1rem",
+                      width: "3.5rem",
+                      "& input": { textAlign: "center" },
+                      // getting rid of the arrows in the input 
+                      "& input::-webkit-outer-spin-button, input::-webkit-inner-spin-button": {
+                          "-webkit-appearance": "none", margin: 0
+                      },
+                      "& input[type=number]": {
+                        "-moz-appearance": "textfield"
+                      }
+                }}
                 value={insertTextOnLoad.length}
                 size="small"
                 inputProps={{ min: MIN_TEXT_INSERT_LENGTH, max: MAX_TEXT_INSERT_LENGTH }}
