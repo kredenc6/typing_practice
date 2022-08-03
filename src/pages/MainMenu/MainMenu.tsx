@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Box, Button } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import normalizeParagraphTexts from "../../textFunctions/normalizeParagraphTexts";
 import LoadTextSection from "../../components/LoadTextSection/LoadTextSection";
 import TextFieldSection from "../../components/TextFieldSection/TextFieldSection";
@@ -13,6 +12,7 @@ import { getInvalidSymbols } from "../../helpFunctions/getInvalidSymbols";
 import adjustTextGeneral from "../../textFunctions/adjustTextGeneral";
 import { useTextToTextField } from "../../customHooks/useTextToTextField";
 import ThemeSwitch from "../../components/ThemeSwith/ThemeSwith";
+import { CSSObjects } from "../../types/themeTypes";
 
 interface Props {
   setText: React.Dispatch<React.SetStateAction<string>>;
@@ -24,8 +24,8 @@ export interface InsertTextOnLoad {
   boolean: boolean;
 }
 
-const useStyles = makeStyles(({ palette }) => ({
-  mainMenu: {
+const styles: CSSObjects = {
+  mainMenu: ({ palette }) => ({
     maxWidth: "1920px",
     width: "100vw",
     height: "100vh",
@@ -34,15 +34,15 @@ const useStyles = makeStyles(({ palette }) => ({
     margin: "0 auto",
     backgroundColor: palette.background.default,
     color: palette.text.primary
-  },
+  }),
   startButton: {
-    margin: "1rem auto"
+    alignSelf: "center",
+    marginTop: "2rem"
   }
-}));
+};
 
 // TODO setText maximum length
 export default function MainMenu({ setText, knownSymbols }: Props) {
-  const classes = useStyles();
   const [loadedParagraphs, setLoadedParagraphs] = useState<string[]>([]);
   const [insertTextOnLoad, setInsertTextOnLoad] = useState<InsertTextOnLoad>({
     length: 100, boolean: true
@@ -95,7 +95,7 @@ export default function MainMenu({ setText, knownSymbols }: Props) {
   },[])
 
   return (
-    <Box className={classes.mainMenu}>
+    <Box sx={styles.mainMenu}>
       <ThemeSwitch />
       <TextFieldSection setTextInput={setTextInput} textInput={textInput} />
       <LoadTextSection
@@ -106,7 +106,7 @@ export default function MainMenu({ setText, knownSymbols }: Props) {
         handleInsertTextOnLoadChange={handleInsertTextOnLoadChange} />
       <Link id="link-to-playArea" style={{ display: "none" }} to="playArea"></Link>
       <Button
-        className={classes.startButton}
+        sx={styles.startButton}
         color="primary"
         disabled={!textInput}
         onClick={handleStart}
