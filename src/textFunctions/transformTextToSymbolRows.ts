@@ -1,6 +1,6 @@
 import { Row, SymbolObject, SymbolWidths, WordObject, WordType } from "../types/symbolTypes";
 
-const splitterRegexp = /[0-9\p{L}']+|\s+|[^0-9\p{L}'\s+]/giu; // numbers, letters or apostrophe | whitespace | nothing of the previous
+const splitterRegexp = /[0-9\p{L}']+|\s+|[^0-9\p{L}'\s]/giu; // numbers, letters or apostrophe | whitespace | nothing of the previous
 export const lineEndersRegexp = /[ .,!?;:)\]}]|\n+/;
 
 
