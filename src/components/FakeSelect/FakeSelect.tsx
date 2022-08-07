@@ -37,8 +37,5 @@ export default function FakeSelect({ className, value, onClick }: Props) {
     <Box className={classNames(classes.fakeSelect, className)} onClick={onClick}>
       {value} <ArrowDropDown />
     </Box>
-    // <Box className={classNames(classes.fakeSelect, className)} {...divProps}>
-    //   {value} <ArrowDropDown />
-    // </Box>
   );
 }
