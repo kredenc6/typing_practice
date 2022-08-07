@@ -6,6 +6,7 @@ import { ArrowDropDown } from "@mui/icons-material";
 
 interface Props extends HTMLProps<HTMLDivElement> {
   value: string;
+  onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
 const useStyles = makeStyles( ({ palette, typography }) => ({
@@ -29,11 +30,11 @@ const useStyles = makeStyles( ({ palette, typography }) => ({
   }
 }));
 
-export default function FakeSelect({ className, value, ...divProps }: Props) {
+export default function FakeSelect({ className, value, onClick }: Props) {
   const classes = useStyles();
 
   return (
-    <Box className={classNames(classes.fakeSelect, className)}>
+    <Box className={classNames(classes.fakeSelect, className)} onClick={onClick}>
       {value} <ArrowDropDown />
     </Box>
     // <Box className={classNames(classes.fakeSelect, className)} {...divProps}>

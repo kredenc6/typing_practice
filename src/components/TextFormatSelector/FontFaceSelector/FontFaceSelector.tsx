@@ -1,4 +1,4 @@
-import { useContext, useLayoutEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { Box, ClickAwayListener, Grid, Popper, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import Spinner from "../../Spinner/Spinner";
@@ -59,16 +59,22 @@ export default function FontFaceSelector({
   const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
   const classes = useStyles(textDisplayTheme);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [isPopperOpen, setIsPopperOpen] = useState(false);
+  const [isPopperOpened, setIsPopperOpened] = useState(false);
 
-  const handleClick = () => {
-    setIsPopperOpen(!isPopperOpen);
+  const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if(!anchorEl) {
+      setAnchorEl(e.currentTarget);
+    }
+
+    setIsPopperOpened(prev => !prev);
   };
-  const handleClickaway = (isPopperOpened: boolean) => {
+
+  const handleClickaway = () => {
     if(isPopperOpened) {
-      setIsPopperOpen(false);
+      setIsPopperOpened(false);
     }
   };
+
   const FontFamilyComponents = fontFamilies.map(({ name }) => {
     return (
       <div key={name}>
@@ -88,18 +94,13 @@ export default function FontFaceSelector({
     );
   });
 
-  useLayoutEffect(() => {
-    const anchorElementNode = document.getElementById("faceSelectorPopperAnchor");
-    setAnchorEl(anchorElementNode);
-  },[])
-
   return(
     <Grid alignItems="center" justifyContent="space-around" container>
       <Grid item>
         <Typography className={classes.selectDescription}>Typ fontu:</Typography>
       </Grid>
       <Grid item>
-        <ClickAwayListener onClickAway={() => handleClickaway(isPopperOpen)}>
+        <ClickAwayListener onClickAway={handleClickaway}>
           <Box>
             <FakeSelect
               className={classes.select}
@@ -107,12 +108,11 @@ export default function FontFaceSelector({
               onClick={handleClick}
               value={activeFontFamily} />
             <Popper
+              id="font-selentor--popper"
               anchorEl={anchorEl}
               className={classes.popper}
-              // BUG //!Mui v.5 check the correct functionality of the offset
-              modifiers={[ { name: "offset", enabled: true, options: { offset: ["-100%p + 100%:", "5"]} } ]}
-              // modifiers={{ offset: { enabled: true, offset: "-100%p + 100%, 5" } }}
-              open={isPopperOpen}
+              modifiers={[ { name: "offset", enabled: true, options: { offset: [0, 5]} } ]}
+              open={isPopperOpened}
               placement="bottom-start"
             >
               {FontFamilyComponents}
