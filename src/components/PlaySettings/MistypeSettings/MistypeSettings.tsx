@@ -1,30 +1,21 @@
 import React, { useContext } from "react";
 import { FormControlLabel, Switch, Box, Divider } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import { AllowedMistype } from "../../../types/otherTypes";
 import SettingsButton from "../SettingsButton/SettingsButton";
 import { PlayPageThemeContext } from "../../../styles/themeContexts";
-import { TextDisplayTheme } from "../../../types/themeTypes";
 
 interface Props {
   setAllowedMistype: React.Dispatch<React.SetStateAction<AllowedMistype>>;
   allowedMistype: AllowedMistype;
 }
 
-const useStyles = makeStyles({
-  button: {
-    fontSize: "2rem",
-    color: (  textDisplayTheme: TextDisplayTheme) => `${textDisplayTheme.text.secondary}`,
-    height: "auto"
-  },
-  switchLabel: {
-    color: (  textDisplayTheme: TextDisplayTheme) => `${textDisplayTheme.text.secondary}`
-  }
-});
-
 export default function MistypeSettings({ allowedMistype, setAllowedMistype }: Props) {
   const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
-  const classes = useStyles(textDisplayTheme);
+  const buttonStyle = {
+    fontSize: "2rem",
+    color: `${textDisplayTheme.text.secondary}`,
+    height: "auto"
+  };
 
   const toggleMistype = () => {
     setAllowedMistype(prev => {
@@ -45,21 +36,21 @@ export default function MistypeSettings({ allowedMistype, setAllowedMistype }: P
     return (
       <>
         <SettingsButton
-          className={classes.button}
+          sx={buttonStyle}
           disabled={allowedMistype.count === 0}
           onClick={() => setMistypeCount(0)}
         >
           1.
         </SettingsButton>
         <SettingsButton
-          className={classes.button}
+          sx={buttonStyle}
           disabled={allowedMistype.count === 1}
           onClick={() => setMistypeCount(1)}
         >
           2.
         </SettingsButton>
         <SettingsButton
-          className={classes.button}
+          sx={buttonStyle}
           disabled={allowedMistype.count === 2}
           onClick={() => setMistypeCount(2)}
         >
@@ -72,7 +63,7 @@ export default function MistypeSettings({ allowedMistype, setAllowedMistype }: P
   return (
     <Box>
       <FormControlLabel
-        className={classes.switchLabel}
+        sx={{ color: `${textDisplayTheme.text.secondary}` }}
         control={
           <Switch
             color="primary"

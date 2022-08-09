@@ -19,6 +19,7 @@ const useStyles = makeStyles({
   }
 });
 
+// TODO switching the theme makes the buttons move by 1px - due to border height change
 export default function TextDisplayThemeSelector({ handleTextDisplayThemeChange, textDisplayTheme }: Props) {
   const classes = useStyles(textDisplayTheme);
   const handleClick = (palette: Omit<TextDisplayTheme, "offset">) => {
