@@ -150,3 +150,4 @@ export default function App() {
 // TODO minify resultObj which is saved/loaded from LS or DB
 // TODO move allowedMistype, setAllowedMistype state to PlayPage (if possible)
 // TODO add spinner when loading text from the internet
+// TODO add keyboard icon to browser tab
