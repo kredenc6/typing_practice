@@ -1,16 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import { Box, Paper, Typography, TextField } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import MistypedWordsSorter from "../MistypedWordsSorter/MistypedWordsSorter";
 import MistypedWordsChart from "../MistypedWordsChart/MistypedWordsChart";
 import { MistypedWordsLogV2, SortBy } from "../../types/otherTypes";
 import { getFilteredMistypeWordIndexes, getMistypedWordsChartHeight, sortMistypedWords, transformMistypeWordsToSeries } from "../../pages/Statistics/helpFunction";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
+import { CSSObjects } from "../../types/themeTypes";
 
 const DEFAULT_SORT_BY = "byMistypeCount:desc";
 const SHOWED_MISTYPED_WORDS_COUNT = 10;
 
-const useStyles = makeStyles(({ palette }) => ({
+const styles: CSSObjects = {
   mistypedWordsWrapper: {
     position: "relative",
     width: "90vw",
@@ -30,7 +30,7 @@ const useStyles = makeStyles(({ palette }) => ({
     fontSize: "0.7rem",
     verticalAlign: "top"
   },
-  filter: {
+  filter: ({ palette }) => ({
     position: "absolute",
     left: 0,
     top: 0,
@@ -48,20 +48,19 @@ const useStyles = makeStyles(({ palette }) => ({
       borderLeft: "none"
     },
     "& input:hover + fieldset": {
-      borderColor: `${palette.info.main} !important`
+      borderColor: `${palette.info.main}`
     },
     "& input:focus + fieldset": {
-      borderColor: `${palette.info.main} !important`
+      borderColor: `${palette.info.main}`
     }
-  }
-}));
+  })
+};
 
 interface Props {
   mistypedWordsObj: MistypedWordsLogV2 | null;
 }
 
 export default function MistypedWordsChartWrapper({ mistypedWordsObj }: Props) {
-  const classes = useStyles();
   const [filteredIndexes, setFilteredIndexes] = useState<number[]>([]);
   const [displayedMistypedWordsSeries, setDisplayedMistypedWordsSeries] = useState<{x: string; y: number; }[]>([]);
   const [displayedMistypedWordsRange, setDisplayedMistypedWordsRange] = useState<[number, number]>([0, SHOWED_MISTYPED_WORDS_COUNT]);
@@ -121,28 +120,30 @@ export default function MistypedWordsChartWrapper({ mistypedWordsObj }: Props) {
     }
   },[])
 
-
-
   return (
-    <Paper ref={wrapperRef} variant="outlined" className={classes.mistypedWordsWrapper}>
+    <Paper
+      sx={styles.mistypedWordsWrapper}
+      ref={wrapperRef}
+      variant="outlined"
+    >
       <Typography variant="h6" align="center">
         Chybně napsaná slova
-        <Typography variant="body2" className={classes.mistypedWordsRange}>
+        <Typography sx={styles.mistypedWordsRange} variant="body2">
           {`${displayedMistypedWordsRange[0] + 1} - ${displayedMistypedWordsRange[1]}/${filteredIndexes.length}`}
         </Typography>
       </Typography>
       <TextField
+        sx={styles.filter}
         value={filter}
         label="najdi"
         variant="outlined"
         size="small"
-        onChange={e => handleFilterChange(e.target.value)}
-        className={classes.filter} />
+        onChange={e => handleFilterChange(e.target.value)} />
       {displayedMistypedWordsSeries?.length > 1 &&
         <MistypedWordsSorter sortBy={sortBy} handleSortChange={handleSortChange} />
       }
       {!displayedMistypedWordsSeries?.length
-        ? <Box className={classes.noDataWrapper}>
+        ? <Box sx={styles.noDataWrapper}>
             <Typography>...žádná nenalezena</Typography>
           </Box>
         : <MistypedWordsChart
