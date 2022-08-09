@@ -6,8 +6,14 @@ export type FontSize = "20px" | "30px" | "40px";
 export type FontFamily = "Bitter" | "Comfortaa" | "Fira Code" | "Inconsolata" | "monospace" | "Roboto Mono" | "Trispace";
 type FontLocation = "google" | "local";
 
+
+
 export interface CSSObjects {
   [propName: string]: CSSObject | ((theme: DefaultTheme) => CSSObject);
+}
+
+export interface CSSObjectFunctionsWithProp {
+  [propName: string]: <T>(theme: DefaultTheme, prop?: T) => CSSObject;
 }
 
 export interface FontStyle {

@@ -1,16 +1,15 @@
 import { Box, Typography } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
-import classNames from "classnames";
 import { SortBy } from "../../types/otherTypes";
+import { CSSObjectFunctionsWithProp, CSSObjects } from "../../types/themeTypes";
 
 interface Props {
   sortBy: SortBy;
   handleSortChange: (value: SortBy) => void;
 }
 
-const useStyles = makeStyles(({palette}) => ({
-  mistypedWordsFilter: {
+const styles:CSSObjects = {
+  mistypedWordsFilter: ({ palette }) => ({
     position: "absolute",
     top: 0,
     right: 0,
@@ -22,7 +21,7 @@ const useStyles = makeStyles(({palette}) => ({
     borderBottomLeftRadius: "10px",
     background: palette.background.paper,
     zIndex: 1
-  },
+  }),
   filterOption: {
     display: "flex",
     alignItems: "center",
@@ -31,58 +30,57 @@ const useStyles = makeStyles(({palette}) => ({
   arrowWrapper: {
     display: "flex",
     flexFlow: "column"
-  },
-  arrowIcon: {
-    fill: palette.text.primary,
-    width: "1rem",
-    height: "1rem",
-    "&:hover": {
-      cursor: "pointer"
-    }
-  },
-  arrowIconActive: {
-    fill: palette.info.main,
-    "&:hover": {
-      cursor: "default"
+  }
+};
+
+const styleFunctions: CSSObjectFunctionsWithProp = {
+  arrowIcon: ({ palette }, prop) => {
+    const isActive = prop;
+
+    return {
+      fill: isActive ? palette.info.main : palette.text.primary,
+      width: "1rem",
+      height: "1rem",
+      "&:hover": {
+        cursor: isActive ? "default" : "pointer"
+      }
     }
   }
-}));
+};
 
 export default function MistypedWordsSorter({ sortBy, handleSortChange }: Props) {
-  const classes = useStyles();
-
   return (
-    <Box className={classes.mistypedWordsFilter}>
-      <Box className={classes.filterOption}>
+    <Box sx={styles.mistypedWordsFilter}>
+      <Box sx={styles.filterOption}>
         <Typography variant="body2">abecedně</Typography>
-        <Box className={classes.arrowWrapper}>
+        <Box sx={styles.arrowWrapper}>
           <KeyboardArrowUp
-            className={classNames(classes.arrowIcon, sortBy==="alphabetical:asc" && classes.arrowIconActive) }
+            sx={theme => styleFunctions.arrowIcon(theme, sortBy === "alphabetical:asc")}
             onClick={() => handleSortChange("alphabetical:asc")} />
           <KeyboardArrowDown
-            className={classNames(classes.arrowIcon, sortBy==="alphabetical:desc" && classes.arrowIconActive) }
+            sx={theme => styleFunctions.arrowIcon(theme, sortBy === "alphabetical:desc") }
             onClick={() => handleSortChange("alphabetical:desc")} />
         </Box>
       </Box>
-      <Box className={classes.filterOption}>
+      <Box sx={styles.filterOption}>
         <Typography variant="body2">nedávné</Typography>
-        <Box className={classes.arrowWrapper}>
+        <Box sx={styles.arrowWrapper}>
           <KeyboardArrowUp
-            className={classNames(classes.arrowIcon, sortBy==="byTime:asc" && classes.arrowIconActive) }
+            sx={theme => styleFunctions.arrowIcon(theme, sortBy === "byTime:asc") }
             onClick={() => handleSortChange("byTime:asc")} />
           <KeyboardArrowDown
-            className={classNames(classes.arrowIcon, sortBy==="byTime:desc" && classes.arrowIconActive) }
+            sx={ theme => styleFunctions.arrowIcon(theme, sortBy === "byTime:desc") }
             onClick={() => handleSortChange("byTime:desc")} />
         </Box>
       </Box>
-      <Box className={classes.filterOption}>
+      <Box sx={styles.filterOption}>
         <Typography variant="body2">počet</Typography>
-        <Box className={classes.arrowWrapper}>
+        <Box sx={styles.arrowWrapper}>
           <KeyboardArrowUp
-            className={classNames(classes.arrowIcon, sortBy==="byMistypeCount:asc" && classes.arrowIconActive) }
+            sx={theme => styleFunctions.arrowIcon(theme, sortBy === "byMistypeCount:asc") }
             onClick={() => handleSortChange("byMistypeCount:asc")} />
           <KeyboardArrowDown 
-            className={classNames(classes.arrowIcon, sortBy==="byMistypeCount:desc" && classes.arrowIconActive) }
+            sx={theme => styleFunctions.arrowIcon(theme, sortBy === "byMistypeCount:desc") }
             onClick={() => handleSortChange("byMistypeCount:desc")} />
         </Box>
       </Box>
