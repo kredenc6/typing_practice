@@ -1,11 +1,10 @@
 import { Box, useTheme } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import { WbSunnyOutlined, NightsStay } from "@mui/icons-material";
-import classNames from "classnames";
 import { Transition } from "react-transition-group";
+import { CSSObjects } from "../../types/themeTypes";
 
-const useStyles = makeStyles( ({ palette, transitions }) => ({
-  themeSwitch: {
+const styles: CSSObjects = {
+  themeSwitch: ({ palette }) => ({
     position: "absolute",
     top: "1rem",
     right: "1rem",
@@ -21,27 +20,29 @@ const useStyles = makeStyles( ({ palette, transitions }) => ({
     "&:hover": {
       cursor: "pointer"
     }
-  },
-  themeSwitchIcon: {
+  }),
+  themeSwitchIcon: ({ palette }) => ({
     color: palette.text.primary
-  },
-  moonIcon: {
+  }),
+  moonIcon: ({ palette, transitions }) => ({
+    color: "ff0000",
+    fill: "ff0000",
     transition:
       `left ${transitions.duration.complex * 2}ms, ` +
       `transform ${transitions.duration.complex * 2}ms, ` +
       (palette.mode === "dark"
         ? `opacity ${transitions.duration.complex}ms ${transitions.duration.complex}ms`
         : `opacity ${transitions.duration.complex}ms`)
-  },
-  sunIcon: {
+  }),
+  sunIcon: ({ palette, transitions }) => ({
     transition:
       `right ${transitions.duration.complex * 2}ms, ` +
       `transform ${transitions.duration.complex * 2}ms, ` +
       (palette.mode === "light"
         ? `opacity ${transitions.duration.complex}ms ${transitions.duration.complex}ms`
         : `opacity ${transitions.duration.complex}ms`)
-  },
-}));
+  })
+};
 
 const moonTransitionStyles = {
   entering: {
@@ -94,7 +95,6 @@ const sunTransitionStyles = {
 };
 
 export default function ThemeSwitch() {
-  const classes = useStyles();
   const { palette, transitions, updateTheme } = useTheme();
   const toggleTheme = () => {
     updateTheme(palette.mode === "light" ? "dark" : "light");
@@ -103,21 +103,21 @@ export default function ThemeSwitch() {
   return (
     <Box
       component="button"
-      className={classes.themeSwitch}
+      sx={styles.themeSwitch}
       onClick={toggleTheme}
     >
       <Transition in={palette.mode === "light"} timeout={transitions.duration.complex * 2}>
         {state => (
           <WbSunnyOutlined
-            className={classNames(classes.themeSwitchIcon, classes.sunIcon)}
-            style={{ ...sunTransitionStyles[state] }} />
+            sx={[ styles.themeSwitchIcon, styles.sunIcon, sunTransitionStyles[state] ]}
+          />
         )}
       </Transition>
       <Transition in={palette.mode === "dark"} timeout={transitions.duration.complex * 2}>
         {state => (
           <NightsStay
-            className={classNames(classes.themeSwitchIcon, classes.moonIcon)}
-            style={{ ...moonTransitionStyles[state] }} />
+            sx={[ styles.themeSwitchIcon, styles.moonIcon, moonTransitionStyles[state] ]}
+          />
         )}
       </Transition>
     </Box>
