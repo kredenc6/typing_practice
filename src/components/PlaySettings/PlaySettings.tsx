@@ -1,7 +1,6 @@
 import React, { useContext, useLayoutEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Box, ClickAwayListener, IconButton } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import { FormatSize, Menu, Palette, Refresh, Settings } from "@mui/icons-material";
 import TextFormatSelector from "../TextFormatSelector/TextFormatSelector";
 import TextDisplayThemeSelector from "../TextDisplayThemeSelector/TextDisplayThemeSelector";
@@ -22,25 +21,6 @@ interface Props {
   allowedMistype: AllowedMistype;
 }
 
-const useStyles = makeStyles({
-  header: {
-    display: "grid",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gridTemplateColumns: "auto auto",
-    padding: "0.5rem 4rem",
-    backgroundColor: (textDisplayTheme: TextDisplayTheme) => textDisplayTheme.background.secondary,
-    color: (textDisplayTheme: TextDisplayTheme) => textDisplayTheme.text.main,
-    borderBottom: (textDisplayTheme: TextDisplayTheme) => `1px solid ${textDisplayTheme.text.secondary}`
-  },
-  iconButton: {
-    color: (textDisplayTheme: TextDisplayTheme) => textDisplayTheme.text.secondary
-  },
-  clickAwayWrapper: {
-    display: "inline-block"
-  }
-});
-
 export default function PlaySettings({
   fontData,
   handleFontDataChange,
@@ -51,7 +31,6 @@ export default function PlaySettings({
   setAllowedMistype
 }: Props) {
   const { state: textDisplayTheme, update: updateTextDisplayTheme } = useContext(PlayPageThemeContext);
-  const classes = useStyles(textDisplayTheme);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [popperOpenedBy, setPopperOpenedBy] = useState("");
   
@@ -116,23 +95,36 @@ export default function PlaySettings({
   }, [])
 
   return(
-    <header className={classes.header} id="playSettingsHeader">
+    <Box
+      component="header"
+      sx={{
+        display: "grid",
+        justifyContent: "space-between",
+        alignItems: "center",
+        gridTemplateColumns: "auto auto",
+        padding: "0.5rem 4rem",
+        backgroundColor: textDisplayTheme.background.secondary,
+        color: textDisplayTheme.text.main,
+        borderBottom: `1px solid ${textDisplayTheme.text.secondary}`
+      }}
+      id="playSettingsHeader"
+    >
       <Link to="/mainMenu">
-        <Menu className={classes.iconButton} />
+        <Menu sx={{ color: textDisplayTheme.text.secondary }} />
       </Link>
       <Box>
-        <IconButton className={classes.iconButton} disabled={restart} onClick={() => setRestart(true)}>
+        <IconButton sx={{ color: textDisplayTheme.text.secondary }} disabled={restart} onClick={() => setRestart(true)}>
           <Refresh />
         </IconButton>
         <ClickAwayListener onClickAway={handleClickAway}>
-          <Box className={classes.clickAwayWrapper} id="clickAwayWrapper">
-            <IconButton className={classes.iconButton} id="formatFontBtt" onClick={e => handleClick(e.currentTarget.id)}>
+          <Box sx={{ display: "inline-block" }} id="clickAwayWrapper">
+            <IconButton sx={{ color: textDisplayTheme.text.secondary }} id="formatFontBtt" onClick={e => handleClick(e.currentTarget.id)}>
               <FormatSize />
             </IconButton>
-            <IconButton className={classes.iconButton} id="fontPaletteBtt" onClick={e => handleClick(e.currentTarget.id)}>
+            <IconButton sx={{ color: textDisplayTheme.text.secondary }} id="fontPaletteBtt" onClick={e => handleClick(e.currentTarget.id)}>
               <Palette />
             </IconButton>
-            <IconButton className={classes.iconButton} id="gameSettings" onClick={e => handleClick(e.currentTarget.id)}>
+            <IconButton sx={{ color: textDisplayTheme.text.secondary }} id="gameSettings" onClick={e => handleClick(e.currentTarget.id)}>
               <Settings />
             </IconButton>
             {
@@ -145,6 +137,6 @@ export default function PlaySettings({
           </Box>
         </ClickAwayListener>
       </Box>
-    </header>
+    </Box>
   );
 }
