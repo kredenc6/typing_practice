@@ -62,7 +62,7 @@ export default function LoadedParagraph({
           horizontal: "left",
         }}
       >
-        <Typography className={classes.paragraphId}>{paragraphId}</Typography>
+        <Typography className={classes.paragraphId}>{paragraphId})</Typography>
           <Tooltip
             title={
               <Simplebar
