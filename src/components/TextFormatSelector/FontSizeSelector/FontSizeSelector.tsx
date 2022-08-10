@@ -1,4 +1,3 @@
-import React from "react";
 import { ButtonGroup, Grid } from "@mui/material";
 import SelectableFontSize from "../SelectableFontSize/SelectableFontSize";
 import { fontSizes } from "../../../styles/textDisplayTheme/textDisplayData";

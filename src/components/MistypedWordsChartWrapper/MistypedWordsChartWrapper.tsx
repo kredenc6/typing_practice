@@ -40,18 +40,9 @@ const styles: CSSObjects = {
       background: palette.background.paper,
       borderRadius: "0.2rem"
     },
-    "& .MuiFormLabel-root.Mui-focused": {
-      color: palette.info.main
-    },
     "& input + fieldset": {
       borderTop: "none",
       borderLeft: "none"
-    },
-    "& input:hover + fieldset": {
-      borderColor: `${palette.info.main}`
-    },
-    "& input:focus + fieldset": {
-      borderColor: `${palette.info.main}`
     }
   })
 };
