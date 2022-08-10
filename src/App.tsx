@@ -151,3 +151,8 @@ export default function App() {
 // TODO move allowedMistype, setAllowedMistype state to PlayPage (if possible)
 // TODO add spinner when loading text from the internet
 // TODO add keyboard icon to browser tab
+// BUG scrollbars are almost invisible in dark mode (especially in the loaded paragraph tooltips)
+// TODO retry text loading when received empty paragraphs from random wiki
+// BUG won't add full 100 (possibly also 10) when scrolling to add text length...
+// ...after scrolling under or over the limit
+// BUG says without typos even when there were some - it's dependent on mistyped words
