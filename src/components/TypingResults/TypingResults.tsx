@@ -3,10 +3,12 @@ import { Box, Paper, SvgIcon, Typography } from "@mui/material";
 import { Results } from "../../types/otherTypes";
 import MistypedWord from "./MistypedWord/MistypedWord";
 import SpecificResult from "./SpecificResult/SpecificResult";
+// TODO switch all icons to 24px / 24px (MUI recomendation)
 import { ReactComponent as TopSpeed } from "../../svg/top-speed.svg";
 import { ReactComponent as Target } from "../../svg/target.svg";
 import { ReactComponent as ErrorCircle } from "../../svg/error-circle.svg";
-import { ReactComponent as ThumbUpIcon } from "../../svg/thumb-up.svgi-24px.svg";
+// import { ReactComponent as ThumbUpIcon } from "../../svg/thumb-up.svg";
+import { ReactComponent as ThumbUpIcon } from "../../svg/thumb-up-24px.svg";
 import { ReactComponent as Clock } from "../../svg/time.svg";
 import { useContext } from "react";
 import { PlayPageThemeContext } from "../../styles/themeContexts";
