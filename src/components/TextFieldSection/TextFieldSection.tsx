@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
 import { Badge, Box, Button, Typography } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import TextInput from "../TextInput/TextInput";
 import TextNormalizeSwitches from "./TextNormalizeSwitches/TextNormalizeSwitches";
 import adjustTextGeneral from "../../textFunctions/adjustTextGeneral";
 import adjustTextFromWiki from "../../textFunctions/adjustTextFromWiki";
 import adjustTextForCzechKeyboard from "../../textFunctions/adjustTextForCzechKeyboard";
 import { Unsafe_Entries } from "../../types/otherTypes";
+import { CSSObjects } from "../../types/themeTypes";
 
 interface Props {
   setTextInput: (text: string) => void;
-  // setTextInput: React.Dispatch<React.SetStateAction<string>>;
   textInput: string;
 }
 
@@ -34,7 +33,7 @@ type LocalStorageAdjustText = {
   [P in keyof AdjustText]: boolean;
 }
 
-const useStyles = makeStyles({
+const styles: CSSObjects = {
   textFieldSection: {
     width: "85%",
     display: "grid",
@@ -59,10 +58,9 @@ const useStyles = makeStyles({
     justifyContent: "space-between",
     alignItem: "center"
   }
-});
+};
 
 export default function TextFieldSection({ setTextInput, textInput }: Props) {
-  const classes = useStyles();
   const [adjustText, setAdjustText] = useState<AdjustText>({
     general: { boolean: true, function: adjustTextGeneral, order: 3 },
     fromWiki: { boolean: true, function: adjustTextFromWiki, order: 1 },
@@ -120,16 +118,12 @@ export default function TextFieldSection({ setTextInput, textInput }: Props) {
   }, [])
 
   return (
-    <Box className={classes.textFieldSection}>
-      <Typography
-        className={classes.textFieldHeading}
-        variant="h5"
-        component="h6"
-      >
+    <Box sx={styles.textFieldSection}>
+      <Typography sx={styles.textFieldHeading} variant="h5" component="h6">
         Text k opsání
       </Typography>
       <Badge
-        className={classes.textField}
+        sx={styles.textField}
         color="primary"
         badgeContent={textInput.length ? `${textInput.length} znaků` : 0}
       >
@@ -140,17 +134,13 @@ export default function TextFieldSection({ setTextInput, textInput }: Props) {
           value={textInput}
           variant="outlined" />
       </Badge>
-      <Box className={classes.switchWrapper}>
+      <Box sx={styles.switchWrapper}>
         <TextNormalizeSwitches
           adjustText={adjustText}
           setAdjustText={setAdjustText}
           handleSwitchChange={handleSwitchChange}
           textInput={textInput} />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleAdjustText}
-        >
+        <Button variant="contained" color="primary" onClick={handleAdjustText}>
           Uprav text
         </Button>
       </Box>
