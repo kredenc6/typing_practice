@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Fade, Box } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import PlaySettings from "../../components/PlaySettings/PlaySettings";
 import TextDisplay from "../../components/TextDisplay/TextDisplay";
 import TypingResults from "../../components/TypingResults/TypingResults";
-import { FontData, TextDisplayTheme } from "../../types/themeTypes";
+import { FontData } from "../../types/themeTypes";
 import { Redirect } from "react-router";
 import Timer from "../../accessories/Timer";
 import { AllowedMistype, GameStatus, Results } from "../../types/otherTypes";
@@ -22,20 +21,6 @@ interface Props {
   allowedMistype: AllowedMistype;
 }
 
-const useStyles = makeStyles({
-  playPage: {
-    position: "relative",
-    display: "flex",
-    flexDirection: "column",
-    height: "100vh",
-    backgroundColor: ({ background} : TextDisplayTheme) => background.main
-  },
-  resultWrapper: {
-    flexGrow: 1,
-    zIndex: 2
-  }
-});
-
 export default function PlayPage({
   fontData,
   handleFontDataChange,
@@ -45,8 +30,7 @@ export default function PlayPage({
   setAllowedMistype,
   allowedMistype
 }: Props) {
-  const { state: playPageTheme } = useContext(PlayPageThemeContext); 
-  const classes = useStyles(playPageTheme);
+  const { state: textDisplayTheme } = useContext(PlayPageThemeContext); 
   const [restart , setRestart] = useState(false);
   const [gameStatus, setGameStatus] = useState<GameStatus>("settingUp");
   const [resultObj, setResultObj] = useState<Results | null>(null);
@@ -68,7 +52,15 @@ export default function PlayPage({
   return (
     !text
       ? <Redirect to="/mainMenu" />
-      : <Box className={classes.playPage}>
+      : <Box
+          sx={{
+            position: "relative",
+            display: "flex",
+            flexDirection: "column",
+            height: "100vh",
+            backgroundColor: textDisplayTheme.background.main
+          }}
+        >
           <PlaySettings
             fontData={fontData}
             handleFontDataChange={handleFontDataChange}
@@ -88,7 +80,7 @@ export default function PlayPage({
             setGameStatus={setGameStatus}
             setResultObj={setResultObj} />
           <Fade in={gameStatus === "finished"}>
-            <Box className={classes.resultWrapper}>
+            <Box sx={{ flexGrow: 1, zIndex: 2 }}>
               <TypingResults resultObj={resultObj} />
             </Box>
           </Fade>
