@@ -1,5 +1,4 @@
 import { Box, Paper } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import Simplebar from "simplebar-react";
 import LoadedParagraph from "../LoadedParagraph/LoadedParagraph";
 
@@ -8,7 +7,7 @@ interface Props {
   handleInsertParagraph: (paragraph: string) => void;
 }
 
-const useStyles = makeStyles({
+const styles = {
   paragraphSummary: {
     width: "100%",
     overflow: "hidden"
@@ -16,13 +15,11 @@ const useStyles = makeStyles({
   paragraphWrapper: {
     paddingRight: "12px"
   }
-});
+};
 
 export default function LoadedParagraphSummary({
   loadedParagraphs, handleInsertParagraph
 }: Props) {
-  const classes = useStyles();
-
   const LoadedParagraphComponents = loadedParagraphs.map((loadedParagraph, i) =>
     <LoadedParagraph
       key={i}
@@ -32,9 +29,9 @@ export default function LoadedParagraphSummary({
   );
 
   return (
-    <Paper className={classes.paragraphSummary} variant="outlined">
+    <Paper sx={styles.paragraphSummary} variant="outlined">
       <Simplebar style={{ maxHeight: "100%" }} autoHide={false}>
-        <Box className={classes.paragraphWrapper}>
+        <Box sx={styles.paragraphWrapper}>
           {LoadedParagraphComponents}
         </Box>
       </Simplebar>
