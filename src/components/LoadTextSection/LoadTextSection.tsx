@@ -3,7 +3,6 @@ import {
   Paper, Typography, ButtonGroup, Button, FormControlLabel, Checkbox,
   TextField, Box
 } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import LoadedParagraphSummary from "../LoadedParagraphSummary/LoadedParagraphSummary";
 import { InsertTextOnLoad } from "../../pages/MainMenu/MainMenu";
 
@@ -18,7 +17,7 @@ interface Props {
   handleInsertTextOnLoadChange: (changeObj: Partial<InsertTextOnLoad>) => void;
 }
 
-const useStyles = makeStyles({
+const styles = {
   loadTextSection: {
     height: "30%",
     display: "flex",
@@ -37,14 +36,12 @@ const useStyles = makeStyles({
     display: "grid",
     gridTemplateRows: "15% 85%"
   }
-});
+};
 
 export default function LoadTextSection({
   handleLoadArcticle, loadedParagraphs, handleInsertParagraph,
   insertTextOnLoad, handleInsertTextOnLoadChange
 }: Props) {
-  const classes = useStyles();
-
   const handleInsertTextOnLoadLengthChange = (newLength: number) => {
     handleInsertTextOnLoadChange({ length: newLength });
   };
@@ -70,8 +67,8 @@ export default function LoadTextSection({
   };
 
   return (
-    <Paper className={classes.loadTextSection} elevation={0}>
-      <Box className={classes.loadOptions}>
+    <Paper sx={styles.loadTextSection} elevation={0}>
+      <Box sx={styles.loadOptions}>
         <ButtonGroup variant="outlined" color="primary" orientation="vertical">
           <Button
             onClick={() => handleLoadArcticle("/randomWiki")}
@@ -124,7 +121,7 @@ export default function LoadTextSection({
               &nbsp;znaků.
             </Box>} />
       </Box>
-      <Box className={classes.loadedParagraphsOptions}>
+      <Box sx={styles.loadedParagraphsOptions}>
         <Typography component="h6" variant="h5">Nalezené odstavce</Typography>
         <LoadedParagraphSummary
           loadedParagraphs={loadedParagraphs}
