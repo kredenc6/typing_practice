@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Box, useTheme } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import DisplayedSymbol from "../DisplayedSymbol/DisplayedSymbol";
 import FadeAway from "../transitions/FadeAway/FadeAway";
-import { SymbolStyle, AnimateMistyped } from "../../types/themeTypes";
+import { SymbolStyle, AnimateMistyped, CSSObjects } from "../../types/themeTypes";
 import { getSymbolStyle } from "../DisplayedRow/helpFunctions";
 import { PlayPageThemeContext } from "../../styles/themeContexts";
 import TextCursor from "../TextCursor/TextCursor";
@@ -18,7 +17,7 @@ interface Props {
   symbol: string;
 }
 
-const useStyles = makeStyles({
+const styles: CSSObjects = {
   displayedSymbolWrapper: {
     position: "relative",
     display: "inline-block",
@@ -31,13 +30,12 @@ const useStyles = makeStyles({
     width: "100%",
     height: "100%"
   }
-});
+};
 
 function DisplayedSymbolWrapper({
   textCursorHeight, symbol, setAnimateMistypedSymbol,
   animateMistypedSymbol, symbolStyle, symbolPosition
 }: Props) {
-  const classes = useStyles();
   const { transitions } = useTheme();
   const { state: textDisplayTheme } = useContext(PlayPageThemeContext)
   const [displayInvalid, setDisplayInvalid] = useState(false);
@@ -63,10 +61,10 @@ function DisplayedSymbolWrapper({
   },[animateMistypedSymbol, symbolPosition, transitions.duration.complex])
 
   return(
-    <Box className={classes.displayedSymbolWrapper}>
+    <Box sx={styles.displayedSymbolWrapper}>
       <DisplayedSymbol symbol={symbol} symbolStyle={symbolStyle} />
       <FadeAway
-        className={classes.invalidSymbol}
+        sx={styles.invalidSymbol}
         inProp={displayInvalid}
         timeout={transitions.duration.complex}
         onExited={() => setAnimateMistypedSymbol(null)}
