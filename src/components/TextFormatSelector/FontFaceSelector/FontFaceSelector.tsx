@@ -1,10 +1,9 @@
 import { useContext, useState } from "react";
 import { Box, ClickAwayListener, Grid, Popper, Typography } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import Spinner from "../../Spinner/Spinner";
 import FakeSelect from "../../FakeSelect/FakeSelect";
 import { fontFamilies } from "../../../styles/textDisplayTheme/textDisplayData";
-import { FontFamily, TextDisplayTheme } from "../../../types/themeTypes";
+import { CSSObjectFunctionsWithProp, CSSObjects, FontFamily, TextDisplayTheme } from "../../../types/themeTypes";
 import { PlayPageThemeContext } from "../../../styles/themeContexts";
 
 interface Props {
@@ -13,23 +12,14 @@ interface Props {
   isFontDataLoading: boolean;
 }
 
-const useStyles = makeStyles(({ palette, typography }) => ({
+const styles: CSSObjects = {
   select: {
     color: "inherit",
     "& .MuiSelect-icon": {
       color: "inherit"
     }
   },
-  popper: {
-    display: "grid",
-    gap: "1rem 1.5rem",
-    gridTemplateColumns: "1fr 1fr 1fr",
-    padding: "1rem",
-    backgroundColor: "white",
-    border: (textDisplayTheme: TextDisplayTheme) => `1px solid ${textDisplayTheme.text.secondary}`,
-    zIndex: 3
-  },
-  fontFamilyItem: {
+  fontFamilyItem: ({ palette, typography }) => ({
     padding: "0.5rem",
     color: "#555",
     fontFamily: typography.fontFamily,
@@ -40,24 +30,39 @@ const useStyles = makeStyles(({ palette, typography }) => ({
       color: palette.info.main,
       borderBottom: `1px solid ${palette.info.main}`
     }
-  },
-  selectedFontFamilyItem: {
+  }),
+  selectedFontFamilyItem: ({ palette, typography }) => ({
     padding: "0.5rem",
     color: palette.info.main,
     fontFamily: typography.fontFamily,
     borderBottom: `1px solid ${palette.info.main}`,
     cursor: "default"
-  },
+  }),
   selectDescription: {
     cursor: "default"
   }
-}));
+};
+
+const styleFunctions: CSSObjectFunctionsWithProp = {
+  popper: (_, prop) => {
+    const textDisplayTheme = prop as TextDisplayTheme;
+
+    return {
+      display: "grid",
+      gap: "1rem 1.5rem",
+      gridTemplateColumns: "1fr 1fr 1fr",
+      padding: "1rem",
+      backgroundColor: "white",
+      border: `1px solid ${textDisplayTheme.text.secondary}`,
+      zIndex: 3
+    }
+  }
+};
 
 export default function FontFaceSelector({
   activeFontFamily, handleFontFamilyChange, isFontDataLoading
 }: Props) {
   const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
-  const classes = useStyles(textDisplayTheme);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [isPopperOpened, setIsPopperOpened] = useState(false);
 
@@ -77,40 +82,43 @@ export default function FontFaceSelector({
 
   const FontFamilyComponents = fontFamilies.map(({ name }) => {
     return (
-      <div key={name}>
+      <Box key={name}>
         {
           activeFontFamily === name ?
-            <span className={classes.selectedFontFamilyItem} key={name}>{name}</span>
+            <Box component="span" sx={styles.selectedFontFamilyItem} key={name}>
+              {name}
+            </Box>
             :
-            <span
-              className={classes.fontFamilyItem}
+            <Box
+              component="span"
+              sx={styles.fontFamilyItem}
               key={name}
               onClick={() => handleFontFamilyChange(name)}
             >
               {name}
-            </span>
+            </Box>
         }
-      </div>
+      </Box>
     );
   });
 
   return(
     <Grid alignItems="center" justifyContent="space-around" container>
       <Grid item>
-        <Typography className={classes.selectDescription}>Typ fontu:</Typography>
+        <Typography sx={styles.selectDescription}>Typ fontu:</Typography>
       </Grid>
       <Grid item>
         <ClickAwayListener onClickAway={handleClickaway}>
           <Box>
             <FakeSelect
-              className={classes.select}
+              sx={styles.select}
               id="faceSelectorPopperAnchor"
               onClick={handleClick}
               value={activeFontFamily} />
             <Popper
               id="font-selentor--popper"
               anchorEl={anchorEl}
-              className={classes.popper}
+              sx={theme => styleFunctions.popper(theme, textDisplayTheme)}
               modifiers={[ { name: "offset", enabled: true, options: { offset: [0, 5]} } ]}
               open={isPopperOpened}
               placement="bottom-start"
