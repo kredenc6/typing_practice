@@ -1,6 +1,5 @@
 import React from "react";
 import { Box, FormControlLabel, Switch } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import { AdjustText } from "../TextFieldSection";
 
 interface Props {
@@ -10,21 +9,16 @@ interface Props {
   textInput: string;
 }
 
-const useStyles = makeStyles({
-  switchWrapper: {
-    display: "flex",
-    flexFlow: "column",
-    alignItems: "start"
-  }
-});
-
 export default function TextNormalizeSwitches({
   adjustText,
   handleSwitchChange,
 }: Props) {
-  const classes = useStyles();
   return (
-    <Box className={classes.switchWrapper}>
+    <Box sx={{
+      display: "flex",
+      flexFlow: "column",
+      alignItems: "start"
+    }}>
       <FormControlLabel
         control={<Switch checked={adjustText.general.boolean} color="primary" disabled name="general" />}
         label="obecné úpravy textu"
