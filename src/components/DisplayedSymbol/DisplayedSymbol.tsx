@@ -1,4 +1,4 @@
-import { makeStyles } from "@mui/styles";
+import { Box } from "@mui/material";
 import { SymbolStyle } from "../../types/themeTypes";
 
 interface Props {
@@ -6,23 +6,22 @@ interface Props {
   symbol: string;
 }
 
-const useStyles = makeStyles({
-  textSymbol: {
-    marginRight: ({ symbolOffset }: SymbolStyle) => symbolOffset.marginRight,
-    paddingLeft: ({ symbolOffset }: SymbolStyle) => symbolOffset.paddingLeft,
-    paddingRight: ({ symbolOffset }: SymbolStyle) => symbolOffset.paddingRight,
-    color: ({ color }: SymbolStyle) => color,
-    backgroundColor: ({ backgroundColor }: SymbolStyle) => backgroundColor,
-    borderRadius: "3px"
-  }
-});
-
 export default function DisplayedSymbol({ symbol, symbolStyle }: Props) {
-  const classes = useStyles(symbolStyle);
+  const { symbolOffset, color, backgroundColor } = symbolStyle;
 
   return (
-    <span className={classes.textSymbol}>
+    <Box
+      component="span"
+      sx={{
+        marginRight: symbolOffset.marginRight,
+        paddingLeft: symbolOffset.paddingLeft,
+        paddingRight: symbolOffset.paddingRight,
+        color,
+        backgroundColor,
+        borderRadius: "3px"
+      }}
+    >
       {symbol}
-    </span>
+    </Box>
   );
 };
