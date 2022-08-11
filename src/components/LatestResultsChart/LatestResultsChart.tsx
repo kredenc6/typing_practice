@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, Paper, useTheme } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import ReactApexCharts from "react-apexcharts";
 import { createLatestResultsChartOptions, timestampsToXAxisCategories } from "../../pages/Statistics/chartOptions";
 
@@ -13,7 +12,7 @@ interface Props {
   timestamps: number[];
 }
 
-const useStyles = makeStyles({
+const styles = {
   lastResultsChartWrapper: {
     minWidth: `${LAST_RESULTS_CHART_MINIMAL_WIDTH}px`,
     width: "90vw",
@@ -30,11 +29,10 @@ const useStyles = makeStyles({
     width: "min-content",
     margin: "0 auto"
   }
-});
+};
 
 export default function LatestResultsChart({ precision, typingSpeed, textLength, timestamps }: Props) {
   const theme = useTheme();
-  const classes = useStyles();
   const chartWidth = `${Math.max(LAST_RESULTS_CHART_MINIMAL_WIDTH, typingSpeed.length * 120)}px`;
   const [latestResultsChartOptions, setLatestResultsChartOptions] = useState(createLatestResultsChartOptions(theme));
 
@@ -57,15 +55,15 @@ export default function LatestResultsChart({ precision, typingSpeed, textLength,
   }, [timestamps, theme])
 
   return (
-    <Paper variant="outlined" className={classes.lastResultsChartWrapper}>
+    <Paper variant="outlined" sx={styles.lastResultsChartWrapper}>
       <Typography variant="h6" align="center">Výsledky za posledních 10 opisů</Typography>
       {
         !timestamps?.length
-          ? <Box className={classes.noDataWrapper}>
+          ? <Box sx={styles.noDataWrapper}>
               <Typography>...žádné nenalezeny</Typography>
             </Box>
           : <ReactApexCharts
-              className={classes.chart}
+              sx={styles.chart}
               id="lastResultsChart"
               options={latestResultsChartOptions}
               series={[
