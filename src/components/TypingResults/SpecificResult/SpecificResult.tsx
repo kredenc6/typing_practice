@@ -1,8 +1,7 @@
 import React, { useContext } from "react";
-import { Box, Typography } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Box, SvgIcon, Typography } from "@mui/material";
 import { PlayPageThemeContext } from "../../../styles/themeContexts";
-import { TextDisplayTheme } from "../../../types/themeTypes";
+import { CSSObjects } from "../../../types/themeTypes";
 
 interface Props {
   Icon: React.FunctionComponent<React.SVGProps<SVGSVGElement> & {
@@ -12,7 +11,7 @@ interface Props {
   children?: React.ReactNode;
 }
 
-const useStyles = makeStyles({
+const styles: CSSObjects = {
   results: {
     display: "grid",
     gridTemplateColumns: "1fr 2fr",
@@ -24,20 +23,21 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     alignItems: "center"
-  },
-  icon: {
-    fill: (textDisplayTheme: TextDisplayTheme) => textDisplayTheme.text.main
   }
-});
+};
 
 export default function SpecificResult({ Icon, description, children }: Props) {
   const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
-  const classes = useStyles(textDisplayTheme);
 
   return (
-    <Box className={classes.results}>
-      <Box className={classes.resultDescription}>
-        <Icon className={classes.icon} />
+    <Box sx={styles.results}>
+      <Box sx={styles.resultDescription}>
+        <SvgIcon
+          sx={{ fill: textDisplayTheme.text.main }}
+          component={Icon}
+          inheritViewBox />
+          {/* TODO delete commented code if everything works */}
+        {/* <Icon sx={{ fill: textDisplayTheme.text.main }} /> */}
         <Typography component="h6" variant="h4">{description}</Typography>
       </Box>
       {children}
