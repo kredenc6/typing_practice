@@ -1,14 +1,13 @@
 import React, { useLayoutEffect, useRef } from "react";
-import classNames from "classnames";
-import { makeStyles } from "@mui/styles";
 import TextCursor from "../TextCursor/TextCursor";
 import { getRelativePosition, getSymbolStyle } from "./helpFunctions";
 import { WordObject } from "../../types/symbolTypes";
-import { FontSize, TextDisplayTheme, AnimateMistyped } from "../../types/themeTypes";
+import { FontSize, TextDisplayTheme, AnimateMistyped, CSSObjects } from "../../types/themeTypes";
 import DisplayedSymbolWrapper from "../DisplayedSymbolWrapper/DisplayedSymbolWrapper";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
+import { Box, BoxProps } from "@mui/material";
 
-interface Props extends React.HTMLProps<HTMLDivElement> {
+interface Props extends BoxProps {
   fontSize: FontSize;
   words: WordObject[];
   setRowHeight: React.Dispatch<React.SetStateAction<number>>;
@@ -20,16 +19,16 @@ interface Props extends React.HTMLProps<HTMLDivElement> {
   setAnimateMistypedSymbol: React.Dispatch<React.SetStateAction<AnimateMistyped | null>>
 }
 
-const useStyles = makeStyles(({ transitions }) => ({
-  row: {
+const styles:CSSObjects = {
+  row: ({ transitions }) => ({
     whiteSpace: "nowrap",
     transition: `margin-top ${transitions.duration.complex}ms,
                  padding-bottom ${transitions.duration.complex}ms`
-  }
-}));
+  })
+};
 
 export default function DisplayedRow({
-  className,
+  sx,
   fontSize,
   words,
   setRowHeight,
@@ -39,9 +38,8 @@ export default function DisplayedRow({
   enteredSymbol,
   animateMistypedSymbol,
   setAnimateMistypedSymbol,
-  ...divProps
+  ...boxProps
 }: Props) {
-  const classes = useStyles();
   const divRef: React.MutableRefObject<null | HTMLDivElement> = useRef(null);
 
   useLayoutEffect(() => {
@@ -75,11 +73,23 @@ export default function DisplayedRow({
   });
 
   return (
-    <div
-      className={classNames(classes.row, className)} {...divProps}
+    <Box
+      sx={[
+        styles.row,
+        ...(Array.isArray(sx) ? sx : [sx])
+      ]}
+      {...boxProps}
       ref={divRef}
     >
       {DisplayedSymbolWrapperComponents}
-    </div>
+    </Box>
   );
+  // TODO delete the commented code if everything works
+  //   <div
+  //     className={classNames(classes.row, className)} {...divProps}
+  //     ref={divRef}
+  //   >
+  //     {DisplayedSymbolWrapperComponents}
+  //   </div>
+  // );
 };
