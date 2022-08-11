@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
 import { MistypedWordsLogV2, Results } from "../../types/otherTypes";
 import MistypedWordsChartWrapper from "../../components/MistypedWordsChartWrapper/MistypedWordsChartWrapper";
 import LatestResultsChart from "../../components/LatestResultsChart/LatestResultsChart";
 import ThemeSwitch from "../../components/ThemeSwith/ThemeSwith";
+import { CSSObjects } from "../../types/themeTypes";
 
-const useStyles = makeStyles(({ palette }) => ({
-  statistics: {
+const styles: CSSObjects = {
+  statistics: ({ palette }) => ({
     height: "100vh",
     display: "grid",
     gridTemplateColumns: "1fr",
@@ -16,11 +16,10 @@ const useStyles = makeStyles(({ palette }) => ({
     textAlign: "center",
     color: palette.text.primary,
     backgroundColor: palette.background.default
-  }
-}));
+  })
+};
 
 export default function Statistics() {
-  const classes = useStyles();
   const [precision, setPrecision] = useState<number[]>([]);
   const [typingSpeed, setTypingSpeed] = useState<number[]>([]);
   const [textLength, setTextLength] = useState<number[]>([]);
@@ -60,7 +59,7 @@ export default function Statistics() {
   }, [])
 
   return (
-    <Box className={classes.statistics}>
+    <Box sx={styles.statistics}>
       <ThemeSwitch />
       <LatestResultsChart
         precision={precision}
