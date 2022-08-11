@@ -1,5 +1,4 @@
 import { Box } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import SelectTextDisplayThemeButton from "./SelectTextDisplayThemeButton/SelectTextDisplayThemeButton";
 import * as availableTextDisplayPalettes from "../../styles/textDisplayPaletes";
 import { TextDisplayTheme } from "../../types/themeTypes";
@@ -9,19 +8,8 @@ interface Props {
   textDisplayTheme: TextDisplayTheme
 }
 
-const useStyles = makeStyles({
-  themeSelector: {
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gap: "1.5rem",
-    padding: "1rem",
-    backgroungColor: ( textDisplayTheme: TextDisplayTheme) => textDisplayTheme.background.secondary
-  }
-});
-
 // TODO switching the theme makes the buttons move by 1px - due to border height change
 export default function TextDisplayThemeSelector({ handleTextDisplayThemeChange, textDisplayTheme }: Props) {
-  const classes = useStyles(textDisplayTheme);
   const handleClick = (palette: Omit<TextDisplayTheme, "offset">) => {
     handleTextDisplayThemeChange(palette);
   };
@@ -35,7 +23,15 @@ export default function TextDisplayThemeSelector({ handleTextDisplayThemeChange,
   ));
 
   return (
-    <Box className={classes.themeSelector}>
+    <Box
+      sx={{
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: "1.5rem",
+      padding: "1rem",
+      backgroungColor: textDisplayTheme.background.secondary
+      }}
+    >
       {ThemeButtonComponents}
     </Box>
   );
