@@ -1,5 +1,4 @@
 import { IconButton, Typography, Tooltip, Badge, Box } from "@mui/material";
-import { makeStyles } from "@mui/styles";
 import Simplebar from "simplebar-react";
 import { PlaylistAdd } from "@mui/icons-material";
 
@@ -9,7 +8,7 @@ interface Props {
   handleInsertParagraph: (paragraph: string) => void;
 }
 
-const useStyles = makeStyles({
+const styles = {
   loadedParagraph: {
     display: "flex",
     alignItems: "center",
@@ -37,24 +36,23 @@ const useStyles = makeStyles({
       width: "20rem"
     }
   }
-});
+};
 
 export default function LoadedParagraph({
   loadedParagraph, paragraphId, handleInsertParagraph
 }: Props) {
-  const classes = useStyles();
 
   return (
-    <Box className={classes.loadedParagraph}>
+    <Box sx={styles.loadedParagraph}>
       <IconButton
-        className={classes.addParagraphButton}
+        sx={styles.addParagraphButton}
         color="primary"
         size="small"
         onClick={() => handleInsertParagraph(loadedParagraph)}>
         <PlaylistAdd />
       </IconButton>
       <Badge
-        className={classes.badge}
+        sx={styles.badge}
         badgeContent={`${loadedParagraph.length} znaků`}
         color="primary"
         anchorOrigin={{
@@ -62,7 +60,7 @@ export default function LoadedParagraph({
           horizontal: "left",
         }}
       >
-        <Typography className={classes.paragraphId}>{paragraphId})</Typography>
+        <Typography sx={styles.paragraphId}>{paragraphId})</Typography>
           <Tooltip
             title={
               <Simplebar
@@ -78,9 +76,9 @@ export default function LoadedParagraph({
             leaveDelay={200}
             placement="top"
             aria-label={`paragraph ${paragraphId}`}
-            PopperProps={{ className: classes.tooltip }}
+            PopperProps={{ sx: styles.tooltip }}
           >
-            <Typography className={classes.paragraphText} noWrap>{loadedParagraph}</Typography>
+            <Typography sx={styles.paragraphText} noWrap>{loadedParagraph}</Typography>
           </Tooltip>
       </Badge>
     </Box>
