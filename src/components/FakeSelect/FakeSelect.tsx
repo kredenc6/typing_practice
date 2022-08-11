@@ -1,16 +1,14 @@
-import { HTMLProps } from "react";
-import classNames from "classnames";
-import { Box } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Box, BoxProps } from "@mui/material";
 import { ArrowDropDown } from "@mui/icons-material";
+import { CSSObjects } from "../../types/themeTypes";
 
-interface Props extends HTMLProps<HTMLDivElement> {
+interface Props extends BoxProps {
   value: string;
   onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
-const useStyles = makeStyles( ({ palette, typography }) => ({
-  fakeSelect: {
+const styles: CSSObjects = {
+  fakeSelect: ({ palette, typography }) => ({
     width: "150px",
     display: "flex",
     justifyContent: "space-between",
@@ -27,14 +25,18 @@ const useStyles = makeStyles( ({ palette, typography }) => ({
       color: palette.info.main,
       borderBottomColor: palette.info.main
     }
-  }
-}));
+  })
+};
 
-export default function FakeSelect({ className, value, onClick }: Props) {
-  const classes = useStyles();
-
+export default function FakeSelect({ sx, value, onClick }: Props) {
   return (
-    <Box className={classNames(classes.fakeSelect, className)} onClick={onClick}>
+    <Box
+      sx={[
+        styles.fakeSelect,
+        ...(Array.isArray(sx) ? sx : [sx])
+      ]}
+      onClick={onClick}
+    >
       {value} <ArrowDropDown />
     </Box>
   );
