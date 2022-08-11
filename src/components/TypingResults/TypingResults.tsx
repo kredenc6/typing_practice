@@ -1,44 +1,25 @@
 import Simplebar from "simplebar-react";
-import { Box, Paper, Typography } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Box, Paper, SvgIcon, Typography } from "@mui/material";
 import { Results } from "../../types/otherTypes";
 import MistypedWord from "./MistypedWord/MistypedWord";
 import SpecificResult from "./SpecificResult/SpecificResult";
 import { ReactComponent as TopSpeed } from "../../svg/top-speed.svg";
 import { ReactComponent as Target } from "../../svg/target.svg";
 import { ReactComponent as ErrorCircle } from "../../svg/error-circle.svg";
-import { ReactComponent as ThumbUp } from "../../svg/thumb-up.svg";
+import { ReactComponent as ThumbUpIcon } from "../../svg/thumb-up.svgi-24px.svg";
 import { ReactComponent as Clock } from "../../svg/time.svg";
 import { useContext } from "react";
 import { PlayPageThemeContext } from "../../styles/themeContexts";
-import { TextDisplayTheme } from "../../types/themeTypes";
+import { CSSObjectFunctionsWithProp, TextDisplayTheme } from "../../types/themeTypes";
 
 interface Props {
   resultObj: Results | null;
 }
 
-const useStyles = makeStyles(({ typography, palette }) => ({
-  resultsWrapper: {
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    color: (textDisplayTheme: TextDisplayTheme) => textDisplayTheme.text.main,
-    backgroundColor: (textDisplayTheme: TextDisplayTheme) => textDisplayTheme.background.main
-  },
+const styles = {
   typingResultsWrapper: {
     display: "grid",
     gap: "2rem"
-  },
-  mistypedWordsWrapper: {
-    height: "200px",
-    padding: "10px",
-    color: (textDisplayTheme: TextDisplayTheme) => textDisplayTheme.text.main,
-    backgroundColor: (textDisplayTheme: TextDisplayTheme) => textDisplayTheme.background.main,
-    border: `1px solid ${palette.divider}`,
-    overflow: "hidden"
   },
   mistypedWords: {
     display: "flex",
@@ -47,17 +28,49 @@ const useStyles = makeStyles(({ typography, palette }) => ({
   },
   mistypedWordComma: {
     transform: "translateY(15%)"
-  },
-  thumbUp: {
-    width: typography.h2.fontSize,
-    height: typography.h2.fontSize,
-    fill: (textDisplayTheme: TextDisplayTheme) => textDisplayTheme.text.main
   }
-}));
+};
+
+const styleFunctions: CSSObjectFunctionsWithProp = {
+  resultsWrapper: (_, prop) => {
+    const textDisplayTheme = prop as TextDisplayTheme;
+
+    return {
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      color: textDisplayTheme.text.main,
+      backgroundColor: textDisplayTheme.background.main
+    }
+  },
+  mistypedWordsWrapper: ({ palette }, prop) => {
+    const textDisplayTheme = prop as TextDisplayTheme;
+
+    return {
+      height: "200px",
+      padding: "10px",
+      color: textDisplayTheme.text.main,
+      backgroundColor: textDisplayTheme.background.main,
+      border: `1px solid ${palette.divider}`,
+      overflow: "hidden"
+    }
+  },
+  thumbUp: ({ typography }, prop) => {
+    const textDisplayTheme = prop as TextDisplayTheme;
+
+    return {
+      width: typography.h2.fontSize,
+      height: typography.h2.fontSize,
+      fill: textDisplayTheme.text.main
+    }
+  }
+};
 
 export default function TypingResults({ resultObj }: Props) {
   const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
-  const classes = useStyles(textDisplayTheme);
 
   const MistypedWordsComponents = resultObj?.mistypedWords.map((mistypedWord, i) => {
     if(i === resultObj?.mistypedWords.length - 1) { // don't add a comma after the last word
@@ -65,15 +78,15 @@ export default function TypingResults({ resultObj }: Props) {
     }
     return <div key={i} style={{ display: "flex" }}>
       <MistypedWord mistypedWord={mistypedWord} textDisplayTheme={textDisplayTheme} />
-      <span className={classes.mistypedWordComma}>,&nbsp;</span>
+      <Box component="span" sx={styles.mistypedWordComma}>,&nbsp;</Box>
     </div>
   });
 
   return (
-    <Box className={classes.resultsWrapper}>
+    <Box sx={theme => styleFunctions.resultsWrapper(theme, textDisplayTheme)}>
       {resultObj &&
       <>
-        <Box className={classes.typingResultsWrapper}>
+        <Box sx={styles.typingResultsWrapper}>
           <SpecificResult Icon={Clock} description="Čas">
             <Typography component="h6" variant="h4">
               {resultObj.time}
@@ -96,9 +109,13 @@ export default function TypingResults({ resultObj }: Props) {
             !!MistypedWordsComponents &&
             <SpecificResult Icon={ErrorCircle} description="Překlepy">
               {MistypedWordsComponents.length > 0 ?
-                <Paper className={classes.mistypedWordsWrapper} variant="outlined" elevation={0}>
+                <Paper
+                  sx={theme => styleFunctions.mistypedWordsWrapper(theme, textDisplayTheme)}
+                  variant="outlined"
+                  elevation={0}
+                >
                   <Simplebar style={{ maxHeight: "100%" }} autoHide={false}>
-                    <Box className={classes.mistypedWords}>
+                    <Box sx={styles.mistypedWords}>
                       {MistypedWordsComponents}
                     </Box>
                   </Simplebar>
@@ -106,7 +123,10 @@ export default function TypingResults({ resultObj }: Props) {
                 :
                 <Typography component="h6" variant="h4">
                   Bez překlepů! Pěkná práce.&nbsp;
-                  <ThumbUp className={classes.thumbUp} />
+                  <SvgIcon
+                    sx={theme => styleFunctions.thumbUp(theme, textDisplayTheme)}
+                    component={ThumbUpIcon}
+                    inheritViewBox />
                 </Typography>
               }
             </SpecificResult>
