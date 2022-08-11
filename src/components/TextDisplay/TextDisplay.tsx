@@ -1,7 +1,5 @@
 import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
-import classNames from "classnames";
-import { Box, useTheme } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Box, Theme, useTheme } from "@mui/material";
 import {
   createSymbolWidthsObject, getPositions, updateSymbolCorrectness, updateWordProp,
   updateSymbolRows, getIndexes, isAllowedKey, isAllowedToMoveToNextSymbolOnMistake,
@@ -11,7 +9,7 @@ import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import adjustRowsToNewFontData from "../../textFunctions/adjustRowsToNewFontData";
 import Timer from "../../accessories/Timer";
 import DisplayedRow from "../DisplayedRow/DisplayedRow";
-import { FontData, AnimateMistyped, TextDisplayTheme } from "../../types/themeTypes";
+import { FontData, AnimateMistyped, TextDisplayTheme, CSSObjectFunctionsWithProp, CSSObjects } from "../../types/themeTypes";
 import { Row, SymbolCorrectness } from "../../types/symbolTypes";
 import { PlayPageThemeContext } from "../../styles/themeContexts";
 import { transformTextToSymbolRows } from "../../textFunctions/transformTextToSymbolRows";
@@ -46,41 +44,51 @@ interface MakeStylesProps {
   rowHeight: number;
 }
 
-// TODO try dynamic width?
-const useStyles = makeStyles({
-  textWindow: {
-    boxSizing: "content-box",
-    position: "absolute",
-    top: "40%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "800px",
-    height: ({ lineCount, rowHeight }: MakeStylesProps) => `${rowHeight * lineCount}px`,
-    marginTop: ({ textDisplayTheme }: MakeStylesProps) => textDisplayTheme.offset.display.marginTop,
-    marginRight: ({ textDisplayTheme }: MakeStylesProps) => textDisplayTheme.offset.display.marginRight,
-    marginBottom: ({ textDisplayTheme }: MakeStylesProps) => textDisplayTheme.offset.display.marginBottom,
-    marginLeft: ({ textDisplayTheme }: MakeStylesProps) => textDisplayTheme.offset.display.marginLeft,
-    paddingTop: ({ textDisplayTheme }: MakeStylesProps) => textDisplayTheme.offset.display.paddingTop,
-    paddingRight: ({ textDisplayTheme }: MakeStylesProps) => textDisplayTheme.offset.display.paddingRight,
-    paddingBottom: ({ textDisplayTheme }: MakeStylesProps) => textDisplayTheme.offset.display.paddingBottom,
-    paddingLeft: ({ textDisplayTheme }: MakeStylesProps) => textDisplayTheme.offset.display.paddingLeft,
-    fontFamily: ({ fontData }: MakeStylesProps) => fontData.fontFamily,
-    fontSize: ({ fontData }: MakeStylesProps) => fontData.fontSize,
-    borderTop: ({ textDisplayTheme }: MakeStylesProps) => `1px solid ${textDisplayTheme.text.main}`,
-    borderBottom: ({ textDisplayTheme }: MakeStylesProps) => `1px solid ${textDisplayTheme.text.main}`,
-    whiteSpace: "nowrap",
-    overflow: "hidden"
-  },
-  topHiddenRow: {
-    marginTop: ({ rowHeight, textDisplayTheme }: MakeStylesProps) => (
-      `-${rowHeight + transformPixelSizeToNumber(textDisplayTheme.offset.display.paddingTop)}px`
-    ),
-    paddingBottom: ({ textDisplayTheme }: MakeStylesProps) => textDisplayTheme.offset.display.paddingTop
-  },
+const styles: CSSObjects = {
   bottomHiddenRow: {
     marginTop: "5px"
   }
-});
+};
+
+// TODO try dynamic width?
+const styleFunctions: CSSObjectFunctionsWithProp = {
+  textWindow: (_ , prop) => {
+    const { lineCount, rowHeight, textDisplayTheme, fontData } = prop as MakeStylesProps;
+    
+    return {
+      boxSizing: "content-box",
+      position: "absolute",
+      top: "40%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: "800px",
+      height: `${rowHeight * lineCount}px`,
+      marginTop: textDisplayTheme.offset.display.marginTop,
+      marginRight: textDisplayTheme.offset.display.marginRight,
+      marginBottom: textDisplayTheme.offset.display.marginBottom,
+      marginLeft: textDisplayTheme.offset.display.marginLeft,
+      paddingTop: textDisplayTheme.offset.display.paddingTop,
+      paddingRight: textDisplayTheme.offset.display.paddingRight,
+      paddingBottom: textDisplayTheme.offset.display.paddingBottom,
+      paddingLeft: textDisplayTheme.offset.display.paddingLeft,
+      fontFamily: fontData.fontFamily,
+      fontSize: fontData.fontSize,
+      borderTop: `1px solid ${textDisplayTheme.text.main}`,
+      borderBottom: `1px solid ${textDisplayTheme.text.main}`,
+      whiteSpace: "nowrap",
+      overflow: "hidden"
+    }
+  },
+  topHiddenRow: (_ , prop) => {
+    const { rowHeight, textDisplayTheme } = prop as MakeStylesProps;
+    
+    return {
+      marginTop: 
+        `-${rowHeight + transformPixelSizeToNumber(textDisplayTheme.offset.display.paddingTop)}px`,
+      paddingBottom: textDisplayTheme.offset.display.paddingTop
+    }
+  }
+};
 
 export default function TextDisplay({
   fontData, restart, setRestart, text, timer, allowedMistype, gameStatus,
@@ -99,7 +107,8 @@ export default function TextDisplay({
 
   const { transitions } = useTheme();
   const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
-  const classes = useStyles({ textDisplayTheme, fontData, lineCount, rowHeight: cssCalculatedRowHeight });
+  // const classes = useStyles({ textDisplayTheme, fontData, lineCount, rowHeight: cssCalculatedRowHeight });
+  const stylePropObject = { textDisplayTheme, fontData, lineCount, rowHeight: cssCalculatedRowHeight };
   const wordTimerObj = useRef<WordTimeObj>({
     timer: new Timer(2),
     wordPosition: 0
@@ -372,11 +381,17 @@ export default function TextDisplay({
 
       return (
         <DisplayedRow
-          className={classNames(
-            rowIndex === 0 && rowPosition >= LINE_MOVEMENT_MIN_POSITION && classes.topHiddenRow,
-            rowIndex === lineCount && rowPosition < LINE_MOVEMENT_MIN_POSITION && classes.bottomHiddenRow,
-            rowIndex === lineCount + 1 && classes.bottomHiddenRow
-          )}
+          sx={[
+            rowIndex === 0 && rowPosition >= LINE_MOVEMENT_MIN_POSITION && ((theme: Theme) => styleFunctions.topHiddenRow(theme, stylePropObject)),
+            rowIndex === lineCount && rowPosition < LINE_MOVEMENT_MIN_POSITION && styles.bottomHiddenRow,
+            rowIndex === lineCount + 1 && styles.bottomHiddenRow
+          ].filter(conditionResult => typeof conditionResult !== "boolean")}
+          // TODO delete commented code if everything works
+          // className={classNames(
+          //   rowIndex === 0 && rowPosition >= LINE_MOVEMENT_MIN_POSITION && classes.topHiddenRow,
+          //   rowIndex === lineCount && rowPosition < LINE_MOVEMENT_MIN_POSITION && classes.bottomHiddenRow,
+          //   rowIndex === lineCount + 1 && classes.bottomHiddenRow
+          // )}
           fontSize={fontData.fontSize}
           key={row.highestSymbolPosition}
           words={row.words}
@@ -392,8 +407,13 @@ export default function TextDisplay({
   );
 
   return(
-    // with mui typescript ref bug workaroud @https://github.com/mui-org/material-ui/issues/17010
-    <Box className={classes.textWindow} {...{ ref: textDisplayRef } as any}>
+    <Box
+      sx={theme => styleFunctions.textWindow(theme, stylePropObject)}
+      ref={textDisplayRef}
+      // TODO delete the workaround notes (and the commented code) if everything works
+      // with mui typescript ref bug workaroud @https://github.com/mui-org/material-ui/issues/17010
+      // {...{ ref: textDisplayRef } as any}
+    >
       {DisplayedRowComponents}
     </Box>
   );
