@@ -1,13 +1,12 @@
-import React, { ReactNode } from "react";
-import { useTheme } from "@mui/material";
+import { ReactNode } from "react";
+import { Box, useTheme, CSSObject, Theme } from "@mui/material";
 import { Transition, TransitionStatus } from "react-transition-group";
 import { TransitionProps } from "react-transition-group/Transition";
-import classnames from "classnames";
 
 interface Props {
     inProp: boolean;
     children: ReactNode;
-    className?: String;
+    sx? : CSSObject | ((theme: Theme) => CSSObject);
 }
 
 const defaultStyle = (duration: number) => ({
@@ -34,7 +33,7 @@ const transitionStyles = {
 };
 
 export default function FadeAway({
-  inProp, children, className, ...transitionProps
+  inProp, children, sx, ...transitionProps
 }: Props & TransitionProps) {
   const { transitions } = useTheme();
   const timeout = typeof transitionProps.timeout === "number"
@@ -48,15 +47,15 @@ export default function FadeAway({
       {...transitionProps}
     >
       {(phase: TransitionStatus) => (
-          <div
-            className={classnames(className)}
+          <Box
+            sx={sx}
             style={{
               ...defaultStyle(timeout),
               ...transitionStyles[phase]
             }}
           >
             {children}
-          </div>
+          </Box>
       )}
     </Transition>
   );
