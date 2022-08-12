@@ -20,6 +20,7 @@ const styles: CSSObjects = {
   },
   resultDescription: {
     justifySelf: "end",
+    minWidth: "10rem",
     display: "flex",
     flexDirection: "column",
     alignItems: "center"
@@ -33,11 +34,9 @@ export default function SpecificResult({ Icon, description, children }: Props) {
     <Box sx={styles.results}>
       <Box sx={styles.resultDescription}>
         <SvgIcon
-          sx={{ fill: textDisplayTheme.text.main }}
+          sx={{ fill: textDisplayTheme.text.main, fontSize: "5.5rem" }}
           component={Icon}
           inheritViewBox />
-          {/* TODO delete commented code if everything works */}
-        {/* <Icon sx={{ fill: textDisplayTheme.text.main }} /> */}
         <Typography component="h6" variant="h4">{description}</Typography>
       </Box>
       {children}

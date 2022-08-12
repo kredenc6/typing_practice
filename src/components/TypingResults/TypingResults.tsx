@@ -3,13 +3,11 @@ import { Box, Paper, SvgIcon, Typography } from "@mui/material";
 import { Results } from "../../types/otherTypes";
 import MistypedWord from "./MistypedWord/MistypedWord";
 import SpecificResult from "./SpecificResult/SpecificResult";
-// TODO switch all icons to 24px / 24px (MUI recomendation)
-import { ReactComponent as TopSpeed } from "../../svg/top-speed.svg";
-import { ReactComponent as Target } from "../../svg/target.svg";
-import { ReactComponent as ErrorCircle } from "../../svg/error-circle.svg";
-// import { ReactComponent as ThumbUpIcon } from "../../svg/thumb-up.svg";
+import { ReactComponent as TopSpeed } from "../../svg/top-speed-24px.svg";
+import { ReactComponent as Target } from "../../svg/target-24px.svg";
+import { ReactComponent as ErrorCircle } from "../../svg/error-circle-24px.svg";
 import { ReactComponent as ThumbUpIcon } from "../../svg/thumb-up-24px.svg";
-import { ReactComponent as Clock } from "../../svg/time.svg";
+import { ReactComponent as Clock } from "../../svg/time-24px.svg";
 import { useContext } from "react";
 import { PlayPageThemeContext } from "../../styles/themeContexts";
 import { CSSObjectFunctionsWithProp, TextDisplayTheme } from "../../types/themeTypes";
@@ -110,6 +108,7 @@ export default function TypingResults({ resultObj }: Props) {
           {
             !!MistypedWordsComponents &&
             <SpecificResult Icon={ErrorCircle} description="Překlepy">
+              {/* TODO mistyped word symbols don't react to font size change */}
               {MistypedWordsComponents.length > 0 ?
                 <Paper
                   sx={theme => styleFunctions.mistypedWordsWrapper(theme, textDisplayTheme)}
