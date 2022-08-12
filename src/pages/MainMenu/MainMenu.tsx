@@ -53,7 +53,10 @@ export default function MainMenu({ setText, knownSymbols }: Props) {
   const handleStart = async () => {
     const cleanedText = await adjustTextGeneral(textInput);
     setText(cleanedText);
-    document.getElementById("link-to-playArea")!.click();
+    
+    setTimeout(() => { // "click" after the state update (react 18+)
+      document.getElementById("link-to-playArea")!.click();
+    }, 0)
   };
 
   const handleLoadArcticle = async (relativePath: string) => {
