@@ -63,7 +63,7 @@ export default function LatestResultsChart({ precision, typingSpeed, textLength,
               <Typography>...žádné nenalezeny</Typography>
             </Box>
           : <ReactApexCharts
-              sx={styles.chart}
+              style={styles.chart}
               id="lastResultsChart"
               options={latestResultsChartOptions}
               series={[
