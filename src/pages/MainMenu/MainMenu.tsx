@@ -85,6 +85,7 @@ export default function MainMenu({ setText, knownSymbols }: Props) {
   };
 
   const handleInsertTextOnLoadChange = (changeObj: Partial<InsertTextOnLoad>) => {
+    console.log("changeObj", changeObj)
     setInsertTextOnLoad(prev => {
       const updatedObj = { ...prev, ...changeObj };
       localStorage.setItem("typingPracticeInsertTextOnLoad", JSON.stringify(updatedObj));

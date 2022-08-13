@@ -45,7 +45,7 @@ export default function LoadTextSection({
   const handleInsertTextOnLoadLengthChange = (newLength: number) => {
     handleInsertTextOnLoadChange({ length: newLength });
   };
-
+  
   const handleInsertTextOnLoadLengthBlur = (newLength: number) => {
     newLength = Math.min(newLength, MAX_TEXT_INSERT_LENGTH);
     newLength = Math.max(newLength, MIN_TEXT_INSERT_LENGTH);
@@ -57,6 +57,11 @@ export default function LoadTextSection({
   };
 
   const handleNumberInputWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if(document.activeElement === e.target) {
+      // prevents triggering unwanted onChange event
+      (e.target as HTMLDivElement).blur();
+    }
+
     e.persist();
     const changeBy = e.shiftKey ? 100 : 10;
     const prevLength = insertTextOnLoad.length;
@@ -94,7 +99,7 @@ export default function LoadTextSection({
               onChange={toggleInsertTextOnLoadBooleanChange} />}
           label={
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              Při načtení článku rovnou vlož text o přibližné délce&nbsp;
+              Při načtení článku vlož text o přibližné délce&nbsp;
               <TextField
                 variant="standard"
                 margin="dense"

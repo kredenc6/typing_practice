@@ -13,7 +13,6 @@ export default function TextInput({ handleInputChange, ...textFieldProps }: Prop
       rows={10}
       onChange={e => handleInputChange(e.target.value)}
       placeholder="zde můžete vložit vlastní text"
-      maxRows={10}
       {...textFieldProps} />
   );
 }
