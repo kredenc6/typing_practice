@@ -138,7 +138,6 @@ export default function App() {
 // TODO for performance - I could split the text to the visible part and make a symbol...
 // ...row object just from that. The rest of the symbol row object would be stored and...
 // ...updated(on the row change?) separately from the render function
-// BUG in playArea menu button are selectable - if some of them stays active it de/pops the menu on spacebar (annoying during typing)
 
 // TODO  add descriptions to main menu text adjustments
 // TODO add text adjustment for czech and english keyboard

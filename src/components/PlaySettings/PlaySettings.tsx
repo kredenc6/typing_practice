@@ -109,22 +109,42 @@ export default function PlaySettings({
       }}
       id="playSettingsHeader"
     >
-      <Link to="/mainMenu">
+      <Link to="/mainMenu" tabIndex={-1}>
         <Menu sx={{ color: textDisplayTheme.text.secondary }} />
       </Link>
       <Box>
-        <IconButton sx={{ color: textDisplayTheme.text.secondary }} disabled={restart} onClick={() => setRestart(true)}>
+        <IconButton
+          tabIndex={-1}
+          sx={{ color: textDisplayTheme.text.secondary }}
+          disabled={restart}
+          onClick={() => setRestart(true)}
+        >
           <Refresh />
         </IconButton>
         <ClickAwayListener onClickAway={handleClickAway}>
           <Box sx={{ display: "inline-block" }} id="clickAwayWrapper">
-            <IconButton sx={{ color: textDisplayTheme.text.secondary }} id="formatFontBtt" onClick={e => handleClick(e.currentTarget.id)}>
+            <IconButton
+              tabIndex={-1}
+              sx={{ color: textDisplayTheme.text.secondary }}
+              id="formatFontBtt"
+              onClick={e => handleClick(e.currentTarget.id)}
+            >
               <FormatSize />
             </IconButton>
-            <IconButton sx={{ color: textDisplayTheme.text.secondary }} id="fontPaletteBtt" onClick={e => handleClick(e.currentTarget.id)}>
+            <IconButton
+              tabIndex={-1}
+              sx={{ color: textDisplayTheme.text.secondary }}
+              id="fontPaletteBtt"
+              onClick={e => handleClick(e.currentTarget.id)}
+            >
               <Palette />
             </IconButton>
-            <IconButton sx={{ color: textDisplayTheme.text.secondary }} id="gameSettings" onClick={e => handleClick(e.currentTarget.id)}>
+            <IconButton
+              tabIndex={-1}
+              sx={{ color: textDisplayTheme.text.secondary }}
+              id="gameSettings"
+              onClick={e => handleClick(e.currentTarget.id)}
+            >
               <Settings />
             </IconButton>
             {
