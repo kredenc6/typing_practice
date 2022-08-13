@@ -3,7 +3,7 @@ import { Box, Theme, useTheme } from "@mui/material";
 import {
   createSymbolWidthsObject, getPositions, updateSymbolCorrectness, updateWordProp,
   updateSymbolRows, getIndexes, isAllowedKey, isAllowedToMoveToNextSymbolOnMistake,
-  createPartialResultObj, isPlayingGameStatus, getWordProp
+  createPartialResultObj, isPlayingGameStatus, getWordProp, getLastSymbol
 } from "./helpFunctions";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import adjustRowsToNewFontData from "../../textFunctions/adjustRowsToNewFontData";
@@ -119,11 +119,8 @@ export default function TextDisplay({
 
   const moveActiveSymbol = (by: -1 | 1) => {
     const newCursorPosition = cursorPosition + by;
-    if(newCursorPosition < 0) return; // reached start of text
-    if(newCursorPosition >= text.length) { // reached end of text
-      setCursorPosition(newCursorPosition);
-      return;
-    }
+    // reached start/end of text
+    if(newCursorPosition < 0 || newCursorPosition >= text.length) return;
 
     const {
       rowPosition: newRowPosition,
@@ -153,23 +150,32 @@ export default function TextDisplay({
       }
     }
 
-    if(cursorPosition >= text.length && gameStatus !== "finished") { // when finished
-      timer.stop();
-      setGameStatus("finished");
-      if(cursorPosition === text.length) { // return cursor position to valid index
-        setCursorPosition(cursorPosition - 1);
-      }
-      const resultObj: Results = {
-        ...createPartialResultObj(symbolRows, timer.getTime(), keyStrokeCount),
-        textLength: text.length,
-        timestamp: Date.now()
-      };
-      
-      setResultObj(resultObj);
+    // when finished
+    // wait for the last correctly typed symbol
+    const lastSymbol = getLastSymbol(symbolRows);
+    if(
+      !(lastSymbol?.correctness === "correct" ||
+      lastSymbol?.correctness === "corrected") ||
+      gameStatus === "finished" // prevent multiple triggers
+    ) {
+      return;
     }
-  },[cursorPosition, text, keyStrokeCount, timer, symbolRows, gameStatus, setGameStatus, setResultObj, enteredSymbol])
 
-  // (on keypress === truthy enteredSymbol) check and adjust all the necessary stuff
+    timer.stop();
+    setGameStatus("finished");
+    if(cursorPosition === text.length) { // return cursor position to valid index
+      setCursorPosition(cursorPosition - 1);
+    }
+    const resultObj: Results = {
+      ...createPartialResultObj(symbolRows, timer.getTime(), keyStrokeCount),
+      textLength: text.length,
+      timestamp: Date.now()
+    };
+    
+    setResultObj(resultObj);
+  },[cursorPosition, text, keyStrokeCount, timer, symbolRows, gameStatus, setGameStatus, setResultObj, enteredSymbol ])
+
+  // on keypress(when enteredSymbol is truthy) check and adjust all the necessary stuff
   useEffect(() => {
     if(!enteredSymbol || !symbolRows.length) return;
 
@@ -255,7 +261,7 @@ export default function TextDisplay({
     if(enteredSymbol || gameStatus !== "selfType") return;
 
     const MISTYPE_EVERY_NTH_SYMBOL = 15;
-    const SELFTYPE_SYMBOL_DELAY_MS = 50;
+    const SELFTYPE_SYMBOL_DELAY_MS = 0;
     const shouldMistype = !(Math.round(Math.random() * 100) / MISTYPE_EVERY_NTH_SYMBOL % 1);
     
     const selfType = () => {
@@ -387,12 +393,6 @@ export default function TextDisplay({
             rowIndex === lineCount && rowPosition < LINE_MOVEMENT_MIN_POSITION && styles.bottomHiddenRow,
             rowIndex === lineCount + 1 && styles.bottomHiddenRow
           ].filter(conditionResult => typeof conditionResult !== "boolean")}
-          // TODO delete commented code if everything works
-          // className={classNames(
-          //   rowIndex === 0 && rowPosition >= LINE_MOVEMENT_MIN_POSITION && classes.topHiddenRow,
-          //   rowIndex === lineCount && rowPosition < LINE_MOVEMENT_MIN_POSITION && classes.bottomHiddenRow,
-          //   rowIndex === lineCount + 1 && classes.bottomHiddenRow
-          // )}
           fontSize={fontData.fontSize}
           key={row.highestSymbolPosition}
           words={row.words}
@@ -411,9 +411,6 @@ export default function TextDisplay({
     <Box
       sx={theme => styleFunctions.textWindow(theme, stylePropObject)}
       ref={textDisplayRef}
-      // TODO delete the workaround notes (and the commented code) if everything works
-      // with mui typescript ref bug workaroud @https://github.com/mui-org/material-ui/issues/17010
-      // {...{ ref: textDisplayRef } as any}
     >
       {DisplayedRowComponents}
     </Box>

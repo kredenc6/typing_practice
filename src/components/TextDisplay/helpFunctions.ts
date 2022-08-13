@@ -443,3 +443,9 @@ export const saveMistypedWordsV2 = (mistypedWords: WordObject[]) => {
   // TODO add last update time for the whole saved object
   // TODO make it async for performance reasons - create state to keep track if it is still computing (and display it where needed)
 };
+
+export const getLastSymbol = (symbolRows: Row[]) => {
+  const lastWords = _.last(symbolRows)?.words;
+  const lastSymbols = lastWords && _.last(lastWords)?.symbols;
+  return lastSymbols && _.last(lastSymbols);
+};

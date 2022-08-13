@@ -119,8 +119,6 @@ export default function App() {
   );
 }
 
-// BUG last mistype is not registered when quickly enough backspace(production should be fast enough?)
-//  - it should wait with finish when the last symbol is mistyped?
 // TODO save last 3 mistype(finish) results in the json
 // TODO add typing sounds
 // TODO add $nbsp; after prepositions
