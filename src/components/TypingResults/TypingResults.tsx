@@ -109,26 +109,34 @@ export default function TypingResults({ resultObj }: Props) {
             !!MistypedWordsComponents &&
             <SpecificResult Icon={ErrorCircle} description="Překlepy">
               {/* TODO mistyped word symbols don't react to font size change */}
-              {MistypedWordsComponents.length > 0 ?
-                <Paper
-                  sx={theme => styleFunctions.mistypedWordsWrapper(theme, textDisplayTheme)}
-                  variant="outlined"
-                  elevation={0}
-                >
-                  <Simplebar style={{ maxHeight: "100%" }} autoHide={false}>
-                    <Box sx={styles.mistypedWords}>
-                      {MistypedWordsComponents}
-                    </Box>
-                  </Simplebar>
-                </Paper>
-                :
-                <Typography component="h6" variant="h4">
-                  Bez překlepů! Pěkná práce.&nbsp;
-                  <SvgIcon
-                    sx={theme => styleFunctions.thumbUp(theme, textDisplayTheme)}
-                    component={ThumbUpIcon}
-                    inheritViewBox />
-                </Typography>
+              {resultObj?.precision === 100
+                ? <Typography component="h6" variant="h4">
+                    Bez překlepů! Pěkná práce.&nbsp;
+                    <SvgIcon
+                      sx={theme => styleFunctions.thumbUp(theme, textDisplayTheme)}
+                      component={ThumbUpIcon}
+                      inheritViewBox />
+                  </Typography>
+                : !MistypedWordsComponents.length ?
+                  <Typography component="h6" variant="h4">
+                    Žádná chybně napsaná slova.
+                    <SvgIcon
+                      sx={theme => styleFunctions.thumbUp(theme, textDisplayTheme)}
+                      component={ThumbUpIcon}
+                      inheritViewBox />
+                  </Typography>
+                  :
+                  <Paper
+                    sx={theme => styleFunctions.mistypedWordsWrapper(theme, textDisplayTheme)}
+                    variant="outlined"
+                    elevation={0}
+                  >
+                    <Simplebar style={{ maxHeight: "100%" }} autoHide={false}>
+                      <Box sx={styles.mistypedWords}>
+                        {MistypedWordsComponents}
+                      </Box>
+                    </Simplebar>
+                  </Paper>
               }
             </SpecificResult>
           }
