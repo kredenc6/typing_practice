@@ -334,6 +334,7 @@ export default function TextDisplay({
       timer.reset();
       updateWordProp(symbolRows, setSymbolRows, "typedSpeed", { value: wordTime, wordPosition: timerWordPosition });
     } else {
+      // continue with previous time(when backspaced) or start at 0
       const previousTypedSpeed = getWordProp(symbolRows, "typedSpeed", wordPosition);
       const typedSpeedStartTime = Math.max(0, previousTypedSpeed);
       timer.start(typedSpeedStartTime);

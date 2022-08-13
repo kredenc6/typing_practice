@@ -134,7 +134,6 @@ export default function App() {
 
 // TODO make links and comments for used sources like wiki and osel(here I should probably ask for permision)
 // TODO display url of the loaded article
-// BUG word times are most likely incorect when the word is "backspaced"
 // TODO for performance - I could split the text to the visible part and make a symbol...
 // ...row object just from that. The rest of the symbol row object would be stored and...
 // ...updated(on the row change?) separately from the render function
