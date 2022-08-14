@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Box, Theme, useTheme } from "@mui/material";
+import { Box, Theme } from "@mui/material";
 import {
   createSymbolWidthsObject, getPositions, updateSymbolCorrectness, updateWordProp,
   updateSymbolRows, getIndexes, isAllowedKey, isAllowedToMoveToNextSymbolOnMistake,
@@ -102,12 +102,9 @@ export default function TextDisplay({
   const [keyStrokeCount, setKeyStrokeCount] = useState(0);
   const [lineCount, setLineCount] = useState(0);
   const [cssCalculatedRowHeight, setCssCalculatedRowHeight] = useState(50);
-  const [isRowInTransition, setIsRowInTransition] = useState(false);
   const [animateMistypedSymbol, setAnimateMistypedSymbol] = useState<AnimateMistyped | null>(null);
 
-  const { transitions } = useTheme();
   const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
-  // const classes = useStyles({ textDisplayTheme, fontData, lineCount, rowHeight: cssCalculatedRowHeight });
   const stylePropObject = { textDisplayTheme, fontData, lineCount, rowHeight: cssCalculatedRowHeight };
   const wordTimerObj = useRef<WordTimeObj>({
     timer: new Timer(2),
@@ -128,7 +125,6 @@ export default function TextDisplay({
     } = getPositions(newCursorPosition, symbolRows);
 
     if(newRowPosition !== rowPosition) {
-      setIsRowInTransition(true);
       setRowPosition(newRowPosition);
     }
 
@@ -364,12 +360,6 @@ export default function TextDisplay({
     gameHasStartedRef.current = false;
     setRestart(false);
   }, [restart, setRestart, timer, setGameStatus])
-
-  useEffect(() => { // BUGprone - connect the timeount/transition delay into 1 variable
-    if(isRowInTransition) {
-      setTimeout(() => setIsRowInTransition(false), transitions.duration.complex);
-    } // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isRowInTransition])
 
   const DisplayedRowComponents = symbolRows
     .filter((_, i) => { // adjust what rows should be displayed

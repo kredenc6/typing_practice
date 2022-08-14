@@ -1,5 +1,4 @@
 import React, { useLayoutEffect, useRef } from "react";
-import TextCursor from "../TextCursor/TextCursor";
 import { getRelativePosition, getSymbolStyle } from "./helpFunctions";
 import { WordObject } from "../../types/symbolTypes";
 import { FontSize, TextDisplayTheme, AnimateMistyped, CSSObjects } from "../../types/themeTypes";
@@ -59,7 +58,6 @@ export default function DisplayedRow({
           key={symbolPosition}
           symbolStyle={symbolStyle} // for memo
           symbol={symbol}
-          // TextCursor={relativePosition === "active" ? <TextCursor height={fontSize === "20px" ? "2px" : "3px"} /> : null}
           textCursorHeight={
             relativePosition === "active"
               ? fontSize === "20px" ? "2px" : "3px"
@@ -84,12 +82,4 @@ export default function DisplayedRow({
       {DisplayedSymbolWrapperComponents}
     </Box>
   );
-  // TODO delete the commented code if everything works
-  //   <div
-  //     className={classNames(classes.row, className)} {...divProps}
-  //     ref={divRef}
-  //   >
-  //     {DisplayedSymbolWrapperComponents}
-  //   </div>
-  // );
 };
