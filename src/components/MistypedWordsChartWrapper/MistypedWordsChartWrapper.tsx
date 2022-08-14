@@ -63,27 +63,38 @@ export default function MistypedWordsChartWrapper({ mistypedWordsObj }: Props) {
 
   const handleWheel = (e: WheelEvent) => {
     if(e.deltaY < 0) {
+      if(displayedMistypedWordsRange[0] <= 0) return;
+
       setDisplayedMistypedWordsRange(prev => {
         const arrIndexStart = Math.max(0, prev[0] - SHOWED_MISTYPED_WORDS_COUNT);
         return [arrIndexStart, arrIndexStart + SHOWED_MISTYPED_WORDS_COUNT];
-      })
-    }
-    else {
+      });
+    } else {
       const filteredMistypedWordCount = filter
         ? filteredIndexes.length
         : mistypedWordsObj?.length ?? 0;
+        
+      if(displayedMistypedWordsRange[1] >= filteredMistypedWordCount) return;
+
       setDisplayedMistypedWordsRange(prev => {
         const arrIndexStart = Math.min(
           filteredMistypedWordCount - SHOWED_MISTYPED_WORDS_COUNT,
           prev[0] + SHOWED_MISTYPED_WORDS_COUNT
         );
         return [arrIndexStart, arrIndexStart + SHOWED_MISTYPED_WORDS_COUNT];
-      })
+      });
     }
   };
 
-  const handleSortChange = (value: SortBy) => setSortBy(value);
-  const handleFilterChange = (value: string) => setFilter(value);
+  const handleSortChange = (value: SortBy) => {
+    setDisplayedMistypedWordsRange([0, SHOWED_MISTYPED_WORDS_COUNT]);
+    setSortBy(value);
+  };
+
+  const handleFilterChange = (value: string) => {
+    setDisplayedMistypedWordsRange([0, SHOWED_MISTYPED_WORDS_COUNT]);
+    setFilter(value);
+  };
 
   useEffect(() => {
     if(mistypedWordsObj === null) return;
@@ -145,6 +156,3 @@ export default function MistypedWordsChartWrapper({ mistypedWordsObj }: Props) {
     </Paper>
   );
 }
-
-// TODO don't scroll up when on top and vice versa
-// BUG reset scroll when filtering (shows no data when scrolled too much and adds filter)
