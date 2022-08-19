@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Box, Button } from "@mui/material";
+import { Box, Button, ButtonGroup, SvgIcon } from "@mui/material";
 import normalizeParagraphTexts from "../../textFunctions/normalizeParagraphTexts";
 import LoadTextSection from "../../components/LoadTextSection/LoadTextSection";
 import TextFieldSection from "../../components/TextFieldSection/TextFieldSection";
@@ -12,6 +12,7 @@ import { getInvalidSymbols } from "../../helpFunctions/getInvalidSymbols";
 import adjustTextGeneral from "../../textFunctions/adjustTextGeneral";
 import { useTextToTextField } from "../../customHooks/useTextToTextField";
 import ThemeSwitch from "../../components/ThemeSwith/ThemeSwith";
+import { ReactComponent as StatisticsIcon } from "../../svg/bar-chart-24px.svg";
 import { CSSObjects } from "../../types/themeTypes";
 
 interface Props {
@@ -35,7 +36,7 @@ const styles: CSSObjects = {
     backgroundColor: palette.background.default,
     color: palette.text.primary
   }),
-  startButton: {
+  buttons: {
     alignSelf: "center",
     marginTop: "2rem"
   }
@@ -57,6 +58,10 @@ export default function MainMenu({ setText, knownSymbols }: Props) {
     setTimeout(() => { // "click" after the state update (react 18+)
       document.getElementById("link-to-playArea")!.click();
     }, 0)
+  };
+
+  const moveToStatistics = () => {
+    document.getElementById("link-to-statistics")!.click();
   };
 
   const handleLoadArcticle = async (relativePath: string) => {
@@ -109,16 +114,20 @@ export default function MainMenu({ setText, knownSymbols }: Props) {
         insertTextOnLoad={insertTextOnLoad}
         handleInsertTextOnLoadChange={handleInsertTextOnLoadChange} />
       <Link id="link-to-playArea" style={{ display: "none" }} to="playArea"></Link>
-      <Button
-        sx={styles.startButton}
-        color="primary"
-        disabled={!textInput}
-        onClick={handleStart}
-        size="large"
-        variant="contained"
-      >
-        Start
-      </Button>
+      <Link id="link-to-statistics" style={{ display: "none" }} to="statistics"></Link>
+      <ButtonGroup sx={styles.buttons} variant="contained" size="large" disableElevation>
+        <Button disabled={!textInput} onClick={handleStart}>Start</Button>
+        <Button
+          onClick={moveToStatistics}
+          startIcon={
+            <SvgIcon
+              component={StatisticsIcon}
+              inheritViewBox />
+          }
+        >
+          Výsledky
+        </Button>
+      </ButtonGroup>
       <InvalidSymbolsMessage invalidSymbols={getInvalidSymbols(textInput, knownSymbols)} />
     </Box>
   );
