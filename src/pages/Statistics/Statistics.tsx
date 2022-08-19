@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { Box } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
+import { Menu } from "@mui/icons-material";
 import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
 import { MistypedWordsLogV2, Results } from "../../types/otherTypes";
 import MistypedWordsChartWrapper from "../../components/MistypedWordsChartWrapper/MistypedWordsChartWrapper";
 import LatestResultsChart from "../../components/LatestResultsChart/LatestResultsChart";
 import ThemeSwitch from "../../components/ThemeSwith/ThemeSwith";
 import { CSSObjects } from "../../types/themeTypes";
+import { Link } from "react-router-dom";
 
 const styles: CSSObjects = {
   statistics: ({ palette }) => ({
@@ -16,6 +18,11 @@ const styles: CSSObjects = {
     textAlign: "center",
     color: palette.text.primary,
     backgroundColor: palette.background.default
+  }),
+  menuButton: ({ palette }) => ({
+    position: "absolute",
+    m: 1,
+    border: `1px solid ${palette.divider}`
   })
 };
 
@@ -25,6 +32,10 @@ export default function Statistics() {
   const [textLength, setTextLength] = useState<number[]>([]);
   const [timestamps, setTimestamps] = useState<number[]>([]);
   const [mistypedWordsObj, setMistypedWordsObj] = useState<MistypedWordsLogV2 | null>(null);
+
+  const goToMainMenu = () => {
+    document.getElementById("link-to-mainMenu")!.click();
+  };
 
   useEffect(() => {
     const lastResultsFromStorage = localStorage.getItem(LOCAL_STORAGE_KEYS.LAST_RESULTS);
@@ -61,6 +72,10 @@ export default function Statistics() {
   return (
     <Box sx={styles.statistics}>
       <ThemeSwitch />
+      <Link id="link-to-mainMenu" style={{ display: "none" }} to="mainMenu"></Link>
+      <IconButton sx={styles.menuButton} size="large" onClick={goToMainMenu}>
+        <Menu />
+      </IconButton>
       <LatestResultsChart
         precision={precision}
         textLength={textLength}

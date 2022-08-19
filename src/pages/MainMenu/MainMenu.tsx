@@ -60,7 +60,7 @@ export default function MainMenu({ setText, knownSymbols }: Props) {
     }, 0)
   };
 
-  const moveToStatistics = () => {
+  const goToStatistics = () => {
     document.getElementById("link-to-statistics")!.click();
   };
 
@@ -118,7 +118,7 @@ export default function MainMenu({ setText, knownSymbols }: Props) {
       <ButtonGroup sx={styles.buttons} variant="contained" size="large" disableElevation>
         <Button disabled={!textInput} onClick={handleStart}>Start</Button>
         <Button
-          onClick={moveToStatistics}
+          onClick={goToStatistics}
           startIcon={
             <SvgIcon
               component={StatisticsIcon}
