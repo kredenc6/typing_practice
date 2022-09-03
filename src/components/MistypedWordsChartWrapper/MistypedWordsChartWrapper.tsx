@@ -140,6 +140,7 @@ export default function MistypedWordsChartWrapper({ mistypedWordsObj }: Props) {
         label="najdi"
         variant="outlined"
         size="small"
+        disabled={!mistypedWordsObj || mistypedWordsObj.length <= SHOWED_MISTYPED_WORDS_COUNT}
         onChange={e => handleFilterChange(e.target.value)} />
       {displayedMistypedWordsSeries?.length > 1 &&
         <MistypedWordsSorter sortBy={sortBy} handleSortChange={handleSortChange} />

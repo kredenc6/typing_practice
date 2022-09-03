@@ -77,3 +77,5 @@ export default function LatestResultsChart({ precision, typingSpeed, textLength,
     </Paper>
   );
 }
+
+// TODO stop redrawing text length chart on theme switch
