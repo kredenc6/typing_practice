@@ -150,3 +150,4 @@ export default function App() {
 // TODO scrollbars are almost invisible in dark mode (especially in the loaded paragraph tooltips)
 // TODO retry text loading when received empty paragraphs from random wiki
 // TODO remember text input when going from main menu to statistics (and play page?)
+// TODO disable statistics button in MainMenu when there are no results yet

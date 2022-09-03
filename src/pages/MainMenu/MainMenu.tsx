@@ -13,6 +13,7 @@ import adjustTextGeneral from "../../textFunctions/adjustTextGeneral";
 import { useTextToTextField } from "../../customHooks/useTextToTextField";
 import ThemeSwitch from "../../components/ThemeSwith/ThemeSwith";
 import { ReactComponent as StatisticsIcon } from "../../svg/bar-chart-24px.svg";
+import { KeyboardAlt as KeyboardIcon } from "@mui/icons-material";
 import { CSSObjects } from "../../types/themeTypes";
 
 interface Props {
@@ -116,7 +117,13 @@ export default function MainMenu({ setText, knownSymbols }: Props) {
       <Link id="link-to-playArea" style={{ display: "none" }} to="playArea"></Link>
       <Link id="link-to-statistics" style={{ display: "none" }} to="statistics"></Link>
       <ButtonGroup sx={styles.buttons} variant="contained" size="large" disableElevation>
-        <Button disabled={!textInput} onClick={handleStart}>Start</Button>
+        <Button
+          disabled={!textInput}
+          onClick={handleStart}
+          startIcon={<KeyboardIcon sx={{ width: "1.7rem", height: "1.7rem" }} />}
+        >
+          Start
+        </Button>
         <Button
           onClick={goToStatistics}
           startIcon={
