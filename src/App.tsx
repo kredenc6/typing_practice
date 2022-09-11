@@ -138,7 +138,6 @@ export default function App() {
 
 // TODO  add descriptions to main menu text adjustments
 // TODO add text adjustment for czech and english keyboard
-// TODO blue color in dark theme is poorly readable
 // TODO style scrollbar along with  theme
 // TODO save sorting selection(in statistics) permanently
 // TODO set a maximum count for mistyped words (10000?)
@@ -151,3 +150,7 @@ export default function App() {
 // TODO retry text loading when received empty paragraphs from random wiki
 // TODO remember text input when going from main menu to statistics (and play page?)
 // TODO disable statistics button in MainMenu when there are no results yet
+// TODO add small delete button for deleting all text in the text field
+// BUG in mistyped words counter shows for example 1-7/10 (when not enough words)
+// TODO make tooltip disappear when scrolling and the tooltip arrow is leaving the paragraph window
+
