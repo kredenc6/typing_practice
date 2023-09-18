@@ -169,6 +169,7 @@ export default function TextDisplay({
     };
     
     setResultObj(resultObj);
+    timer.reset();
   },[cursorPosition, text, keyStrokeCount, timer, symbolRows, gameStatus, setGameStatus, setResultObj, enteredSymbol ])
 
   // on keypress(when enteredSymbol is truthy) check and adjust all the necessary stuff

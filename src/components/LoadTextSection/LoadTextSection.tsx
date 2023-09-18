@@ -110,10 +110,10 @@ export default function LoadTextSection({
                       "& input": { textAlign: "center" },
                       // getting rid of the arrows in the input 
                       "& input::-webkit-outer-spin-button, input::-webkit-inner-spin-button": {
-                          "-webkit-appearance": "none", margin: 0
-                      },
+                          "-webkit-appearance": "none", margin: 0 // throws an error due to kebab-case, but it still works (camel-case doesn't)
+                        },
                       "& input[type=number]": {
-                        "-moz-appearance": "textfield"
+                        "-moz-appearance": "textfield" // throws an error due to kebab-case, but it still works (camel-case doesn't)
                       }
                 }}
                 value={insertTextOnLoad.length}
