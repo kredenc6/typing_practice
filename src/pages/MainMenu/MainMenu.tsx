@@ -12,13 +12,18 @@ import { getInvalidSymbols } from "../../helpFunctions/getInvalidSymbols";
 import adjustTextGeneral from "../../textFunctions/adjustTextGeneral";
 import { useTextToTextField } from "../../customHooks/useTextToTextField";
 import ThemeSwitch from "../../components/ThemeSwith/ThemeSwith";
+import { googleLogout } from "@react-oauth/google";
 import { ReactComponent as StatisticsIcon } from "../../svg/bar-chart-24px.svg";
 import { KeyboardAlt as KeyboardIcon } from "@mui/icons-material";
 import { CSSObjects } from "../../types/themeTypes";
+import { User } from "../../types/otherTypes";
+import UserCard from "../../components/UserCard/UserCard";
 
 interface Props {
   setText: React.Dispatch<React.SetStateAction<string>>;
   knownSymbols: string[];
+  user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
 export interface InsertTextOnLoad {
@@ -44,7 +49,7 @@ const styles: CSSObjects = {
 };
 
 // TODO setText maximum length
-export default function MainMenu({ setText, knownSymbols }: Props) {
+export default function MainMenu({ setText, knownSymbols, user, setUser }: Props) {
   const [loadedParagraphs, setLoadedParagraphs] = useState<string[]>([]);
   const [insertTextOnLoad, setInsertTextOnLoad] = useState<InsertTextOnLoad>({
     length: 100, boolean: true
@@ -106,6 +111,8 @@ export default function MainMenu({ setText, knownSymbols }: Props) {
 
   return (
     <Box sx={styles.mainMenu}>
+      <UserCard user={user} logout={() => setUser(null)} />
+      {/* <Button onClick={() => { setUser(null); }}>Logout</Button> */}
       <ThemeSwitch />
       <TextFieldSection setTextInput={setTextInput} textInput={textInput} />
       <LoadTextSection

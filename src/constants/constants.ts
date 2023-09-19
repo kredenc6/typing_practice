@@ -5,6 +5,7 @@ export const LOCAL_STORAGE_KEYS = {
   MISTYPE_SETTINGS: "typingPracticeMistypeSettings",
   MISTYPED_WORDS: "mistypedWordsChartWidth",
   THEME_TYPES: "typingPracticeAppThemeType",
-  TEXT_DISPLAY_THEME: "typingPracticeTextDisplayTheme"
+  TEXT_DISPLAY_THEME: "typingPracticeTextDisplayTheme",
+  USER: "typingPracticeUser"
 };
 export const MAXIMUM_TEXT_LENGTH = 1500;

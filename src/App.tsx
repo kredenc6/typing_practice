@@ -1,9 +1,10 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { BrowserRouter as Router, Redirect, Route, Switch } from "react-router-dom";
+import { ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { BrowserRouter as Router, Redirect, Route, RouteProps, Switch, useLocation } from "react-router-dom";
 import { PaletteMode, ThemeProvider as MuiThemeProvider } from "@mui/material";
 import PlayPage from "./pages/PlayPage/PlayPage";
 import MainMenu from "./pages/MainMenu/MainMenu";
 import Statistics from "./pages/Statistics/Statistics";
+import Login from "./components/Login/Login";
 import Timer from "./accessories/Timer";
 import getFontData from "./async/getFontData";
 import loadFont from "./async/loadFont";
@@ -11,7 +12,7 @@ import { defaultTextDisplayFontData } from "./styles/textDisplayTheme/textDispla
 import { FontData } from "./types/themeTypes";
 import { PlayPageThemeContext, PlayPageThemeProvider } from "./styles/themeContexts";
 import { createAppTheme } from "./styles/appTheme";
-import { AllowedMistype } from "./types/otherTypes";
+import { AllowedMistype, User } from "./types/otherTypes";
 import { getKnownSymbols } from "./helpFunctions/getKnownSymbols";
 import CssBaseline from '@mui/material/CssBaseline';
 import "simplebar/dist/simplebar.min.css";
@@ -26,6 +27,7 @@ export default function App() {
   const [allowedMistype, setAllowedMistype] = useState<AllowedMistype>({
     count: 1, isAllowed: true
   });
+  const [user, setUser] = useState<User | null>(null);
 
   const updateTheme = useCallback((themeType: PaletteMode) => {
     setAppTheme(createAppTheme(themeType)) ;
@@ -92,13 +94,21 @@ export default function App() {
       <CssBaseline /> {/* will also enable dark mode for the app's background. */}
       <Router>
         <Switch>
-          <Route exact path="/">
+          <PrivateRoute exact path="/" user={user}>
             <Redirect to="/mainMenu" />
+          </PrivateRoute>
+          <Route path="/login">
+            <Login setUser={setUser} user={user} />
           </Route>
-          <Route path="/mainMenu">
-            <MainMenu setText={setText} knownSymbols={getKnownSymbols(fontData)} />
-          </Route>
-          <Route path="/playArea">
+          <PrivateRoute path="/mainMenu" user={user}>
+            <MainMenu
+              setText={setText}
+              knownSymbols={getKnownSymbols(fontData)}
+              setUser={setUser}
+              user={user}
+            />
+          </PrivateRoute>
+          <PrivateRoute path="/playArea" user={user}>
             <PlayPageThemeProvider>
               <PlayPage
                 fontData={fontData}
@@ -109,15 +119,44 @@ export default function App() {
                 setAllowedMistype={setAllowedMistype}
                 allowedMistype={allowedMistype} />
             </PlayPageThemeProvider>
-          </Route>
-          <Route path="/statistics">
+          </PrivateRoute>
+          <PrivateRoute path="/statistics" user={user}>
             <Statistics />
-          </Route>
+          </PrivateRoute>
         </Switch>
       </Router>
     </MuiThemeProvider>
   );
 }
+
+interface PrivateRouteProps {
+  children: ReactNode;
+  user: User | null;
+}
+
+function PrivateRoute({ children, user, ...routeProps }:PrivateRouteProps & RouteProps) {
+  const location = useLocation();
+
+  return (
+    <Route
+      {...routeProps}
+      render={() => {
+        if (!user) {
+          return (
+            <Redirect
+              to={{
+                pathname: "/login",
+                state: { from: location }
+              }}
+            />
+          );
+        }
+
+        return children;
+      }}
+    />
+  );
+};
 
 // TODO save last 3 mistype(finish) results in the json
 // TODO add typing sounds
