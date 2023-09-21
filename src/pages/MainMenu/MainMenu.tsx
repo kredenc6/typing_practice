@@ -12,7 +12,6 @@ import { getInvalidSymbols } from "../../helpFunctions/getInvalidSymbols";
 import adjustTextGeneral from "../../textFunctions/adjustTextGeneral";
 import { useTextToTextField } from "../../customHooks/useTextToTextField";
 import ThemeSwitch from "../../components/ThemeSwith/ThemeSwith";
-import { googleLogout } from "@react-oauth/google";
 import { ReactComponent as StatisticsIcon } from "../../svg/bar-chart-24px.svg";
 import { KeyboardAlt as KeyboardIcon } from "@mui/icons-material";
 import { CSSObjects } from "../../types/themeTypes";
@@ -112,7 +111,6 @@ export default function MainMenu({ setText, knownSymbols, user, setUser }: Props
   return (
     <Box sx={styles.mainMenu}>
       <UserCard user={user} logout={() => setUser(null)} />
-      {/* <Button onClick={() => { setUser(null); }}>Logout</Button> */}
       <ThemeSwitch />
       <TextFieldSection setTextInput={setTextInput} textInput={textInput} />
       <LoadTextSection

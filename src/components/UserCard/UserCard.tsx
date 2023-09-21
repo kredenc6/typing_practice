@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, Box, Button, IconButton, Popover, Typography } from "@mui/material";
+import { Avatar, Box, Button, IconButton, Popover, Typography, AvatarProps } from "@mui/material";
 import { User } from "../../types/otherTypes";
 
 interface Props {
@@ -24,10 +24,7 @@ export default function UserCard({ user, logout }: Props) {
   return (
     <Box>
       <IconButton aria-describedby={id} onClick={handleClick}>
-        <Avatar 
-          alt="user"
-          src={user?.picture}
-        />
+        <UserAvatar user={user} />
       </IconButton>
       <Popover
         id={id}
@@ -39,16 +36,24 @@ export default function UserCard({ user, logout }: Props) {
           horizontal: "left"
         }}
       >
-        <Avatar
-          alt="user"
-          src={user?.picture}
-          sx={{ width: 56, height: 56 }}
-        />
+        <UserAvatar user={user} sx={{ width: 56, height: 56 }} />
           <Typography align="center" color="text.secondary" gutterBottom noWrap paragraph variant="h6">
-            {user?.name}
+            {user?.name || "anonymní"}
           </Typography>
         <Button onClick={logout} size="small">Odhlásit se</Button>
       </Popover>
     </Box>
+  );
+}
+
+interface UserAvatarProps extends AvatarProps {
+  user: User | null;
+}
+
+function UserAvatar({ user, ...avatarProps}: UserAvatarProps) {
+  return (
+    user?.picture
+      ? <Avatar alt="user" src={user?.picture} {...avatarProps} />
+      : <Avatar alt="user" {...avatarProps}>A</Avatar>
   );
 }

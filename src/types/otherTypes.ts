@@ -1,6 +1,5 @@
 import Timer from "../accessories/Timer";
 import { WordObject } from "./symbolTypes";
-import { TokenResponse } from "@react-oauth/google";
 
 export interface AllowedMistype {
   count: 0 | 1 | 2;
@@ -68,6 +67,6 @@ export type SortBy = "alphabetical:desc" | "alphabetical:asc" | "byMistypeCount:
 
 export type User = {
   id: string;
-  name: string;
-  picture: string;
-};
+  name: string | null;
+  picture: string | null;
+}
