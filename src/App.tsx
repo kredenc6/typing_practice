@@ -165,6 +165,7 @@ function PrivateRoute({ children, user, ...routeProps }:PrivateRouteProps & Rout
 //  - at first it can be based on symbol difficulty, later on on the symbol combination
 //  - and finally both?
 
+// TODO implement notifications - for errors to start with
 // TODO handle failed font fetch
 // TODO be able to save a text and load it
 // TODO limit a text to 10000? symbols
@@ -193,3 +194,5 @@ function PrivateRoute({ children, user, ...routeProps }:PrivateRouteProps & Rout
 // BUG in mistyped words counter shows for example 1-7/10 (when not enough words)
 // TODO make tooltip disappear when scrolling and the tooltip arrow is leaving the paragraph window
 
+// DATABASE:
+// TODO write database security rules: https://firebase.google.com/docs/rules/basics?authuser=0

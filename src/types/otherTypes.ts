@@ -66,7 +66,8 @@ export type MistypedWordsLogV2 = {
 export type SortBy = "alphabetical:desc" | "alphabetical:asc" | "byMistypeCount:desc" | "byMistypeCount:asc" | "byTime:desc" | "byTime:asc";
 
 export type User = {
-  id: string;
   name: string | null;
   picture: string | null;
+  isAdmin: boolean;
+  createdAt: number;
 }
