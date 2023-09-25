@@ -17,6 +17,7 @@ import { getKnownSymbols } from "./helpFunctions/getKnownSymbols";
 import CssBaseline from '@mui/material/CssBaseline';
 import "simplebar/dist/simplebar.min.css";
 import { LOCAL_STORAGE_KEYS } from "./constants/constants";
+import parseStorageItem from "./helpFunctions/parseStorageItem";
 
 export default function App() {
   const [fontData, setFontData] = useState(defaultTextDisplayFontData);
@@ -27,7 +28,9 @@ export default function App() {
   const [allowedMistype, setAllowedMistype] = useState<AllowedMistype>({
     count: 1, isAllowed: true
   });
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(() => {
+    return parseStorageItem<User>(localStorage.getItem(LOCAL_STORAGE_KEYS.USER));
+  });
 
   const updateTheme = useCallback((themeType: PaletteMode) => {
     setAppTheme(createAppTheme(themeType)) ;
@@ -193,6 +196,7 @@ function PrivateRoute({ children, user, ...routeProps }:PrivateRouteProps & Rout
 // TODO add small delete button for deleting all text in the text field
 // BUG in mistyped words counter shows for example 1-7/10 (when not enough words)
 // TODO make tooltip disappear when scrolling and the tooltip arrow is leaving the paragraph window
+// TODO user can set up a typing profile (for example for different keyboards, or devices)
 
 // DATABASE:
 // TODO write database security rules: https://firebase.google.com/docs/rules/basics?authuser=0

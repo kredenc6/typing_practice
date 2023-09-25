@@ -17,6 +17,7 @@ import { KeyboardAlt as KeyboardIcon } from "@mui/icons-material";
 import { CSSObjects } from "../../types/themeTypes";
 import { User } from "../../types/otherTypes";
 import UserCard from "../../components/UserCard/UserCard";
+import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
 
 interface Props {
   setText: React.Dispatch<React.SetStateAction<string>>;
@@ -55,6 +56,10 @@ export default function MainMenu({ setText, knownSymbols, user, setUser }: Props
   });
   const [textInput, setTextInput] = useTextToTextField();
 
+  const logout = () => {
+    localStorage.removeItem(LOCAL_STORAGE_KEYS.USER);
+    setUser(null)
+  };
 
   const handleStart = async () => {
     const cleanedText = await adjustTextGeneral(textInput);
@@ -110,7 +115,7 @@ export default function MainMenu({ setText, knownSymbols, user, setUser }: Props
 
   return (
     <Box sx={styles.mainMenu}>
-      <UserCard user={user} logout={() => setUser(null)} />
+      <UserCard user={user} logout={logout} />
       <ThemeSwitch />
       <TextFieldSection setTextInput={setTextInput} textInput={textInput} />
       <LoadTextSection

@@ -5,6 +5,11 @@ import { Box, Button, Typography } from "@mui/material";
 import { User } from "../../types/otherTypes";
 import { doc, setDoc, getDoc, DocumentSnapshot, DocumentData } from "firebase/firestore";
 import handleTryCatchError from "../../helpFunctions/handleTryCatchError";
+import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
+
+
+// TODO Změň název aplikace v:
+// Budete-li pokračovat, Google bude sdílet vaše jméno, e‑mailovou adresu, předvolbu jazyka a profilovou fotku s aplikací typing-practice-399508.firebaseapp.com.
 
 interface Props {
   user: User | null;
@@ -30,13 +35,15 @@ export default function Login({ user, setUser }: Props) {
         return;
       }
 
-      // if the user exist, save him to the state...
+      // if the user exist, save him to the state and localStorage...
       if (userSnap.exists()) {
-        setUser({...userSnap.data() as User });
+        const existingUser = {...userSnap.data() as User }; // BUGprone - verify the type!!!
+        localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify(existingUser));
+        setUser(existingUser);
         
-      // ssselse create a new user...
+      // else create a new user...
       } else {
-        const resultUser: User = {
+        const newUser: User = {
           name: result.user.displayName,
           picture: result.user.photoURL,
           isAdmin: result.user.email === "filip.sran@gmail.com",
@@ -45,11 +52,12 @@ export default function Login({ user, setUser }: Props) {
 
         // ...and save the new user to the database and the state
         try {
-          await setDoc(doc(db, "users", result.user.uid), resultUser);
-          setUser(resultUser);
+          await setDoc(doc(db, "users", result.user.uid), newUser);
+          localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify(newUser));
+          setUser(newUser);
         }
         catch(error) {
-          const errorMessage = `Failed to save the user ${resultUser.name} to the database`;
+          const errorMessage = `Failed to save the user ${newUser.name} to the database`;
           handleTryCatchError(error, errorMessage);
         }
         
