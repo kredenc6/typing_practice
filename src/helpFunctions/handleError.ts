@@ -1,7 +1,8 @@
-export default function handleTryCatchError (error: unknown, message?: string) {
+export default function handleError (error: unknown | any, message?: string) {
   if (error instanceof Error) {
     if (message) {
       console.log(`${message} Error: ${error.message}`);
+      return;
     }
       console.log(error.message);
   } else {

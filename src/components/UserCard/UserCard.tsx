@@ -51,7 +51,7 @@ interface UserAvatarProps extends AvatarProps {
 }
 
 function UserAvatar({ user, ...avatarProps}: UserAvatarProps) {
-  return (
+return (
     user?.picture
       ? <Avatar alt="user" src={user?.picture} {...avatarProps} />
       : <Avatar alt="user" {...avatarProps}>A</Avatar>

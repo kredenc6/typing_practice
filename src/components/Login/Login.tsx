@@ -1,15 +1,17 @@
 import { Redirect } from "react-router-dom";
 import { signInWithPopup } from "firebase/auth";
 import { auth, db, provider } from "../../config/firebase";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { User } from "../../types/otherTypes";
 import { doc, setDoc, getDoc, DocumentSnapshot, DocumentData } from "firebase/firestore";
-import handleTryCatchError from "../../helpFunctions/handleTryCatchError";
+import handleError from "../../helpFunctions/handleError";
 import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
+import { isUserObject } from "../../dbTypeVerification/dbTypeVerification";
 
 
 // TODO Změň název aplikace v:
 // Budete-li pokračovat, Google bude sdílet vaše jméno, e‑mailovou adresu, předvolbu jazyka a profilovou fotku s aplikací typing-practice-399508.firebaseapp.com.
+// I can't find it!!!!!!! ^&*&^&@#$%@#&@#%@#$#%@#!!!
 
 interface Props {
   user: User | null;
@@ -31,13 +33,19 @@ export default function Login({ user, setUser }: Props) {
       }
       catch(error) {
         const errorMessage = `Failed to load the user ${result.user.uid} from the database`;
-        handleTryCatchError(error, errorMessage);
+        handleError(error, errorMessage);
         return;
       }
 
       // if the user exist, save him to the state and localStorage...
       if (userSnap.exists()) {
-        const existingUser = {...userSnap.data() as User }; // BUGprone - verify the type!!!
+        const existingUser = {...userSnap.data() as User };
+        
+        // typeguard
+        if(!isUserObject(existingUser)) {
+          throw new Error("Received an invalid user object.");
+        }
+
         localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify(existingUser));
         setUser(existingUser);
         
@@ -58,33 +66,40 @@ export default function Login({ user, setUser }: Props) {
         }
         catch(error) {
           const errorMessage = `Failed to save the user ${newUser.name} to the database`;
-          handleTryCatchError(error, errorMessage);
+          handleError(error, errorMessage);
         }
         
       }
     })
-    // TODO finish error handling
     .catch((error) => {
-      console.dir("error");
-      console.dir(error);
-      // // Handle Errors here.
-      // const errorCode = error.code;
-      // const errorMessage = error.message;
-      // // The email of the user's account used.
-      // const email = error.customData.email;
-      // // The AuthCredential type that was used.
-      // const credential = GoogleAuthProvider.credentialFromError(error);
-      // // ...
+      const message = `Login failed. ${error.message}`;
+      handleError(error, message);
     });
 
     return (
       user
       ? <Redirect to="/mainMenu" />
-      : (<Box>
-            <Typography variant="h2">React Google Login</Typography>
-            <br />
-            <br />
-            <Button onClick={() => login()}>Sign in with Google 🚀 </Button>
-        </Box>)
+      : (
+        <Box>
+          <Paper
+            elevation={3}
+            sx={{ width: "30rem", p: "2rem", textAlign: "center", mx: "auto", marginTop: "20vh" }}
+          >
+            <Typography
+              variant="h6"
+              sx={{ marginBottom: "1rem" }}
+            >
+              přihlášení
+            </Typography>
+            <Typography variant="h2" sx={{ marginBottom: "3rem" }}>Deset prstů</Typography>
+            <Button
+              onClick={() => login()}
+              variant="contained"
+            >
+              Přihlásit se přes Google účet
+            </Button>
+          </Paper>
+        </Box>
+        )
     );
 };
