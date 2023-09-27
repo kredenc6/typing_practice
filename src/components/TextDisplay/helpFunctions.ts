@@ -2,7 +2,7 @@ import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeTo
 import { calcTypingPrecision, calcTypingSpeedInKeystrokes } from "../../helpFunctions/calcTypigSpeed";
 import { FontData, Offset } from "../../types/themeTypes";
 import { Row, SymbolCorrectness, SymbolWidths, WordObject } from "../../types/symbolTypes";
-import { AllowedMistype, GameStatus, Results, MistypedWordsLogV2 } from "../../types/otherTypes";
+import { AllowedMistype, GameStatus, Results, MistypedWordsLog, MistypedWords } from "../../types/otherTypes";
 import { secondsToMMSS } from "../../helpFunctions/secondsToMMSS";
 import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
 import _ from "lodash";
@@ -316,6 +316,33 @@ export const isPlayingGameStatus = (gameStatus: GameStatus) => {
   return ["playing", "selfType"].includes(gameStatus)
 };
 
+// TODO I need to add time of mistype to the mistyped words...
+/**
+ * 
+ * @returns alphabetically sorted array
+ */
+const extractMistypedWordsAlphabetically = (mistypedWords: WordObject[]): MistypedWords => {
+  const timestamp = Date.now(); // ...here is suppose to be the exact mistype time not Date.now()
+  
+  const wordTimestampsObj = mistypedWords.reduce((accumulator, { string }) => {
+    
+    if(accumulator[string]) {
+      accumulator[string].push(timestamp);
+    } else {
+      accumulator[string] = [timestamp];
+    }
+
+    return accumulator;
+
+  }, {} as {[key: string]: number[]});
+
+  // transform to an array and sort it alphabetically
+  return Object.entries(wordTimestampsObj).sort(([keyA,], [keyB,]) => {
+    return keyA.localeCompare(keyB, "cz");
+  });
+};
+
+// TODO back to the original saveMistypedWords?
 // export const createMistypedWordsLog = (mistypedWords: WordObject[]) => {
 //   return mistypedWords.reduce((accumulator, { string }) => {
 //     if(accumulator[string]) {
@@ -330,6 +357,174 @@ export const isPlayingGameStatus = (gameStatus: GameStatus) => {
 //   }, {} as MistypedWordsLog)
 // };
 
+export const saveMistypedWords = (mistypedWords: WordObject[]) => {
+  const localStorageMistypedWords = localStorage.getItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS);
+  const savedMistypedWordsLog = localStorageMistypedWords
+    ? JSON.parse(localStorageMistypedWords) as MistypedWordsLog
+    : null;
+
+  let updatedMistypedWords = extractMistypedWordsAlphabetically(mistypedWords);
+
+  // merge old and new mistype words
+  if(savedMistypedWordsLog) {
+    updatedMistypedWords = mergeSortedStringArrays(savedMistypedWordsLog["words"], updatedMistypedWords, true);
+  }
+
+  const byTime: [number, number][] = []; // [index, lastMistype][]
+  const byMistypeCount: [number, number][] = [];  // [index, mistypeCount][]
+
+  for(let i=0; i<updatedMistypedWords.length; i++) {
+
+    const timestamps = updatedMistypedWords[i][1];
+    const lastMistype = timestamps[timestamps.length - 1]; 
+    byTime.push([i, lastMistype]);
+    
+    const mistypeCount = updatedMistypedWords[i][1].length;
+    byMistypeCount.push([i, mistypeCount]);
+  }
+
+  // the sorting has to be consistently ascending for every sort type
+  // it ensure a simple use of reverse method for sorting and filtering in Statistic page
+  byTime.sort(([, lastMistypeA], [, lastMistypeB]) => lastMistypeA - lastMistypeB);
+  byMistypeCount.sort(([, mistypeCountA], [, mistypeCountB]) => mistypeCountA - mistypeCountB);
+
+  const alphabeticalOrder: number[] = [];
+  const byTimeOrder: number[] = [];
+  const byMistypeCountOrder: number[] = [];
+  for(let i=0; i<updatedMistypedWords.length; i++) {
+    alphabeticalOrder[i] = i;
+    const byTimeOrderIndex = byTime[i][0];
+    const byMistypeCountOrderIndex = byMistypeCount[i][0];
+
+    byTimeOrder[byTimeOrderIndex] = i
+    byMistypeCountOrder[byMistypeCountOrderIndex] = i
+  }
+
+  const newMistypedWordsLog: MistypedWordsLog = {
+    words: updatedMistypedWords,
+    sorting: {
+      alphabetical: alphabeticalOrder,
+      byMistypeCount: byMistypeCountOrder,
+      byTime: byTimeOrder
+    }
+  };
+
+  localStorage.setItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS, JSON.stringify(newMistypedWordsLog));
+
+  /**
+   * 
+   * @param largeArr must be alphabetically sorted
+   * @param smallArr must be alphabetically sorted
+   * @returns new array
+   */
+  function mergeSortedStringArrays(largeArr: MistypedWords, smallArr: MistypedWords, areBothArrSorted = false) {
+    if(!areBothArrSorted) {
+      throw new Error("mergeSortedStringArrays function does not currently support unsorted arrays!");
+    }
+
+    const mergedArray:MistypedWords = [];
+    let insertionPoint = 0;
+    let insertionCount = 0; // it shows arr lenght difference between largeArr and mergedArr
+
+    // Iterate over the small array.
+    for (const [nextWord, nextWordTimestamps] of smallArr) {
+
+      // if we reach end of largeArr, just push the rest of smallArr to the mergedArray
+      if(insertionPoint > largeArr.length - 1) {
+        mergedArray.push([nextWord, nextWordTimestamps]);
+
+        // there's no need to increase the insertionCount anymore
+        continue;
+      }
+
+      // Use binary search to find the insertion point for the nextWord (and nextWordTimestamps) in the larger array.
+      const { index, isEqual } = binarySearch(largeArr, nextWord, insertionPoint);
+
+      insertionPoint = index;
+      const startSlicePoint = mergedArray.length - insertionCount;
+      const endSlicePoint = insertionPoint + Number(isEqual);
+
+      // Copy alphabetically preceding words from the largeArr up to the slice point.
+      // Alphabetical order ensures they won't need to be moved from their indexes.
+      mergedArray.push(...largeArr.slice(startSlicePoint, endSlicePoint));
+
+      // If the nextWord already exists in the largeArr (and now also in the merged array), just add its timestamps.
+      if(isEqual) {
+        const nextWordIndex = insertionPoint + insertionCount;
+        mergedArray[nextWordIndex][1].push(...nextWordTimestamps);
+
+      // If nextWord doesn't exist in the large array, push it and its timestapms into the the mergedArray.
+      }else {
+        mergedArray.push([nextWord, nextWordTimestamps]);
+        insertionCount++;
+      }
+    }
+
+    return mergedArray;
+  }
+  
+  function binarySearch(array: MistypedWords, comparedWord: string , startIndex: number) {
+    // Initialize two pointers, one for the start of the array and the other for the end.
+    let low = startIndex;
+    let high = array.length - 1;
+
+    if(low > high) {
+      throw new Error(`Start index {${startIndex}} can't be bigger than array length - 1 {${array.length - 1}}.`);
+    }
+
+    // While the low pointer is less than to the high pointer, continue searching.
+    while (low < high) {
+
+      // Calculate the midpoint of the array.
+      const mid = Math.floor((low + high) / 2);
+
+      // compare the words
+      const word = array[mid][0];
+      const compareNumber = comparedWord.localeCompare(word, "cz");
+
+      // If the current words are equal
+      if (compareNumber === 0) {
+        return { index: mid, isEqual: true };
+      
+      // If the comparedWord should come in front of the word at midpoint, set the high pointer to the midpoint - 1.
+      } else if (compareNumber < 0) {
+        if(mid - 1 < low) {
+          low = mid;
+          high = mid;
+          break;
+        }
+        high = mid - 1;
+
+      // If the comparedWord should come after, than the word at the midpoint, set the low pointer to the midpoint + 1.
+      } else {
+        if(mid + 1 > high) {
+          low = mid;
+          high = mid;
+          break;
+        }
+        low = mid + 1;
+      }
+    }
+
+    // If we reach this point, the same word was not found in the array.
+    // Determine and return the placement index and equality of the comparedWord.
+    const word = array[high][0];
+    const compareNumber = comparedWord.localeCompare(word, "cz");
+
+    if(compareNumber === 0) {
+        return { index: high, isEqual: true };
+
+    } else if(compareNumber < 0) {
+        return { index: high, isEqual: false };
+    }
+
+    return { index: high + 1, isEqual: false };
+  }
+
+  // todos taken from deprecated V2
+  // TODO add last update time for the whole saved object
+  // TODO make it async for performance reasons - create state to keep track if it is still computing (and display it where needed)
+};
 // export const saveMistypedWords = (mistypedWords: WordObject[]) => {
 //   const localStorageMistypedWords = localStorage.getItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS);
 //   const savedMistypedWords = localStorageMistypedWords
@@ -353,96 +548,85 @@ export const isPlayingGameStatus = (gameStatus: GameStatus) => {
 //   }
 // };
 
-const extractMistypedWords = (mistypedWords: WordObject[]) => {
-  return mistypedWords.reduce((accumulator, { string }) => {
-    const timestamp = Date.now();
+
+// TODO delete if V1 is thoroughly tested
+// /**
+//  * @deprecated
+//  */
+// export const saveMistypedWordsV2 = (mistypedWords: WordObject[]) => {
+//   if(!mistypedWords.length) return;
+
+//   const localStorageMistypedWords = localStorage.getItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS);
+//   const savedMistypedWords = localStorageMistypedWords
+//     ? JSON.parse(localStorageMistypedWords) as MistypedWordsLogV2
+//     : null;
+//   const mistypedWordsLog = extractMistypedWords(mistypedWords);
+
+//   let mistypedWordsMap: Map<string, number[]> = new Map();
+//   if(savedMistypedWords) {
+//     const mistypedWordsArr: [string, number[]][] = savedMistypedWords
+//       .map(({ word, timestamps }) => [word, timestamps]);
+//     mistypedWordsMap = new Map(mistypedWordsArr);
     
-    if(accumulator[string]) {
-      accumulator[string].push(timestamp);
-    } else {
-      accumulator[string] = [timestamp]
-    }
+//     Object.entries(mistypedWordsLog).forEach(([key, value]) => {
+//       const timestamps = mistypedWordsMap.get(key) ?? [];
+//       timestamps.push(...value);
+//       mistypedWordsMap.set(key, timestamps);
+//     });
     
-    return accumulator;
-  }, {} as {[key: string]: number[]})
-};
+//   } else {
+//     mistypedWordsMap = new Map(Object.entries(mistypedWordsLog));
+//   }
 
-export const saveMistypedWordsV2 = (mistypedWords: WordObject[]) => {
-  if(!mistypedWords.length) return;
+//   const newSavedMistypedWordsArr = Array.from(mistypedWordsMap);
+//   const alphabetical: [number, string][] = []; // [index, word][]
+//   const byTime: [number, number][] = []; // [index, lastMistype][]
+//   const byMistypeCount: [number, number][] = [];  // [index, mistypeCount][]
 
-  const localStorageMistypedWords = localStorage.getItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS);
-  const savedMistypedWords = localStorageMistypedWords
-    ? JSON.parse(localStorageMistypedWords) as MistypedWordsLogV2
-    : null;
-  const mistypedWordsLog = extractMistypedWords(mistypedWords);
+//   for(let i=0; i<newSavedMistypedWordsArr.length; i++) {
+//     const word = newSavedMistypedWordsArr[i][0];
+//     alphabetical.push([i, word]);
 
-  let mistypedWordsMap: Map<string, number[]> = new Map();
-  if(savedMistypedWords) {
-    const mistypedWordsArr: [string, number[]][] = savedMistypedWords
-      .map(({ word, timestamps }) => [word, timestamps]);
-    mistypedWordsMap = new Map(mistypedWordsArr);
+//     const timestamps = newSavedMistypedWordsArr[i][1];
+//     const lastMistype = timestamps[timestamps.length - 1]; 
+//     byTime.push([i, lastMistype]);
     
-    Object.entries(mistypedWordsLog).forEach(([key, value]) => {
-      const timestamps = mistypedWordsMap.get(key) ?? [];
-      timestamps.push(...value);
-      mistypedWordsMap.set(key, timestamps);
-    });
-    
-  } else {
-    mistypedWordsMap = new Map(Object.entries(mistypedWordsLog));
-  }
+//     const mistypeCount = newSavedMistypedWordsArr[i][1].length;
+//     byMistypeCount.push([i, mistypeCount]);
+//   }
 
-  const newSavedMistypedWordsArr = Array.from(mistypedWordsMap);
-  const alphabetical: [number, string][] = []; // [index, word][]
-  const byTime: [number, number][] = []; // [index, lastMistype][]
-  const byMistypeCount: [number, number][] = [];  // [index, mistypeCount][]
+//   alphabetical.sort(([, wordA], [, wordB]) => wordA.localeCompare(wordB, "cz"));
+//   byTime.sort(([, lastMistypeA], [, lastMistypeB]) => lastMistypeA - lastMistypeB);
+//   byMistypeCount.sort(([, mistypeCountA], [, mistypeCountB]) => mistypeCountA - mistypeCountB);
 
-  for(let i=0; i<newSavedMistypedWordsArr.length; i++) {
-    const word = newSavedMistypedWordsArr[i][0];
-    alphabetical.push([i, word]);
+//   const alphabeticalOrder: number[] = [];
+//   const byTimeOrder: number[] = [];
+//   const byMistypeCountOrder: number[] = [];
+//   for(let i=0; i<newSavedMistypedWordsArr.length; i++) {
+//     const alphabeticalOrderIndex = alphabetical[i][0];
+//     const byTimeOrderIndex = byTime[i][0];
+//     const byMistypeCountOrderIndex = byMistypeCount[i][0];
 
-    const timestamps = newSavedMistypedWordsArr[i][1];
-    const lastMistype = timestamps[timestamps.length - 1]; 
-    byTime.push([i, lastMistype]);
-    
-    const mistypeCount = newSavedMistypedWordsArr[i][1].length;
-    byMistypeCount.push([i, mistypeCount]);
-  }
+//     alphabeticalOrder[alphabeticalOrderIndex] = i
+//     byTimeOrder[byTimeOrderIndex] = i
+//     byMistypeCountOrder[byMistypeCountOrderIndex] = i
+//   }
 
-  alphabetical.sort(([, wordA], [, wordB]) => wordA.localeCompare(wordB, "cz"));
-  byTime.sort(([, lastMistypeA], [, lastMistypeB]) => lastMistypeA - lastMistypeB);
-  byMistypeCount.sort(([, mistypeCountA], [, mistypeCountB]) => mistypeCountA - mistypeCountB);
+//   const newMistypedWordsLog: MistypedWordsLogV2 = newSavedMistypedWordsArr.map(([word, timestamps], i) => {
+//     return {
+//       word,
+//       timestamps,
+//       sorting: {
+//         alphabetical: alphabeticalOrder[i],
+//         byTime: byTimeOrder[i],
+//         byMistypeCount: byMistypeCountOrder[i]
+//       }
+//     }
+//   });
 
-  const alphabeticalOrder: number[] = [];
-  const byTimeOrder: number[] = [];
-  const byMistypeCountOrder: number[] = [];
-  for(let i=0; i<newSavedMistypedWordsArr.length; i++) {
-    const alphabeticalOrderIndex = alphabetical[i][0];
-    const byTimeOrderIndex = byTime[i][0];
-    const byMistypeCountOrderIndex = byMistypeCount[i][0];
-
-    alphabeticalOrder[alphabeticalOrderIndex] = i
-    byTimeOrder[byTimeOrderIndex] = i
-    byMistypeCountOrder[byMistypeCountOrderIndex] = i
-  }
-
-  const newMistypedWordsLog: MistypedWordsLogV2 = newSavedMistypedWordsArr.map(([word, timestamps], i) => {
-    return {
-      word,
-      timestamps,
-      sorting: {
-        alphabetical: alphabeticalOrder[i],
-        byTime: byTimeOrder[i],
-        byMistypeCount: byMistypeCountOrder[i]
-      }
-    }
-  });
-
-  console.log({ newMistypedWordsLog, alphabetical })
-  localStorage.setItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS, JSON.stringify(newMistypedWordsLog));
-  // TODO add last update time for the whole saved object
-  // TODO make it async for performance reasons - create state to keep track if it is still computing (and display it where needed)
-};
+//   console.log({ newMistypedWordsLog, alphabetical })
+//   localStorage.setItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS, JSON.stringify(newMistypedWordsLog));
+// };
 
 export const getLastSymbol = (symbolRows: Row[]) => {
   const lastWords = _.last(symbolRows)?.words;

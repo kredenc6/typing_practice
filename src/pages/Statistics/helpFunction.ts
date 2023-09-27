@@ -1,63 +1,84 @@
 import dateFormat from "dateformat";
-import { MistypedWordsLogV2, SortBy } from "../../types/otherTypes";
+import { MistypedWords, MistypedWordsLog, SortBy } from "../../types/otherTypes";
 
-// export const sortMistypedWords = (mistypedWords: MistypedWordsLog, sortBy: SortBy) => {
-//   const [sort, direction] = sortBy.split(":") as [string, "asc" | "desc"];
+// export const sortMistypedWords = (mistypedWords: MistypedWordsLog, filteredIndexes: number[], sortBy: SortBy) => {
+//   const [sort, direction] = sortBy.split(":") as [keyof MistypedWordsLog["sorting"], "asc" | "desc"];
+//   const sortedWords: MistypedWords = [];
+  
+//   for (let i=0; i<filteredIndexes.length; i++) {
+//     const wordPlacementIndex = mistypedWords.sorting[sort][i];
+//     sortedWords[wordPlacementIndex] = mistypedWords.words[i];
+//   }
+//   // for (let i=0; i<mistypedWords.words.length; i++) {
+//   //   const wordPlacementIndex = mistypedWords.sorting[sort][i];
+//   //   sortedWords[wordPlacementIndex] = mistypedWords.words[i];
+//   // }
 
-//   if(sort === "count") {
-//     return _.orderBy(
-//       Object.entries(mistypedWords),
-//       [
-//         ([,{ timestamps }]) => timestamps.length,
-//         ([,{ timestamps }]) => timestamps[timestamps.length - 1]
-//       ],
-//       [direction, "desc"]
-//     );
+//   if(direction === "desc") {
+//     sortedWords.reverse();
 //   }
 
-//   if(sort === "time") {
-//     return _.orderBy(
-//       Object.entries(mistypedWords),
-//       [
-//         ([,{ timestamps }]) => timestamps[timestamps.length - 1],
-//         ([,{ timestamps }]) => timestamps.length
-//       ],
-//       [direction, "desc"]
-//     );
-//   }
+//   return sortedWords;
+  
+  // if(sort === "byMistypeCount") {
 
-//   if(sort === "alphabetical") {
-//     const sortingCoefficient = direction === "asc" ? 1 : -1;
-//     return Object.entries(mistypedWords)
-//       .sort(([wordA], [wordB]) => {
-//         return (
-//           sortingCoefficient *
-//           new Intl.Collator("cz").compare(wordA, wordB)
-//         );
-//       });
-//   }
 
-//   // default fallback
-//   return _.orderBy(
-//     Object.entries(mistypedWords),
-//     [
-//       ([,{ timestamps }]) => timestamps.length,
-//       ([,{ timestamps }]) => timestamps[timestamps.length - 1]
-//     ],
-//     ["desc", "desc"]
-//   );
+  //   return _.orderBy(
+  //     Object.entries(mistypedWords),
+  //     [
+  //       ([, sor]) => timestamps.length,
+  //       ([,{ timestamps }]) => timestamps[timestamps.length - 1]
+  //       // ([,{ timestamps }]) => timestamps.length,
+  //       // ([,{ timestamps }]) => timestamps[timestamps.length - 1]
+  //     ],
+  //     [direction, "desc"]
+  //   );
+  // }
+
+  // if(sort === "byTime") {
+  //   return _.orderBy(
+  //     Object.entries(mistypedWords),
+  //     [
+  //       ([,{ timestamps }]) => timestamps[timestamps.length - 1],
+  //       ([,{ timestamps }]) => timestamps.length
+  //     ],
+  //     [direction, "desc"]
+  //   );
+  // }
+
+  // if(sort === "alphabetical") {
+  //   const sortingCoefficient = direction === "asc" ? 1 : -1;
+  //   return Object.entries(mistypedWords)
+  //     .sort(([wordA], [wordB]) => {
+  //       return (
+  //         sortingCoefficient *
+  //         new Intl.Collator("cz").compare(wordA, wordB)
+  //       );
+  //     });
+  // }
+
+  // // default fallback
+  // return _.orderBy(
+  //   Object.entries(mistypedWords),
+  //   [
+  //     ([,{ timestamps }]) => timestamps.length,
+  //     ([,{ timestamps }]) => timestamps[timestamps.length - 1]
+  //   ],
+  //   ["desc", "desc"]
+  // );
 // };
 
 export const sortMistypedWords = (
-  mistypedWordsObj: MistypedWordsLogV2, filteredIndexes: number[], sortBy: SortBy
+  mistypedWordsObj: MistypedWordsLog, filteredIndexes: number[], sortBy: SortBy
 ) => {
   const [sort, direction] = sortBy
-    .split(":") as [keyof MistypedWordsLogV2[0]["sorting"], "asc" | "desc"];
+    .split(":") as [keyof MistypedWordsLog["sorting"], "asc" | "desc"];
   
   let sortedWords: ([string, number[]] | undefined)[] = [];
   filteredIndexes.forEach(wordIndex => {
-    const { word, timestamps, sorting } = mistypedWordsObj[wordIndex];
-    const wordPosition = sorting[sort];
+    const [word, timestamps] = mistypedWordsObj["words"][wordIndex];
+    const sorting = mistypedWordsObj["sorting"];
+    const wordPosition = sorting[sort][wordIndex];
     sortedWords[wordPosition] = [word, timestamps];
   });
 
@@ -69,10 +90,33 @@ export const sortMistypedWords = (
     refinedSortedWords.reverse();
   }
 
-  console.log(mistypedWordsObj)
-  console.log({filteredIndexes, refinedSortedWords, sort, direction})
   return refinedSortedWords;
 };
+// export const sortMistypedWords = (
+//   mistypedWordsObj: MistypedWordsLogV2, filteredIndexes: number[], sortBy: SortBy
+// ) => {
+//   const [sort, direction] = sortBy
+//     .split(":") as [keyof MistypedWordsLogV2[0]["sorting"], "asc" | "desc"];
+  
+//   let sortedWords: ([string, number[]] | undefined)[] = [];
+//   filteredIndexes.forEach(wordIndex => {
+//     const { word, timestamps, sorting } = mistypedWordsObj[wordIndex];
+//     const wordPosition = sorting[sort];
+//     sortedWords[wordPosition] = [word, timestamps];
+//   });
+
+//   const tempSet = new Set(sortedWords); // get rid of empty spaces (remove all undefined duplicates)
+//   tempSet.delete(undefined); // get rid of the remaining undefined
+//   const refinedSortedWords = Array.from(tempSet) as [string, number[]][];
+
+//   if(direction === "desc") {
+//     refinedSortedWords.reverse();
+//   }
+
+//   console.log(mistypedWordsObj)
+//   console.log({filteredIndexes, refinedSortedWords, sort, direction})
+//   return refinedSortedWords;
+// };
 
 export const transformMistypeWordsToSeries = (mistypedwords: [string, number[]][]) => {
   return mistypedwords
@@ -115,9 +159,9 @@ export const getLastMistypeFromChartOptions = (options: any) => {
 // };
 
 export const getFilteredMistypeWordIndexes = (
-  mistypedWordsObj: MistypedWordsLogV2, filter: string
+  mistypedWordsObj: MistypedWordsLog, filter: string
 ) => {
-  return mistypedWordsObj.reduce((filteredIndexes, { word }, i) => {
+  return mistypedWordsObj["words"].reduce((filteredIndexes, [word], i) => {
     if(word.includes(filter)) {
       filteredIndexes.push(i);
     }
@@ -125,6 +169,17 @@ export const getFilteredMistypeWordIndexes = (
     return filteredIndexes;
   }, [] as number[]);
 };
+// export const getFilteredMistypeWordIndexes = (
+//   mistypedWordsObj: MistypedWordsLogV2, filter: string
+// ) => {
+//   return mistypedWordsObj.reduce((filteredIndexes, { word }, i) => {
+//     if(word.includes(filter)) {
+//       filteredIndexes.push(i);
+//     }
+
+//     return filteredIndexes;
+//   }, [] as number[]);
+// };
 
 // export const filterMistypedWordsOrders = (
 //   mistypedWords: MistypedWordsLog, filter: string

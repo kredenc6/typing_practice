@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Box, IconButton } from "@mui/material";
 import { Menu } from "@mui/icons-material";
 import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
-import { MistypedWordsLogV2, Results } from "../../types/otherTypes";
+import { MistypedWordsLog, Results } from "../../types/otherTypes";
 import MistypedWordsChartWrapper from "../../components/MistypedWordsChartWrapper/MistypedWordsChartWrapper";
 import LatestResultsChart from "../../components/LatestResultsChart/LatestResultsChart";
 import ThemeSwitch from "../../components/ThemeSwith/ThemeSwith";
@@ -31,7 +31,7 @@ export default function Statistics() {
   const [typingSpeed, setTypingSpeed] = useState<number[]>([]);
   const [textLength, setTextLength] = useState<number[]>([]);
   const [timestamps, setTimestamps] = useState<number[]>([]);
-  const [mistypedWordsObj, setMistypedWordsObj] = useState<MistypedWordsLogV2 | null>(null);
+  const [mistypedWordsObj, setMistypedWordsObj] = useState<MistypedWordsLog | null>(null);
 
   const goToMainMenu = () => {
     document.getElementById("link-to-mainMenu")!.click();
@@ -63,8 +63,7 @@ export default function Statistics() {
     setTimestamps(savedResultTimestamps);
 
     if(mistypedWordsFromStorage) {
-      const savedMistypedWords = JSON.parse(mistypedWordsFromStorage) as MistypedWordsLogV2;
-      console.log(savedMistypedWords)
+      const savedMistypedWords = JSON.parse(mistypedWordsFromStorage) as MistypedWordsLog;
       setMistypedWordsObj(savedMistypedWords);
     }
   }, [])

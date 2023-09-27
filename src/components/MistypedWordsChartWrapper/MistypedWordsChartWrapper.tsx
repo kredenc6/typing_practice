@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Box, Paper, Typography, TextField } from "@mui/material";
 import MistypedWordsSorter from "../MistypedWordsSorter/MistypedWordsSorter";
 import MistypedWordsChart from "../MistypedWordsChart/MistypedWordsChart";
-import { MistypedWordsLogV2, SortBy } from "../../types/otherTypes";
+import { MistypedWordsLog, SortBy } from "../../types/otherTypes";
 import { getFilteredMistypeWordIndexes, getMistypedWordsChartHeight, sortMistypedWords, transformMistypeWordsToSeries } from "../../pages/Statistics/helpFunction";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 import { CSSObjects } from "../../types/themeTypes";
@@ -48,7 +48,7 @@ const styles: CSSObjects = {
 };
 
 interface Props {
-  mistypedWordsObj: MistypedWordsLogV2 | null;
+  mistypedWordsObj: MistypedWordsLog | null;
 }
 
 export default function MistypedWordsChartWrapper({ mistypedWordsObj }: Props) {
@@ -72,7 +72,7 @@ export default function MistypedWordsChartWrapper({ mistypedWordsObj }: Props) {
     } else {
       const filteredMistypedWordCount = filter
         ? filteredIndexes.length
-        : mistypedWordsObj?.length ?? 0;
+        : mistypedWordsObj?.words.length ?? 0;
         
       if(displayedMistypedWordsRange[1] >= filteredMistypedWordCount) return;
 
@@ -140,7 +140,7 @@ export default function MistypedWordsChartWrapper({ mistypedWordsObj }: Props) {
         label="najdi"
         variant="outlined"
         size="small"
-        disabled={!mistypedWordsObj || mistypedWordsObj.length <= SHOWED_MISTYPED_WORDS_COUNT}
+        disabled={!mistypedWordsObj || mistypedWordsObj["words"].length <= SHOWED_MISTYPED_WORDS_COUNT}
         onChange={e => handleFilterChange(e.target.value)} />
       {displayedMistypedWordsSeries?.length > 1 &&
         <MistypedWordsSorter sortBy={sortBy} handleSortChange={handleSortChange} />

@@ -200,3 +200,6 @@ function PrivateRoute({ children, user, ...routeProps }:PrivateRouteProps & Rout
 
 // DATABASE:
 // TODO write database security rules: https://firebase.google.com/docs/rules/basics?authuser=0
+// TODO use lzstring (already installed) to compress data sent to the database
+
+// BUG fix user saved in the localStorage - easy to hack, and it won't (shouldn't) allow interaction with the database anyway
