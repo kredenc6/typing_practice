@@ -38,16 +38,14 @@ export type MistypedWords = [string, number[]][];
 export type MistypedWordsLog = {
   words: MistypedWords;
   sorting: {
-
-    // TODO alphabetical is sorted number array from 0 to arr.length - 1, it should be possible to delete it
-    // and save the extra space
-    alphabetical: number[];
     byTime: number[];
     byMistypeCount: number[];
   }
 }
 
-export type SortBy = "alphabetical:desc" | "alphabetical:asc" | "byMistypeCount:desc" | "byMistypeCount:asc" | "byTime:desc" | "byTime:asc";
+export type SortingDirection = "asc" | "desc";
+export type SortingType = "alphabetical" | "byMistypeCount" | "byTime";
+export type SortBy = `${SortingType}:${SortingDirection}`;
 
 export type User = {
   name: string | null;

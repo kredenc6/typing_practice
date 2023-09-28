@@ -100,7 +100,7 @@ export default function MistypedWordsChartWrapper({ mistypedWordsObj }: Props) {
     if(mistypedWordsObj === null) return;
 
     // TODO don't filter again if the filter stays the same
-    const newFilteredIndexes = getFilteredMistypeWordIndexes(mistypedWordsObj, filter);
+    const newFilteredIndexes = getFilteredMistypeWordIndexes(mistypedWordsObj["words"], filter);
     setFilteredIndexes(newFilteredIndexes);
     // const filteredMistypedWordsSeries = filterMistypedWords(mistypedWords, filter);
     // TODO when the sorting direction is changed just reverse the array

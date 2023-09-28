@@ -1,25 +1,31 @@
 import dateFormat from "dateformat";
-import { MistypedWordsLog, SortBy } from "../../types/otherTypes";
+import { MistypedWords, MistypedWordsLog, SortBy, SortingDirection, SortingType } from "../../types/otherTypes";
 
 export const sortMistypedWords = (
   mistypedWordsObj: MistypedWordsLog, filteredIndexes: number[], sortBy: SortBy
 ) => {
-  const [sort, direction] = sortBy
-    .split(":") as [keyof MistypedWordsLog["sorting"], "asc" | "desc"];
+  const [sortingType, sortingDirection] = sortBy.split(":") as [SortingType, SortingDirection];
   
   let sortedWords: ([string, number[]] | undefined)[] = [];
   filteredIndexes.forEach(wordIndex => {
     const [word, timestamps] = mistypedWordsObj["words"][wordIndex];
-    const sorting = mistypedWordsObj["sorting"];
-    const wordPosition = sorting[sort][wordIndex];
-    sortedWords[wordPosition] = [word, timestamps];
+
+    // filteredIndexes are already alphabetically sorted, so wordIndex can be used directly
+    if(sortingType === "alphabetical") {
+      sortedWords[wordIndex] = [word, timestamps];
+
+    // for other sorting types word positions are in the sorting arrays
+    } else {
+      const sortedWordPosition = mistypedWordsObj.sorting[sortingType][wordIndex];
+      sortedWords[sortedWordPosition] = [word, timestamps];
+    }
   });
 
   const tempSet = new Set(sortedWords); // get rid of empty spaces (remove all undefined duplicates)
   tempSet.delete(undefined); // get rid of the remaining undefined
   const refinedSortedWords = Array.from(tempSet) as [string, number[]][];
 
-  if(direction === "desc") {
+  if(sortingDirection === "desc") {
     refinedSortedWords.reverse();
   }
 
@@ -57,9 +63,9 @@ export const getLastMistypeFromChartOptions = (options: any) => {
 };
 
 export const getFilteredMistypeWordIndexes = (
-  mistypedWordsObj: MistypedWordsLog, filter: string
+  mistypedWordsObj: MistypedWords, filter: string
 ) => {
-  return mistypedWordsObj["words"].reduce((filteredIndexes, [word], i) => {
+  return mistypedWordsObj.reduce((filteredIndexes, [word], i) => {
     if(word.includes(filter)) {
       filteredIndexes.push(i);
     }

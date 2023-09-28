@@ -332,11 +332,9 @@ export const saveMistypedWords = (mistypedWords: WordObject[]) => {
   byTime.sort(([, lastMistypeA], [, lastMistypeB]) => lastMistypeA - lastMistypeB);
   byMistypeCount.sort(([, mistypeCountA], [, mistypeCountB]) => mistypeCountA - mistypeCountB);
 
-  const alphabeticalOrder: number[] = [];
   const byTimeOrder: number[] = [];
   const byMistypeCountOrder: number[] = [];
   for(let i=0; i<updatedMistypedWords.length; i++) {
-    alphabeticalOrder[i] = i;
     const byTimeOrderIndex = byTime[i][0];
     const byMistypeCountOrderIndex = byMistypeCount[i][0];
 
@@ -347,7 +345,6 @@ export const saveMistypedWords = (mistypedWords: WordObject[]) => {
   const newMistypedWordsLog: MistypedWordsLog = {
     words: updatedMistypedWords,
     sorting: {
-      alphabetical: alphabeticalOrder,
       byMistypeCount: byMistypeCountOrder,
       byTime: byTimeOrder
     }
