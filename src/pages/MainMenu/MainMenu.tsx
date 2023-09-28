@@ -56,29 +56,6 @@ export default function MainMenu({ setText, knownSymbols, user, setUser }: Props
   });
   const [textInput, setTextInput] = useTextToTextField();
 
-  // DEBUGGING
-  const handleTest = () => {
-    // console.log("FONT_DATA");
-    // console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.FONT_DATA));
-    // console.log("LAST_RESULTS");
-    // console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.LAST_RESULTS));
-    // console.log("MISTYPED_WORDS");
-    // console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS));
-    // console.log("MISTYPE_SETTINGS");
-    // console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.MISTYPE_SETTINGS));
-    // console.log("TEXT_DISPLAY_THEME");
-    // console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.TEXT_DISPLAY_THEME));
-    // console.log("THEME_TYPES");
-    // console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.THEME_TYPES));
-    // console.log("USER");
-    // console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.USER));
-
-    console.log("Deleting saved mistyped words.");
-    localStorage.removeItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS);
-  };
-
-  // END OF DEBUGGING
-
   const logout = () => {
     localStorage.removeItem(LOCAL_STORAGE_KEYS.USER);
     setUser(null)
@@ -123,7 +100,6 @@ export default function MainMenu({ setText, knownSymbols, user, setUser }: Props
   };
 
   const handleInsertTextOnLoadChange = (changeObj: Partial<InsertTextOnLoad>) => {
-    console.log("changeObj", changeObj)
     setInsertTextOnLoad(prev => {
       const updatedObj = { ...prev, ...changeObj };
       localStorage.setItem("typingPracticeInsertTextOnLoad", JSON.stringify(updatedObj));
@@ -167,11 +143,6 @@ export default function MainMenu({ setText, knownSymbols, user, setUser }: Props
         >
           Výsledky
         </Button>
-        {/* DEBUGGING */}
-        <Button onClick={handleTest}>
-          test
-        </Button>
-        
       </ButtonGroup>
       <InvalidSymbolsMessage invalidSymbols={getInvalidSymbols(textInput, knownSymbols)} />
     </Box>

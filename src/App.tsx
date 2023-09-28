@@ -197,6 +197,7 @@ function PrivateRoute({ children, user, ...routeProps }:PrivateRouteProps & Rout
 // BUG in mistyped words counter shows for example 1-7/10 (when not enough words)
 // TODO make tooltip disappear when scrolling and the tooltip arrow is leaving the paragraph window
 // TODO user can set up a typing profile (for example for different keyboards, or devices)
+// TODO use new Intl.Collator("cz").compare(wordA, wordB) instead of the wordA.localCompare(wordB, "cz") - it's more precise
 
 // DATABASE:
 // TODO write database security rules: https://firebase.google.com/docs/rules/basics?authuser=0
