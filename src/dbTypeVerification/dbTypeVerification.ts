@@ -1,8 +1,6 @@
 import { User } from "../types/otherTypes";
 
 export const isUserObject = (obj: any): obj is User => {
-  console.dir("userObj");
-  console.dir(obj);
     return (
       typeof obj === "object" &&
       obj !== null &&

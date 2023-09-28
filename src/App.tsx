@@ -17,7 +17,10 @@ import { getKnownSymbols } from "./helpFunctions/getKnownSymbols";
 import CssBaseline from '@mui/material/CssBaseline';
 import "simplebar/dist/simplebar.min.css";
 import { LOCAL_STORAGE_KEYS } from "./constants/constants";
-import parseStorageItem from "./helpFunctions/parseStorageItem";
+import { auth } from "./database/firebase";
+import { getUser } from "./database/endpoints";
+import handleError from "./helpFunctions/handleError";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function App() {
   const [fontData, setFontData] = useState(defaultTextDisplayFontData);
@@ -28,9 +31,7 @@ export default function App() {
   const [allowedMistype, setAllowedMistype] = useState<AllowedMistype>({
     count: 1, isAllowed: true
   });
-  const [user, setUser] = useState<User | null>(() => {
-    return parseStorageItem<User>(localStorage.getItem(LOCAL_STORAGE_KEYS.USER));
-  });
+  const [user, setUser] = useState<User | null>(null);
 
   const updateTheme = useCallback((themeType: PaletteMode) => {
     setAppTheme(createAppTheme(themeType)) ;
@@ -89,6 +90,24 @@ export default function App() {
     if(loadedMistypeSetting) {
       setAllowedMistype(JSON.parse(loadedMistypeSetting) as AllowedMistype);
     }
+
+    return onAuthStateChanged(auth, async (userDb) => {
+      
+      // user logged in
+      if (userDb) {
+        try {
+          const loggedInUser = await getUser(userDb.uid);
+          setUser(loggedInUser);
+        } catch(error) {
+          handleError(error);
+        }
+
+      // user logged out
+      } else {
+        setUser(null);
+      }
+    });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -198,9 +217,15 @@ function PrivateRoute({ children, user, ...routeProps }:PrivateRouteProps & Rout
 // TODO make tooltip disappear when scrolling and the tooltip arrow is leaving the paragraph window
 // TODO user can set up a typing profile (for example for different keyboards, or devices)
 // TODO use new Intl.Collator("cz").compare(wordA, wordB) instead of the wordA.localCompare(wordB, "cz") - it's more precise
+// TODO get rid of the Login page flashing when auto-loging
 
 // DATABASE:
+// BUG signOut() can fail - it return a promise, which should be handled
 // TODO write database security rules: https://firebase.google.com/docs/rules/basics?authuser=0
 // TODO use lzstring (already installed) to compress data sent to the database
+// TODO mistype timestamps can be reduced to minutes (4-byte integer: Math.trunc(Date.now() / 60000)), however...
+// ...this is expensive, so the best way would be to store raw results from this day in the local storage and...
+// ... once the user logins the next day it would automatically update the DB with optimized and compressed data...
+// ...and deleted the previous day results
 
 // BUG fix user saved in the localStorage - easy to hack, and it won't (shouldn't) allow interaction with the database anyway

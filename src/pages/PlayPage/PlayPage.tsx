@@ -37,13 +37,8 @@ export default function PlayPage({
 
   useEffect(() => {
     if(!resultObj) return;
-    // DEBUGGING
-    console.log("I got here.");
-    console.dir(resultObj);
     
     saveMistypedWords(resultObj.mistypedWords);
-    // TODO delete the commented code when the transition to saveMistypedWords (V1) is done
-    // saveMistypedWordsV2(resultObj.mistypedWords);
     const lastResultsString = localStorage.getItem(LOCAL_STORAGE_KEYS.LAST_RESULTS) || "[]";
     const lastResults = [
         ...JSON.parse(lastResultsString),

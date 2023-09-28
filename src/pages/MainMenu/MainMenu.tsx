@@ -17,7 +17,7 @@ import { KeyboardAlt as KeyboardIcon } from "@mui/icons-material";
 import { CSSObjects } from "../../types/themeTypes";
 import { User } from "../../types/otherTypes";
 import UserCard from "../../components/UserCard/UserCard";
-import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
+import { auth } from "../../database/firebase";
 
 interface Props {
   setText: React.Dispatch<React.SetStateAction<string>>;
@@ -57,8 +57,9 @@ export default function MainMenu({ setText, knownSymbols, user, setUser }: Props
   const [textInput, setTextInput] = useTextToTextField();
 
   const logout = () => {
-    localStorage.removeItem(LOCAL_STORAGE_KEYS.USER);
-    setUser(null)
+    auth.signOut();
+    // localStorage.removeItem(LOCAL_STORAGE_KEYS.USER);
+    // setUser(null)
   };
 
   const handleStart = async () => {

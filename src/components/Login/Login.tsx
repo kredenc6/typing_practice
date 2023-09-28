@@ -1,17 +1,13 @@
+import { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
-import { signInWithPopup } from "firebase/auth";
-import { auth, db, provider } from "../../config/firebase";
-import { Box, Button, Paper, Typography } from "@mui/material";
+import { setPersistence, signInWithPopup, browserLocalPersistence, inMemoryPersistence } from "firebase/auth";
+import { auth, db, provider } from "../../database/firebase";
+import { Box, Button, Checkbox, FormControlLabel, Paper, Typography } from "@mui/material";
 import { User } from "../../types/otherTypes";
 import { doc, setDoc, getDoc, DocumentSnapshot, DocumentData } from "firebase/firestore";
 import handleError from "../../helpFunctions/handleError";
 import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
 import { isUserObject } from "../../dbTypeVerification/dbTypeVerification";
-
-
-// TODO Změň název aplikace v:
-// Budete-li pokračovat, Google bude sdílet vaše jméno, e‑mailovou adresu, předvolbu jazyka a profilovou fotku s aplikací typing-practice-399508.firebaseapp.com.
-// I can't find it!!!!!!! ^&*&^&@#$%@#&@#%@#$#%@#!!!
 
 interface Props {
   user: User | null;
@@ -19,6 +15,18 @@ interface Props {
 }
 
 export default function Login({ user, setUser }: Props) {
+  const [rememberTheUser, setRememberTheUser] = useState(false);
+
+  const handleCheckboxChange = () => setRememberTheUser(prevState => !prevState);
+
+  // TODO extract to custom hook
+  useEffect(() => {
+    if(rememberTheUser) {
+      setPersistence(auth, browserLocalPersistence);
+    } else {
+      setPersistence(auth, inMemoryPersistence);
+    }
+  }, [rememberTheUser])
 
   // https://firebase.google.com/docs/auth/web/google-signin
   const login = () => signInWithPopup(auth, provider)
@@ -98,6 +106,10 @@ export default function Login({ user, setUser }: Props) {
             >
               Přihlásit se přes Google účet
             </Button>
+            <FormControlLabel
+              control={<Checkbox checked={rememberTheUser} onChange={handleCheckboxChange} />}
+              label="Zůstat přihlášen"
+            />
           </Paper>
         </Box>
         )
