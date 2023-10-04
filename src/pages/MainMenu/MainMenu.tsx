@@ -57,10 +57,15 @@ export default function MainMenu({ setText, knownSymbols, user, setUser }: Props
   const [textInput, setTextInput] = useTextToTextField();
 
   const logout = () => {
+    // TODO handle failed logout (signOut's promise)
     auth.signOut();
     // localStorage.removeItem(LOCAL_STORAGE_KEYS.USER);
     // setUser(null)
   };
+
+  const handleTest = () => {
+    console.log("There's no test atm.");
+  }
 
   const handleStart = async () => {
     const cleanedText = await adjustTextGeneral(textInput);
@@ -144,6 +149,7 @@ export default function MainMenu({ setText, knownSymbols, user, setUser }: Props
         >
           Výsledky
         </Button>
+        <Button onClick={handleTest}>test</Button>
       </ButtonGroup>
       <InvalidSymbolsMessage invalidSymbols={getInvalidSymbols(textInput, knownSymbols)} />
     </Box>

@@ -2,9 +2,9 @@ import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeTo
 import { calcTypingPrecision, calcTypingSpeedInKeystrokes } from "../../helpFunctions/calcTypigSpeed";
 import { FontData, Offset } from "../../types/themeTypes";
 import { Row, SymbolCorrectness, SymbolWidths, WordObject } from "../../types/symbolTypes";
-import { AllowedMistype, GameStatus, Results, MistypedWordsLog, MistypedWords } from "../../types/otherTypes";
+import { AllowedMistype, GameStatus, ResultObj, MistypedWordsLog, MistypedWords, Mistypes, ShortenedResultObj, MistypedWord, UserDB, User } from "../../types/otherTypes";
 import { secondsToMMSS } from "../../helpFunctions/secondsToMMSS";
-import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
+import { LAST_RESULTS_SAVE_COUNT } from "../../constants/constants";
 import _ from "lodash";
 
 export const updateSymbolCorrectness = (
@@ -253,7 +253,7 @@ export const isAllowedToMoveToNextSymbolOnMistake = (
 
 export const createPartialResultObj = (
   symbolRows: Row[], time: number, keyStrokeCount: number
-): Pick<Results, "mistypedWords" | "typingSpeed" | "wpm" | "precision" | "time"> => {
+): Pick<ResultObj, "mistypedWords" | "typingSpeed" | "wpm" | "precision" | "time"> => {
   const mistypedWords = collectMistypedWords(symbolRows);
   const mistakeCount = collectSymbolPositionsByCorrectness(symbolRows, "mistyped").length;
   const correctedCount = collectSymbolPositionsByCorrectness(symbolRows, "corrected").length;
@@ -301,17 +301,20 @@ const extractMistypedWordsAlphabetically = (mistypedWords: WordObject[]): Mistyp
   });
 };
 
-export const saveMistypedWords = (mistypedWords: WordObject[]) => {
-  const localStorageMistypedWords = localStorage.getItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS);
-  const savedMistypedWordsLog = localStorageMistypedWords
-    ? JSON.parse(localStorageMistypedWords) as MistypedWordsLog
-    : null;
+export const updateMistypedWords = (
+  mistypedWords: WordObject[],
+  savedMistypedWordsLog: MistypedWordsLog | null,
+): MistypedWordsLog => {
+  const newMistypedWords = extractMistypedWordsAlphabetically(mistypedWords);
 
-  let updatedMistypedWords = extractMistypedWordsAlphabetically(mistypedWords);
-
+  // MERGING AND UPDATING
+  
   // merge old and new mistype words
+  let updatedMistypedWords: MistypedWords;
   if(savedMistypedWordsLog) {
-    updatedMistypedWords = mergeSortedStringArrays(savedMistypedWordsLog["words"], updatedMistypedWords, true);
+    updatedMistypedWords = mergeSortedStringArrays(savedMistypedWordsLog["words"], newMistypedWords, true);
+  } else {
+    updatedMistypedWords = newMistypedWords;
   }
 
   const byTime: [number, number][] = []; // [index, lastMistype][]
@@ -327,8 +330,10 @@ export const saveMistypedWords = (mistypedWords: WordObject[]) => {
     byMistypeCount.push([i, mistypeCount]);
   }
 
+  // SORTING
+  
   // the sorting has to be consistently ascending for every sort type
-  // it ensure a simple use of reverse method for sorting and filtering in Statistic page
+  // it ensures a simple use of the reverse method for sorting and filtering in Statistic page
   byTime.sort(([, lastMistypeA], [, lastMistypeB]) => lastMistypeA - lastMistypeB);
   byMistypeCount.sort(([, mistypeCountA], [, mistypeCountB]) => mistypeCountA - mistypeCountB);
 
@@ -342,7 +347,7 @@ export const saveMistypedWords = (mistypedWords: WordObject[]) => {
     byMistypeCountOrder[byMistypeCountOrderIndex] = i
   }
 
-  const newMistypedWordsLog: MistypedWordsLog = {
+  return {
     words: updatedMistypedWords,
     sorting: {
       byMistypeCount: byMistypeCountOrder,
@@ -350,7 +355,7 @@ export const saveMistypedWords = (mistypedWords: WordObject[]) => {
     }
   };
 
-  localStorage.setItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS, JSON.stringify(newMistypedWordsLog));
+  // HELP FUNCTIONS
 
   /**
    * 
@@ -461,14 +466,62 @@ export const saveMistypedWords = (mistypedWords: WordObject[]) => {
 
     return { index: high + 1, isEqual: false };
   }
-
-  // todos taken from deprecated V2
-  // TODO add last update time for the whole saved object
-  // TODO make it async for performance reasons - create state to keep track if it is still computing (and display it where needed)
 };
 
 export const getLastSymbol = (symbolRows: Row[]) => {
   const lastWords = _.last(symbolRows)?.words;
   const lastSymbols = lastWords && _.last(lastWords)?.symbols;
   return lastSymbols && _.last(lastSymbols);
+};
+
+export const updateLatestResults = (
+  resultObj: ResultObj, latestResults: ShortenedResultObj[] | null
+): ShortenedResultObj[] => {
+  const newLatestResults = createLatestResults(resultObj);
+
+  if(latestResults) {
+    return [...latestResults, newLatestResults]
+      .slice(-LAST_RESULTS_SAVE_COUNT);
+  }
+
+  return [newLatestResults];
+
+  // HELP FUNCTIONS
+  function createLatestResults(resultObj: ResultObj): ShortenedResultObj {
+    const mistypedWords: MistypedWord[] = resultObj.mistypedWords.map(
+      ({ string, type, typedSpeed, symbols }) => {
+      
+      // Transform symbols into much simpler Mistypes...
+      const mistypes: Mistypes[] = [];
+      symbols.forEach(({ correctness }, i) => {
+        if(correctness === "corrected" || correctness === "mistyped") { // not sure whether to include "invalid"
+          mistypes.push({ [i]: correctness })
+        }
+      });
+  
+      // ...and add to the mistypes string, type and typedSpeed.
+      return {
+        mistypes, string, type, typedSpeed
+      }
+    });
+
+    return { ...resultObj , mistypedWords };
+  };
+};
+
+export const extractUserFromDbUser = (userDB: UserDB | null) => {
+  if(!userDB) {
+    return null;
+  }
+  
+  const desiredProperties = ["id", "name", "picture", "isAdmin", "createdAt"];
+  const localUser = {} as any;
+
+  Object.entries(userDB).forEach(([key, value]) => {
+    if(desiredProperties.includes(key)) {
+      localUser[key] = value;
+    }
+  });
+
+  return localUser as User;
 };

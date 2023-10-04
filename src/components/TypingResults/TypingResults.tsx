@@ -1,6 +1,6 @@
 import Simplebar from "simplebar-react";
 import { Box, Paper, SvgIcon, Typography } from "@mui/material";
-import { Results } from "../../types/otherTypes";
+import { ResultObj } from "../../types/otherTypes";
 import MistypedWord from "./MistypedWord/MistypedWord";
 import SpecificResult from "./SpecificResult/SpecificResult";
 import { ReactComponent as TopSpeed } from "../../svg/top-speed-24px.svg";
@@ -13,7 +13,7 @@ import { PlayPageThemeContext } from "../../styles/themeContexts";
 import { CSSObjectFunctionsWithProp, TextDisplayTheme } from "../../types/themeTypes";
 
 interface Props {
-  resultObj: Results | null;
+  resultObj: ResultObj | null;
 }
 
 const styles = {

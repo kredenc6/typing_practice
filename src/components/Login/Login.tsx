@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { setPersistence, signInWithPopup, browserLocalPersistence, inMemoryPersistence } from "firebase/auth";
-import { auth, db, provider } from "../../database/firebase";
+import { auth, provider } from "../../database/firebase";
 import { Box, Button, Checkbox, FormControlLabel, Paper, Typography } from "@mui/material";
 import { User } from "../../types/otherTypes";
-import { doc, setDoc, getDoc, DocumentSnapshot, DocumentData } from "firebase/firestore";
 import handleError from "../../helpFunctions/handleError";
-import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
-import { isUserObject } from "../../dbTypeVerification/dbTypeVerification";
+import { getUser, saveUser } from "../../database/endpoints";
 
 interface Props {
   user: User | null;
@@ -28,61 +26,49 @@ export default function Login({ user, setUser }: Props) {
     }
   }, [rememberTheUser])
 
-  // https://firebase.google.com/docs/auth/web/google-signin
-  const login = () => signInWithPopup(auth, provider)
-    .then( async (result) => {
+  // // https://firebase.google.com/docs/auth/web/google-signin
+  // const login = () => signInWithPopup(auth, provider)
+  //   .then( async (result) => {
 
-      const userRef = doc(db, "users", result.user.uid);
-      let userSnap: DocumentSnapshot<DocumentData, DocumentData> | null = null;
+  //     // find out if the user already exists in the database
+  //     try {
+  //       const user = await getUser(result.user.uid);
 
-      // find out if the user already exists in the database
-      try {
-        userSnap = await getDoc(userRef);
-      }
-      catch(error) {
-        const errorMessage = `Failed to load the user ${result.user.uid} from the database`;
-        handleError(error, errorMessage);
-        return;
-      }
+  //       // if the user exist, save him to the state
+  //       if(user) {
+  //         setUser(user);
+  //         return;
+  //       }
+  //     }
+  //     catch(error) {
+  //       const errorMessage = `Failed to load the user ${result.user.uid} from the database`;
+  //       handleError(error, errorMessage);
+  //       return;
+  //     }
 
-      // if the user exist, save him to the state and localStorage...
-      if (userSnap.exists()) {
-        const existingUser = {...userSnap.data() as User };
+  //     // if the user doesn't exist in the database create a new user...
+  //     const newUser: User = {
+  //       name: result.user.displayName,
+  //       picture: result.user.photoURL,
+  //       isAdmin: result.user.email === "filip.sran@gmail.com", // BUG THIS CAN'T BE HERE LIKE THAT - EASY TO HACK!!!!
+  //       createdAt: Date.now()
+  //     };
+
+  //     // ...and save the new user to the database and the state
+  //     try {
+  //       await saveUser(result.user.uid, newUser);
+  //       setUser(newUser);
+  //     }
+  //     catch(error) {
+  //       const errorMessage = `Failed to save the user ${newUser.name} to the database`;
+  //       handleError(error, errorMessage);
+  //     }
         
-        // typeguard
-        if(!isUserObject(existingUser)) {
-          throw new Error("Received an invalid user object.");
-        }
-
-        localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify(existingUser));
-        setUser(existingUser);
-        
-      // else create a new user...
-      } else {
-        const newUser: User = {
-          name: result.user.displayName,
-          picture: result.user.photoURL,
-          isAdmin: result.user.email === "filip.sran@gmail.com",
-          createdAt: Date.now()
-        };
-
-        // ...and save the new user to the database and the state
-        try {
-          await setDoc(doc(db, "users", result.user.uid), newUser);
-          localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify(newUser));
-          setUser(newUser);
-        }
-        catch(error) {
-          const errorMessage = `Failed to save the user ${newUser.name} to the database`;
-          handleError(error, errorMessage);
-        }
-        
-      }
-    })
-    .catch((error) => {
-      const message = `Login failed. ${error.message}`;
-      handleError(error, message);
-    });
+  //   })
+  //   .catch(error => {
+  //     const message = `Login failed. ${error.message}`;
+  //     handleError(error, message);
+  //   });
 
     return (
       user
@@ -101,17 +87,65 @@ export default function Login({ user, setUser }: Props) {
             </Typography>
             <Typography variant="h2" sx={{ marginBottom: "3rem" }}>Deset prstů</Typography>
             <Button
-              onClick={() => login()}
+              onClick={() => login(setUser)}
               variant="contained"
             >
-              Přihlásit se přes Google účet
+              Přihlásit se přes Google
             </Button>
-            <FormControlLabel
-              control={<Checkbox checked={rememberTheUser} onChange={handleCheckboxChange} />}
-              label="Zůstat přihlášen"
-            />
+            <Box>
+              <FormControlLabel
+                control={<Checkbox checked={rememberTheUser} onChange={handleCheckboxChange} />}
+                label="Zůstat přihlášen"
+              />
+            </Box>
           </Paper>
         </Box>
         )
     );
 };
+
+// https://firebase.google.com/docs/auth/web/google-signin
+function login(setUser: React.Dispatch<React.SetStateAction<User | null>>) {
+  signInWithPopup(auth, provider)
+    .then( async (result) => {
+
+      // find out if the user already exists in the database
+      try {
+        const user = await getUser(result.user.uid);
+
+        // if the user exist, save him to the state
+        if(user) {
+          setUser(user);
+          return;
+        }
+      }
+      catch(error) {
+        const errorMessage = `Failed to load the user ${result.user.uid} from the database`;
+        handleError(error, errorMessage);
+        return;
+      }
+
+      // if the user doesn't exist in the database create a new user...
+      const newUser: User = {
+        id: result.user.uid,
+        name: result.user.displayName,
+        picture: result.user.photoURL,
+        isAdmin: result.user.email === "filip.sran@gmail.com", // BUG THIS CAN'T BE HERE LIKE THAT - EASY TO HACK!!!!
+        createdAt: Date.now()
+      };
+
+      // ...and save the new user to the database and the state
+      try {
+        await saveUser(result.user.uid, newUser);
+        setUser(newUser);
+      }
+      catch(error) {
+        const errorMessage = `Failed to save the user ${newUser.name} to the database`;
+        handleError(error, errorMessage);
+      }
+    })
+    .catch(error => {
+      const message = `Login failed. ${error.message}`;
+      handleError(error, message);
+    });
+}

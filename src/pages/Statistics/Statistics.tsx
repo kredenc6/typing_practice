@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, IconButton } from "@mui/material";
 import { Menu } from "@mui/icons-material";
-import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
-import { MistypedWordsLog, Results } from "../../types/otherTypes";
+import { MistypedWordsLog, ShortenedResultObj } from "../../types/otherTypes";
 import MistypedWordsChartWrapper from "../../components/MistypedWordsChartWrapper/MistypedWordsChartWrapper";
 import LatestResultsChart from "../../components/LatestResultsChart/LatestResultsChart";
 import ThemeSwitch from "../../components/ThemeSwith/ThemeSwith";
@@ -26,30 +25,32 @@ const styles: CSSObjects = {
   })
 };
 
-export default function Statistics() {
+interface Props {
+  savedMistypedWords: MistypedWordsLog | null;
+  latestResults: ShortenedResultObj[] | null;
+}
+
+export default function Statistics({ savedMistypedWords, latestResults }: Props) {
+  // TODO the state could be simplified? Precision, typingSpeed, textLength and timestamps could be in just one object?
+
   const [precision, setPrecision] = useState<number[]>([]);
   const [typingSpeed, setTypingSpeed] = useState<number[]>([]);
   const [textLength, setTextLength] = useState<number[]>([]);
   const [timestamps, setTimestamps] = useState<number[]>([]);
-  const [mistypedWordsObj, setMistypedWordsObj] = useState<MistypedWordsLog | null>(null);
 
   const goToMainMenu = () => {
     document.getElementById("link-to-mainMenu")!.click();
   };
 
+  // TODO make it a custom hook?
   useEffect(() => {
-    const lastResultsFromStorage = localStorage.getItem(LOCAL_STORAGE_KEYS.LAST_RESULTS);
-    const mistypedWordsFromStorage = localStorage.getItem(LOCAL_STORAGE_KEYS.MISTYPED_WORDS);
-
     const savedPrecision: number[] = [];
     const savedResultTimestamps: number[] = [];
     const savedTypingSpeed: number[] = [];
     const savedTextLength: number[] = [];
     
-    if(lastResultsFromStorage) {
-      const savedLastResults = JSON.parse(lastResultsFromStorage) as Results[];
-
-      savedLastResults.forEach(({ precision, timestamp, typingSpeed, textLength }) => {
+    if(latestResults) {
+      latestResults.forEach(({ precision, timestamp, typingSpeed, textLength }) => {
         savedPrecision.push(precision);
         savedResultTimestamps.push(timestamp);
         savedTypingSpeed.push(typingSpeed);
@@ -62,10 +63,9 @@ export default function Statistics() {
     setTextLength(savedTextLength);
     setTimestamps(savedResultTimestamps);
 
-    if(mistypedWordsFromStorage) {
-      const savedMistypedWords = JSON.parse(mistypedWordsFromStorage) as MistypedWordsLog;
-      setMistypedWordsObj(savedMistypedWords);
-    }
+    // Run only on mount. To make any result changes user needs to leave this page
+    // anyway.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -81,12 +81,9 @@ export default function Statistics() {
         timestamps={timestamps}
         typingSpeed={typingSpeed} />
       <MistypedWordsChartWrapper
-        mistypedWordsObj={mistypedWordsObj} />
+        mistypedWordsObj={savedMistypedWords} />
     </Box>
   );
 }
 
-// TODO already sorted results could be saved in state
 // TODO try to switch text length line for bar and the other two for line (in the chart)
-// TODO add alphabetical sorting
-// TODO add text filtering

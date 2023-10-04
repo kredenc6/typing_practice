@@ -6,10 +6,12 @@ import TypingResults from "../../components/TypingResults/TypingResults";
 import { FontData } from "../../types/themeTypes";
 import { Redirect } from "react-router";
 import Timer from "../../accessories/Timer";
-import { AllowedMistype, GameStatus, Results } from "../../types/otherTypes";
-import { saveMistypedWords } from "../../components/TextDisplay/helpFunctions";
-import { LAST_RESULTS_SAVE_COUNT, LOCAL_STORAGE_KEYS } from "../../constants/constants";
+import { AllowedMistype, GameStatus, MistypedWordsLog, ResultObj, ShortenedResultObj } from "../../types/otherTypes";
+import { updateLatestResults, updateMistypedWords } from "../../components/TextDisplay/helpFunctions";
 import { PlayPageThemeContext } from "../../styles/themeContexts";
+import handleError from "../../helpFunctions/handleError";
+import { updateUser } from "../../database/endpoints";
+import compressText from "../../helpFunctions/compressText";
 
 interface Props {
   fontData: FontData;
@@ -19,6 +21,11 @@ interface Props {
   timer: Timer;
   setAllowedMistype: React.Dispatch<React.SetStateAction<AllowedMistype>>;
   allowedMistype: AllowedMistype;
+  userId: string | null;
+  savedMistypedWords: MistypedWordsLog | null;
+  setSavedMistypedWords: React.Dispatch<React.SetStateAction<MistypedWordsLog | null>>;
+  latestResults: ShortenedResultObj[] | null;
+  setLatestResults: React.Dispatch<React.SetStateAction<ShortenedResultObj[] | null>>;
 }
 
 export default function PlayPage({
@@ -28,25 +35,39 @@ export default function PlayPage({
   text,
   timer,
   setAllowedMistype,
-  allowedMistype
+  allowedMistype,
+  userId,
+  savedMistypedWords,
+  setSavedMistypedWords,
+  latestResults,
+  setLatestResults
 }: Props) {
   const { state: textDisplayTheme } = useContext(PlayPageThemeContext); 
   const [restart , setRestart] = useState(false);
   const [gameStatus, setGameStatus] = useState<GameStatus>("settingUp");
-  const [resultObj, setResultObj] = useState<Results | null>(null);
+  const [resultObj, setResultObj] = useState<ResultObj | null>(null);
 
   useEffect(() => {
-    if(!resultObj) return;
+    if(!resultObj || !userId) return;
     
-    saveMistypedWords(resultObj.mistypedWords);
-    const lastResultsString = localStorage.getItem(LOCAL_STORAGE_KEYS.LAST_RESULTS) || "[]";
-    const lastResults = [
-        ...JSON.parse(lastResultsString),
-        resultObj
-      ]
-      .slice(-LAST_RESULTS_SAVE_COUNT);
-      
-    localStorage.setItem(LOCAL_STORAGE_KEYS.LAST_RESULTS, JSON.stringify(lastResults));
+    const updatedMistypeWordsLog = updateMistypedWords(resultObj.mistypedWords, savedMistypedWords);
+    const compressedMistypedWords = compressText(JSON.stringify(updatedMistypeWordsLog));
+    
+    const updatedLatestResults = updateLatestResults(resultObj, latestResults);
+    const compressedLatestResults = compressText(JSON.stringify(updatedLatestResults));
+    
+    updateUser(userId, {compressedMistypedWords, compressedLatestResults}) // BUG CHECK IF IT COUNTS AS A 1 WRITE OR 2!!!!!!!!!!
+      .then(() => {
+        setSavedMistypedWords(updatedMistypeWordsLog);
+        setLatestResults(updatedLatestResults);
+        console.log("Mistyped words and latest results saved successfuly.");
+      })
+      .catch(error => {
+        handleError(error);
+      });
+    
+    // run the hook only if the resultObj changes!
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resultObj])
 
   return (

@@ -25,4 +25,3 @@ auth.useDeviceLanguage();
 export const provider = new GoogleAuthProvider();
 export const db = getFirestore(app);
 // const analytics = getAnalytics(app);
-

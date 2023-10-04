@@ -12,7 +12,7 @@ import { defaultTextDisplayFontData } from "./styles/textDisplayTheme/textDispla
 import { FontData } from "./types/themeTypes";
 import { PlayPageThemeContext, PlayPageThemeProvider } from "./styles/themeContexts";
 import { createAppTheme } from "./styles/appTheme";
-import { AllowedMistype, User } from "./types/otherTypes";
+import { AllowedMistype, ShortenedResultObj, MistypedWordsLog, User } from "./types/otherTypes";
 import { getKnownSymbols } from "./helpFunctions/getKnownSymbols";
 import CssBaseline from '@mui/material/CssBaseline';
 import "simplebar/dist/simplebar.min.css";
@@ -21,6 +21,10 @@ import { auth } from "./database/firebase";
 import { getUser } from "./database/endpoints";
 import handleError from "./helpFunctions/handleError";
 import { onAuthStateChanged } from "firebase/auth";
+import decompressText from "./helpFunctions/decompressText";
+import { isCompressedText } from "./dbTypeVerification/dbTypeVerification";
+import { extractUserFromDbUser } from "./components/TextDisplay/helpFunctions";
+const usx = require("unishox2.siara.cc");
 
 export default function App() {
   const [fontData, setFontData] = useState(defaultTextDisplayFontData);
@@ -32,6 +36,9 @@ export default function App() {
     count: 1, isAllowed: true
   });
   const [user, setUser] = useState<User | null>(null);
+  // TODO rename to just mistypedWords?
+  const [savedMistypedWords, setSavedMistypedWords] = useState<MistypedWordsLog | null>(null);
+  const [latestResults, setLatestResults] = useState<ShortenedResultObj[] | null>(null);
 
   const updateTheme = useCallback((themeType: PaletteMode) => {
     setAppTheme(createAppTheme(themeType)) ;
@@ -77,6 +84,8 @@ export default function App() {
     localStorage.setItem(LOCAL_STORAGE_KEYS.FONT_DATA, JSON.stringify(newFontData));
   };
 
+
+  // TODO make it custom and seperate it to several by their functionality
   useEffect(() => {
     const localFontData = localStorage.getItem(LOCAL_STORAGE_KEYS.FONT_DATA);
     const determinedFontData = localFontData ? JSON.parse(localFontData) as FontData : fontData;
@@ -91,13 +100,56 @@ export default function App() {
       setAllowedMistype(JSON.parse(loadedMistypeSetting) as AllowedMistype);
     }
 
-    return onAuthStateChanged(auth, async (userDb) => {
-      
+    // AUTH STATE CHANGE LISTENER
+    return onAuthStateChanged(auth, async (firebaseUser) => {
+      console.log(`Auth state changed. Current user: `, auth.currentUser?.uid);
+      console.dir(firebaseUser)
       // user logged in
-      if (userDb) {
+      if (firebaseUser) {
         try {
-          const loggedInUser = await getUser(userDb.uid);
-          setUser(loggedInUser);
+          const loggedInUser = await getUser(firebaseUser.uid);
+          console.log(`Logged in user name: ${loggedInUser?.name}.`);
+
+          // Extract and save to the state mistyped words from the user object.
+          if(loggedInUser?.compressedMistypedWords) {
+            console.log(loggedInUser.compressedMistypedWords);
+            // verify the type
+            if(!isCompressedText(loggedInUser.compressedMistypedWords)) {
+              // TODO better error handling
+              console.log("Invalid type of the compressed text.");
+            }
+            const { compressedText, compressedTextLength } = loggedInUser.compressedMistypedWords;
+            let mistypedWordsLogString = decompressText(compressedText, compressedTextLength);
+            console.log("test")
+            console.log(mistypedWordsLogString)
+            setSavedMistypedWords(
+              JSON.parse(mistypedWordsLogString) as MistypedWordsLog
+              );
+            // setSavedMistypedWords(
+            //   JSON.parse(usx.decompress(mistypedWordsLogString)) as MistypedWordsLog
+            //   );
+            }
+            
+            // Extract and save to the state latest results from the user object.
+            if(loggedInUser?.compressedLatestResults) {
+            /// verify the type
+            if(!isCompressedText(loggedInUser.compressedLatestResults)) {
+              // TODO better error handling
+              console.log("Invalid type of the compressed text.");
+            }
+            const { compressedText, compressedTextLength } = loggedInUser.compressedLatestResults;
+            let shortenedResultObjString = decompressText(compressedText, compressedTextLength);
+            console.log("test")
+            console.log(shortenedResultObjString)
+            setLatestResults(
+              JSON.parse(shortenedResultObjString) as ShortenedResultObj[]
+              );
+            // setLatestResults(
+            //   JSON.parse(usx.decompress(shortenedResultObjString)) as ShortenedResultObj[]
+            //   );
+          }
+
+          setUser(extractUserFromDbUser(loggedInUser));
         } catch(error) {
           handleError(error);
         }
@@ -139,11 +191,16 @@ export default function App() {
                 text={text}
                 timer={timer.current}
                 setAllowedMistype={setAllowedMistype}
-                allowedMistype={allowedMistype} />
+                allowedMistype={allowedMistype}
+                userId={user?.id ?? null}
+                savedMistypedWords={savedMistypedWords}
+                setSavedMistypedWords={setSavedMistypedWords}
+                latestResults={latestResults}
+                setLatestResults={setLatestResults} />
             </PlayPageThemeProvider>
           </PrivateRoute>
           <PrivateRoute path="/statistics" user={user}>
-            <Statistics />
+            <Statistics savedMistypedWords={savedMistypedWords} latestResults={latestResults} />
           </PrivateRoute>
         </Switch>
       </Router>
@@ -156,6 +213,11 @@ interface PrivateRouteProps {
   user: User | null;
 }
 
+
+// TODO this can be a nice generic component!!
+/**
+ * allows logged in user only
+ */
 function PrivateRoute({ children, user, ...routeProps }:PrivateRouteProps & RouteProps) {
   const location = useLocation();
 
@@ -180,7 +242,6 @@ function PrivateRoute({ children, user, ...routeProps }:PrivateRouteProps & Rout
   );
 };
 
-// TODO save last 3 mistype(finish) results in the json
 // TODO add typing sounds
 // TODO add $nbsp; after prepositions
 // TODO create a text difficulty assesment function
@@ -218,14 +279,25 @@ function PrivateRoute({ children, user, ...routeProps }:PrivateRouteProps & Rout
 // TODO user can set up a typing profile (for example for different keyboards, or devices)
 // TODO use new Intl.Collator("cz").compare(wordA, wordB) instead of the wordA.localCompare(wordB, "cz") - it's more precise
 // TODO get rid of the Login page flashing when auto-loging
+// TODO improve fetching experience and handling (multiple quick calls, errors, etc.) - there should be libraries for this, do some research
 
 // DATABASE:
-// BUG signOut() can fail - it return a promise, which should be handled
+// BUG signOut() can fail - it returns a promise, which should be handled
 // TODO write database security rules: https://firebase.google.com/docs/rules/basics?authuser=0
-// TODO use lzstring (already installed) to compress data sent to the database
 // TODO mistype timestamps can be reduced to minutes (4-byte integer: Math.trunc(Date.now() / 60000)), however...
 // ...this is expensive, so the best way would be to store raw results from this day in the local storage and...
 // ... once the user logins the next day it would automatically update the DB with optimized and compressed data...
 // ...and deleted the previous day results
+// BUG lzstring can't be used for compressing data, which are sent outside the browser - the data get corrupted
 
-// BUG fix user saved in the localStorage - easy to hack, and it won't (shouldn't) allow interaction with the database anyway
+// NETLIFY
+// BUG netlify lambda functions can crush the running server (getting articles is the cause?) - needs more investigation to find out the cause
+
+// TODO handling sync with the firebase
+/* Using onbeforeunload listener works only if it triggers the "alert" (the callback must return a string to do that).
+Syncing 1x a day doesn't work if the user uses multiple devices for example in a school. Some results would never be synced.
+There could be a complicated solution for this - manual sync done by the user and alerting him, when no sync was done
+and the broswer is closing. There would also needed to be some FUP in place. It would be increased in a payed version.
+The last option leaves me with the sync every time the transcript is done. */
+
+// TODO saves to the local storage need to be bound to the user

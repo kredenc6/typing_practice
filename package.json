@@ -26,7 +26,6 @@
     "express": "^4.17.1",
     "firebase": "^10.4.0",
     "lodash": "^4.17.21",
-    "lz-string": "^1.5.0",
     "react": "^18.2.0",
     "react-apexcharts": "^1.3.9",
     "react-dom": "^18.2.0",
@@ -37,6 +36,7 @@
     "serverless-http": "^2.7.0",
     "simplebar-react": "^2.4.1",
     "typescript": "^4.4.3",
+    "unishox2.siara.cc": "^1.1.3",
     "web-vitals": "^2.1.4",
     "webfontloader": "^1.6.28"
   },

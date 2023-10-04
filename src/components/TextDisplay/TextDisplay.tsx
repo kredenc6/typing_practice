@@ -14,7 +14,7 @@ import { Row, SymbolCorrectness } from "../../types/symbolTypes";
 import { PlayPageThemeContext } from "../../styles/themeContexts";
 import { transformTextToSymbolRows } from "../../textFunctions/transformTextToSymbolRows";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
-import { AllowedMistype, GameStatus, Results, WordTimeObj } from "../../types/otherTypes";
+import { AllowedMistype, GameStatus, ResultObj, WordTimeObj } from "../../types/otherTypes";
 import { shouldStartSelfType, shouldStopSelfType } from "../../admin/selfTypeSymbol";
 
 const LINE_MOVEMENT_MIN_POSITION = 3;
@@ -29,7 +29,7 @@ interface Props {
   allowedMistype: AllowedMistype;
   gameStatus: GameStatus;
   setGameStatus: React.Dispatch<React.SetStateAction<GameStatus>>;
-  setResultObj: React.Dispatch<React.SetStateAction<Results | null>>;
+  setResultObj: React.Dispatch<React.SetStateAction<ResultObj | null>>;
 }
 
 interface FontDataAndTextRef {
@@ -162,7 +162,7 @@ export default function TextDisplay({
     if(cursorPosition === text.length) { // return cursor position to valid index
       setCursorPosition(cursorPosition - 1);
     }
-    const resultObj: Results = {
+    const resultObj: ResultObj = {
       ...createPartialResultObj(symbolRows, timer.getTime(), keyStrokeCount),
       textLength: text.length,
       timestamp: Date.now()
