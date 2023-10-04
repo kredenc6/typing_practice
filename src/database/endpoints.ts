@@ -41,9 +41,3 @@ export const loadMistypedWordsFromDB = async (userId: string) => {
     throw new Error(`The user ${userId} was not found.`);
   }
 };
-
-// TODO FOR DEBUGGING, DELETE AFTER
-export const saveUserName = async (userName: string, userId: string) => {
-  const userRef = doc(db, "users", userId);
-  return await setDoc(userRef, { name: userName }, { merge: true });
-};

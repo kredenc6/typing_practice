@@ -24,7 +24,6 @@ import { onAuthStateChanged } from "firebase/auth";
 import decompressText from "./helpFunctions/decompressText";
 import { isCompressedText } from "./dbTypeVerification/dbTypeVerification";
 import { extractUserFromDbUser } from "./components/TextDisplay/helpFunctions";
-const usx = require("unishox2.siara.cc");
 
 export default function App() {
   const [fontData, setFontData] = useState(defaultTextDisplayFontData);
@@ -120,14 +119,9 @@ export default function App() {
             }
             const { compressedText, compressedTextLength } = loggedInUser.compressedMistypedWords;
             let mistypedWordsLogString = decompressText(compressedText, compressedTextLength);
-            console.log("test")
-            console.log(mistypedWordsLogString)
             setSavedMistypedWords(
               JSON.parse(mistypedWordsLogString) as MistypedWordsLog
               );
-            // setSavedMistypedWords(
-            //   JSON.parse(usx.decompress(mistypedWordsLogString)) as MistypedWordsLog
-            //   );
             }
             
             // Extract and save to the state latest results from the user object.
@@ -139,14 +133,9 @@ export default function App() {
             }
             const { compressedText, compressedTextLength } = loggedInUser.compressedLatestResults;
             let shortenedResultObjString = decompressText(compressedText, compressedTextLength);
-            console.log("test")
-            console.log(shortenedResultObjString)
             setLatestResults(
               JSON.parse(shortenedResultObjString) as ShortenedResultObj[]
               );
-            // setLatestResults(
-            //   JSON.parse(usx.decompress(shortenedResultObjString)) as ShortenedResultObj[]
-            //   );
           }
 
           setUser(extractUserFromDbUser(loggedInUser));
