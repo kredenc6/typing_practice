@@ -1,4 +1,3 @@
-import { Bytes } from "firebase/firestore";
 import Timer from "../accessories/Timer";
 import { SymbolCorrectness, WordObject, WordType } from "./symbolTypes";
 
@@ -44,6 +43,15 @@ export type MistypedWordsLog = {
   }
 }
 
+export type MinifiedMistypedWordsLog = {
+  w: [string, number[]][];
+  t: number[];
+  s: {
+    t: number[];
+    c: number[];
+  }
+}
+
 export type SortingDirection = "asc" | "desc";
 export type SortingType = "alphabetical" | "byMistypeCount" | "byTime";
 export type SortBy = `${SortingType}:${SortingDirection}`;
@@ -56,19 +64,28 @@ export type User = {
   createdAt: number;
 }
 
-export type CompressedText = {
-  compressedText: Bytes;
-  compressedTextLength: number;
+export type LatestResult = {
+  mistypedWords: MistypedWord[];
+  typingSpeed: number;
+  wpm: number;
+  precision: number;
+  time: string;
+  textLength: number;
+  timestamp: number;
 }
 
+/**
+ * i = id, n = name, p = picture (url), a = isAdmin, c = createdAt, 
+ * m = mistypedWords, r = latestResults
+ */
 export type UserDB = {
-  id: string;
-  name: string | null;
-  picture: string | null;
-  isAdmin: boolean;
-  createdAt: number;
-  compressedMistypedWords?: CompressedText;
-  compressedLatestResults?: CompressedText;
+  i: string;
+  n: string | null;
+  p: string | null;
+  a: boolean;
+  c: number;
+  m?: string;
+  r?: string;
 }
 
 /**
@@ -85,12 +102,4 @@ export type MistypedWord = {
   mistypes: Mistypes[];
 }
 
-export type ShortenedResultObj = {
-  mistypedWords: MistypedWord[];
-  typingSpeed: number;
-  wpm: number;
-  precision: number;
-  time: string;
-  textLength: number;
-  timestamp: number;
-}
+

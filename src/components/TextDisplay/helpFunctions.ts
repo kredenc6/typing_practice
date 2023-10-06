@@ -2,7 +2,7 @@ import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeTo
 import { calcTypingPrecision, calcTypingSpeedInKeystrokes } from "../../helpFunctions/calcTypigSpeed";
 import { FontData, Offset } from "../../types/themeTypes";
 import { Row, SymbolCorrectness, SymbolWidths, WordObject } from "../../types/symbolTypes";
-import { AllowedMistype, GameStatus, ResultObj, MistypedWordsLog, MistypedWords, Mistypes, ShortenedResultObj, MistypedWord, UserDB, User } from "../../types/otherTypes";
+import { AllowedMistype, GameStatus, ResultObj, MistypedWordsLog, MistypedWords, Mistypes, LatestResult, MistypedWord, UserDB, User } from "../../types/otherTypes";
 import { secondsToMMSS } from "../../helpFunctions/secondsToMMSS";
 import { LAST_RESULTS_SAVE_COUNT } from "../../constants/constants";
 import _ from "lodash";
@@ -475,8 +475,8 @@ export const getLastSymbol = (symbolRows: Row[]) => {
 };
 
 export const updateLatestResults = (
-  resultObj: ResultObj, latestResults: ShortenedResultObj[] | null
-): ShortenedResultObj[] => {
+  resultObj: ResultObj, latestResults: LatestResult[] | null
+): LatestResult[] => {
   const newLatestResults = createLatestResults(resultObj);
 
   if(latestResults) {
@@ -487,7 +487,7 @@ export const updateLatestResults = (
   return [newLatestResults];
 
   // HELP FUNCTIONS
-  function createLatestResults(resultObj: ResultObj): ShortenedResultObj {
+  function createLatestResults(resultObj: ResultObj): LatestResult {
     const mistypedWords: MistypedWord[] = resultObj.mistypedWords.map(
       ({ string, type, typedSpeed, symbols }) => {
       
@@ -507,21 +507,4 @@ export const updateLatestResults = (
 
     return { ...resultObj , mistypedWords };
   };
-};
-
-export const extractUserFromDbUser = (userDB: UserDB | null) => {
-  if(!userDB) {
-    return null;
-  }
-  
-  const desiredProperties = ["id", "name", "picture", "isAdmin", "createdAt"];
-  const localUser = {} as any;
-
-  Object.entries(userDB).forEach(([key, value]) => {
-    if(desiredProperties.includes(key)) {
-      localUser[key] = value;
-    }
-  });
-
-  return localUser as User;
 };

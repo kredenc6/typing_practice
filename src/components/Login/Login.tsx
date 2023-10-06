@@ -3,9 +3,10 @@ import { Redirect } from "react-router-dom";
 import { setPersistence, signInWithPopup, browserLocalPersistence, inMemoryPersistence } from "firebase/auth";
 import { auth, provider } from "../../database/firebase";
 import { Box, Button, Checkbox, FormControlLabel, Paper, Typography } from "@mui/material";
-import { User } from "../../types/otherTypes";
+import { User, UserDB } from "../../types/otherTypes";
 import handleError from "../../helpFunctions/handleError";
 import { getUser, saveUser } from "../../database/endpoints";
+import { extractUserDBFromUser, extractUserFromDbUser } from "../../appHelpFunctions";
 
 interface Props {
   user: User | null;
@@ -111,10 +112,11 @@ function login(setUser: React.Dispatch<React.SetStateAction<User | null>>) {
 
       // find out if the user already exists in the database
       try {
-        const user = await getUser(result.user.uid);
+        const userDB = await getUser(result.user.uid);
 
         // if the user exist, save him to the state
-        if(user) {
+        if(userDB) {
+          const user = extractUserFromDbUser(userDB);
           setUser(user);
           return;
         }
@@ -135,8 +137,9 @@ function login(setUser: React.Dispatch<React.SetStateAction<User | null>>) {
       };
 
       // ...and save the new user to the database and the state
+      const newUserDB = extractUserDBFromUser(newUser)!;
       try {
-        await saveUser(result.user.uid, newUser);
+        await saveUser(result.user.uid, newUserDB);
         setUser(newUser);
       }
       catch(error) {

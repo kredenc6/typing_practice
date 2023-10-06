@@ -12,7 +12,7 @@ import { defaultTextDisplayFontData } from "./styles/textDisplayTheme/textDispla
 import { FontData } from "./types/themeTypes";
 import { PlayPageThemeContext, PlayPageThemeProvider } from "./styles/themeContexts";
 import { createAppTheme } from "./styles/appTheme";
-import { AllowedMistype, ShortenedResultObj, MistypedWordsLog, User } from "./types/otherTypes";
+import { AllowedMistype, LatestResult, MistypedWordsLog, User } from "./types/otherTypes";
 import { getKnownSymbols } from "./helpFunctions/getKnownSymbols";
 import CssBaseline from '@mui/material/CssBaseline';
 import "simplebar/dist/simplebar.min.css";
@@ -21,9 +21,8 @@ import { auth } from "./database/firebase";
 import { getUser } from "./database/endpoints";
 import handleError from "./helpFunctions/handleError";
 import { onAuthStateChanged } from "firebase/auth";
-import decompressText from "./helpFunctions/decompressText";
-import { isCompressedText } from "./dbTypeVerification/dbTypeVerification";
-import { extractUserFromDbUser } from "./components/TextDisplay/helpFunctions";
+import { extractUserFromDbUser, unminifyMistypedWordsLog } from "./appHelpFunctions";
+import checkStringSize from "./helpFunctions/checkStringSize";
 
 export default function App() {
   const [fontData, setFontData] = useState(defaultTextDisplayFontData);
@@ -37,7 +36,7 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null);
   // TODO rename to just mistypedWords?
   const [savedMistypedWords, setSavedMistypedWords] = useState<MistypedWordsLog | null>(null);
-  const [latestResults, setLatestResults] = useState<ShortenedResultObj[] | null>(null);
+  const [latestResults, setLatestResults] = useState<LatestResult[] | null>(null);
 
   const updateTheme = useCallback((themeType: PaletteMode) => {
     setAppTheme(createAppTheme(themeType)) ;
@@ -100,45 +99,31 @@ export default function App() {
     }
 
     // AUTH STATE CHANGE LISTENER
-    return onAuthStateChanged(auth, async (firebaseUser) => {
+    return onAuthStateChanged(auth, async (providerUser) => {
       console.log(`Auth state changed. Current user: `, auth.currentUser?.uid);
-      console.dir(firebaseUser)
+      console.dir(providerUser)
+      
       // user logged in
-      if (firebaseUser) {
+      if (providerUser) {
         try {
-          const loggedInUser = await getUser(firebaseUser.uid);
-          console.log(`Logged in user name: ${loggedInUser?.name}.`);
+          const loggedInUserDB = await getUser(providerUser.uid);
+          console.log(`Logged in user name: ${loggedInUserDB?.n}.`);
 
           // Extract and save to the state mistyped words from the user object.
-          if(loggedInUser?.compressedMistypedWords) {
-            console.log(loggedInUser.compressedMistypedWords);
-            // verify the type
-            if(!isCompressedText(loggedInUser.compressedMistypedWords)) {
-              // TODO better error handling
-              console.log("Invalid type of the compressed text.");
-            }
-            const { compressedText, compressedTextLength } = loggedInUser.compressedMistypedWords;
-            let mistypedWordsLogString = decompressText(compressedText, compressedTextLength);
-            setSavedMistypedWords(
-              JSON.parse(mistypedWordsLogString) as MistypedWordsLog
-              );
-            }
-            
-            // Extract and save to the state latest results from the user object.
-            if(loggedInUser?.compressedLatestResults) {
-            /// verify the type
-            if(!isCompressedText(loggedInUser.compressedLatestResults)) {
-              // TODO better error handling
-              console.log("Invalid type of the compressed text.");
-            }
-            const { compressedText, compressedTextLength } = loggedInUser.compressedLatestResults;
-            let shortenedResultObjString = decompressText(compressedText, compressedTextLength);
-            setLatestResults(
-              JSON.parse(shortenedResultObjString) as ShortenedResultObj[]
-              );
+          if(loggedInUserDB?.m) {
+            const minifiedMistypedWordsLog = JSON.parse(loggedInUserDB.m);
+            const unminified = unminifyMistypedWordsLog(minifiedMistypedWordsLog);
+            setSavedMistypedWords(unminified);
+          }
+          
+          // Extract and save to the state latest results from the user object.
+          if(loggedInUserDB?.r) {
+            const latestResults = JSON.parse(loggedInUserDB.r);
+            setLatestResults(latestResults);
           }
 
-          setUser(extractUserFromDbUser(loggedInUser));
+          // Extract and save to the state the user object.
+          setUser(extractUserFromDbUser(loggedInUserDB));
         } catch(error) {
           handleError(error);
         }
@@ -277,7 +262,6 @@ function PrivateRoute({ children, user, ...routeProps }:PrivateRouteProps & Rout
 // ...this is expensive, so the best way would be to store raw results from this day in the local storage and...
 // ... once the user logins the next day it would automatically update the DB with optimized and compressed data...
 // ...and deleted the previous day results
-// BUG lzstring can't be used for compressing data, which are sent outside the browser - the data get corrupted
 
 // NETLIFY
 // BUG netlify lambda functions can crush the running server (getting articles is the cause?) - needs more investigation to find out the cause
@@ -290,3 +274,4 @@ and the broswer is closing. There would also needed to be some FUP in place. It 
 The last option leaves me with the sync every time the transcript is done. */
 
 // TODO saves to the local storage need to be bound to the user
+// TODO don't save results under 100 (200?) characters

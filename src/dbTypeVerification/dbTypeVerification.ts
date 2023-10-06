@@ -1,29 +1,20 @@
-import { CompressedText, User } from "../types/otherTypes";
+import { UserDB } from "../types/otherTypes";
 
-export const isUserObject = (obj: any): obj is User => {
+export const isUserObject = (obj: any): obj is UserDB => {
+  console.log("User obj check:");
+  console.dir(obj);
     return (
       typeof obj === "object" &&
       obj !== null &&
-      "id" in obj &&
-      typeof obj.id === "string" &&
-      "name" in obj &&
-      typeof obj.name === "string" &&
-      "isAdmin" in obj &&
-      typeof obj.isAdmin === "boolean" &&
-      "createdAt" in obj &&
-      typeof obj.createdAt === "number" &&
-      "picture" in obj &&
-      (typeof obj.picture === "string" || obj.picture === null)
+      "i" in obj &&
+      typeof obj.i === "string" &&
+      "n" in obj &&
+      typeof obj.n === "string" &&
+      "a" in obj &&
+      typeof obj.a === "boolean" &&
+      "c" in obj &&
+      typeof obj.c === "number" &&
+      "p" in obj &&
+      (typeof obj.p === "string" || obj.picture === null)
     );
-};
-
-export const isCompressedText = (obj: any): obj is CompressedText => {
-  return (
-    typeof obj === "object" &&
-    obj !== null &&
-    "compressedText" in obj &&
-    typeof obj.compressedText === "object" &&
-    "compressedTextLength" in obj &&
-    typeof obj.compressedTextLength === "number"
-  )
 };

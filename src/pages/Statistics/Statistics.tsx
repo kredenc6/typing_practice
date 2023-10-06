@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, IconButton } from "@mui/material";
 import { Menu } from "@mui/icons-material";
-import { MistypedWordsLog, ShortenedResultObj } from "../../types/otherTypes";
+import { MistypedWordsLog, LatestResult } from "../../types/otherTypes";
 import MistypedWordsChartWrapper from "../../components/MistypedWordsChartWrapper/MistypedWordsChartWrapper";
 import LatestResultsChart from "../../components/LatestResultsChart/LatestResultsChart";
 import ThemeSwitch from "../../components/ThemeSwith/ThemeSwith";
@@ -27,7 +27,7 @@ const styles: CSSObjects = {
 
 interface Props {
   savedMistypedWords: MistypedWordsLog | null;
-  latestResults: ShortenedResultObj[] | null;
+  latestResults: LatestResult[] | null;
 }
 
 export default function Statistics({ savedMistypedWords, latestResults }: Props) {

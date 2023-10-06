@@ -6,12 +6,12 @@ import TypingResults from "../../components/TypingResults/TypingResults";
 import { FontData } from "../../types/themeTypes";
 import { Redirect } from "react-router";
 import Timer from "../../accessories/Timer";
-import { AllowedMistype, GameStatus, MistypedWordsLog, ResultObj, ShortenedResultObj } from "../../types/otherTypes";
+import { AllowedMistype, GameStatus, MistypedWordsLog, ResultObj, LatestResult } from "../../types/otherTypes";
 import { updateLatestResults, updateMistypedWords } from "../../components/TextDisplay/helpFunctions";
 import { PlayPageThemeContext } from "../../styles/themeContexts";
 import handleError from "../../helpFunctions/handleError";
 import { updateUser } from "../../database/endpoints";
-import compressText from "../../helpFunctions/compressText";
+import { minifyMistypedWordsLog } from "../../appHelpFunctions";
 
 interface Props {
   fontData: FontData;
@@ -24,8 +24,8 @@ interface Props {
   userId: string | null;
   savedMistypedWords: MistypedWordsLog | null;
   setSavedMistypedWords: React.Dispatch<React.SetStateAction<MistypedWordsLog | null>>;
-  latestResults: ShortenedResultObj[] | null;
-  setLatestResults: React.Dispatch<React.SetStateAction<ShortenedResultObj[] | null>>;
+  latestResults: LatestResult[] | null;
+  setLatestResults: React.Dispatch<React.SetStateAction<LatestResult[] | null>>;
 }
 
 export default function PlayPage({
@@ -50,15 +50,16 @@ export default function PlayPage({
   useEffect(() => {
     if(!resultObj || !userId) return;
     
-    const updatedMistypeWordsLog = updateMistypedWords(resultObj.mistypedWords, savedMistypedWords);
-    const compressedMistypedWords = compressText(JSON.stringify(updatedMistypeWordsLog));
+    const updatedMistypedWordsLog = updateMistypedWords(resultObj.mistypedWords, savedMistypedWords);
+    const minifiedMistypedWordsLog = minifyMistypedWordsLog(updatedMistypedWordsLog);
+    const minifiedMistypedWordsLogString = JSON.stringify(minifiedMistypedWordsLog);
     
     const updatedLatestResults = updateLatestResults(resultObj, latestResults);
-    const compressedLatestResults = compressText(JSON.stringify(updatedLatestResults));
+    const latestResultsString = JSON.stringify(updatedLatestResults);
     
-    updateUser(userId, {compressedMistypedWords, compressedLatestResults}) // BUG CHECK IF IT COUNTS AS A 1 WRITE OR 2!!!!!!!!!!
+    updateUser(userId, { m: minifiedMistypedWordsLogString, r: latestResultsString }) // BUG CHECK IF IT COUNTS AS A 1 WRITE OR 2!!!!!!!!!!
       .then(() => {
-        setSavedMistypedWords(updatedMistypeWordsLog);
+        setSavedMistypedWords(updatedMistypedWordsLog);
         setLatestResults(updatedLatestResults);
         console.log("Mistyped words and latest results saved successfuly.");
       })
