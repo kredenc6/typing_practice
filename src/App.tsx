@@ -21,14 +21,13 @@ import { auth } from "./database/firebase";
 import { getUser } from "./database/endpoints";
 import handleError from "./helpFunctions/handleError";
 import { onAuthStateChanged } from "firebase/auth";
-import { extractUserFromDbUser, unminifyMistypedWordsLog } from "./appHelpFunctions";
-import checkStringSize from "./helpFunctions/checkStringSize";
+import { addUserIdToStorageKey, extractUserFromDbUser, unminifyMistypedWordsLog } from "./appHelpFunctions";
 
 export default function App() {
   const [fontData, setFontData] = useState(defaultTextDisplayFontData);
   const [isFontDataLoading, setIsFontDataLoading] = useState(false);
   const [text, setText] = useState("");
-  const [appTheme, setAppTheme] = useState(createAppTheme());
+  const [appTheme, setAppTheme] = useState(createAppTheme(null));
   const { state: playPageTheme, update: updatePlayPageTheme } = useContext(PlayPageThemeContext);
   const [allowedMistype, setAllowedMistype] = useState<AllowedMistype>({
     count: 1, isAllowed: true
@@ -38,10 +37,18 @@ export default function App() {
   const [savedMistypedWords, setSavedMistypedWords] = useState<MistypedWordsLog | null>(null);
   const [latestResults, setLatestResults] = useState<LatestResult[] | null>(null);
 
-  const updateTheme = useCallback((themeType: PaletteMode) => {
-    setAppTheme(createAppTheme(themeType)) ;
-    localStorage.setItem(LOCAL_STORAGE_KEYS.THEME_TYPES, themeType);
-  }, []);
+  const updateTheme = useCallback((themeType?: PaletteMode) => {
+    if(!user?.id) return;
+
+    // Update the App theme.
+    const newAppTheme = createAppTheme(user.id, themeType);
+    setAppTheme(newAppTheme) ;
+
+    // Update the local storage.
+    const key = addUserIdToStorageKey(user.id, LOCAL_STORAGE_KEYS.THEME_TYPES);
+    const newAppThemeType = newAppTheme.palette.mode;
+    localStorage.setItem(key, newAppThemeType);
+  }, [user]);
 
   const timer = useRef(new Timer());
 
@@ -136,6 +143,10 @@ export default function App() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    updateTheme();
+  }, [updateTheme])
 
   return (
     <MuiThemeProvider theme={{ ...appTheme, updateTheme }}>

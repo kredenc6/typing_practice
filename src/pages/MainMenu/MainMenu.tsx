@@ -18,6 +18,7 @@ import { CSSObjects } from "../../types/themeTypes";
 import { User } from "../../types/otherTypes";
 import UserCard from "../../components/UserCard/UserCard";
 import { auth } from "../../database/firebase";
+import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
 
 interface Props {
   setText: React.Dispatch<React.SetStateAction<string>>;
@@ -64,8 +65,12 @@ export default function MainMenu({ setText, knownSymbols, user, setUser }: Props
   };
 
   const handleTest = () => {
-    console.log("There's no test atm.");
-  }
+    // console.log("There's no test atm.");
+    console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.FONT_DATA));
+    console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.MISTYPE_SETTINGS));
+    console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.TEXT_DISPLAY_THEME));
+    console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.THEME_TYPES));
+  };
 
   const handleStart = async () => {
     const cleanedText = await adjustTextGeneral(textInput);

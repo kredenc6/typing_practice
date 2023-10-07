@@ -74,6 +74,20 @@ export type LatestResult = {
   timestamp: number;
 }
 
+//// if I one day decide to put it into DB
+// type UserTheme = {
+//   t: "l" | "d"; // app theme (light | dark)
+//   p: {  // play page
+//     f: string; // font
+//     s: string; // size
+//     t: string; // play page theme
+//     m: {  // mistake
+//       b: boolean; // block
+//       n: number; // number
+//     }
+//   }
+// }
+
 /**
  * i = id, n = name, p = picture (url), a = isAdmin, c = createdAt, 
  * m = mistypedWords, r = latestResults
@@ -87,6 +101,20 @@ export type UserDB = {
   m?: string;
   r?: string;
 }
+// /**
+//  * i = id, n = name, p = picture (url), a = isAdmin, c = createdAt, t = theme
+//  * m = mistypedWords, r = latestResults
+//  */
+// export type UserDB = {
+//   i: string;
+//   n: string | null;
+//   p: string | null;
+//   a: boolean;
+//   c: number;
+//   t: Theming;
+//   m?: string;
+//   r?: string;
+// }
 
 /**
  * key is the index on which the mistype happened

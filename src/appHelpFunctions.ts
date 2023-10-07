@@ -92,3 +92,7 @@ export const extractUserDBFromUser = (user: User | null): UserDB | null => {
     p: user.picture
   }
 };
+
+export const addUserIdToStorageKey = (userId: string, storageKey: string) => {
+  return storageKey + userId;
+};
