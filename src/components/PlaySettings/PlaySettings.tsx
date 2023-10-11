@@ -1,4 +1,4 @@
-import React, { useContext, useLayoutEffect, useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Box, ClickAwayListener, IconButton } from "@mui/material";
 import { FormatSize, Menu, Palette, Refresh, Settings } from "@mui/icons-material";
@@ -7,9 +7,10 @@ import TextDisplayThemeSelector from "../TextDisplayThemeSelector/TextDisplayThe
 import MistypeSettings from "./MistypeSettings/MistypeSettings";
 import PlaySettingsPopper from "./PlaySettingsPopper/PlaySettingsPopper";
 import { FontData, TextDisplayTheme } from "../../types/themeTypes";
-import { PlayPageThemeContext } from "../../styles/themeContexts";
+import { usePlayPageTheme } from "../../styles/themeContexts";
 import { AllowedMistype } from "../../types/otherTypes";
 import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
+import { addUserIdToStorageKey } from "../../appHelpFunctions";
 
 interface Props {
   fontData: FontData;
@@ -19,6 +20,7 @@ interface Props {
   setRestart: React.Dispatch<React.SetStateAction<boolean>>;
   setAllowedMistype: React.Dispatch<React.SetStateAction<AllowedMistype>>;
   allowedMistype: AllowedMistype;
+  userId: string | null;
 }
 
 export default function PlaySettings({
@@ -28,16 +30,20 @@ export default function PlaySettings({
   restart,
   setRestart,
   allowedMistype,
-  setAllowedMistype
+  setAllowedMistype,
+  userId
 }: Props) {
-  const { state: textDisplayTheme, update: updateTextDisplayTheme } = useContext(PlayPageThemeContext);
+  const { state: textDisplayTheme, update: updateTextDisplayTheme } = usePlayPageTheme()!;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [popperOpenedBy, setPopperOpenedBy] = useState("");
   
   const handleTextDisplayThemeChange = (newTheme: Omit<TextDisplayTheme, "offset">) => {
+    if(!userId) return;
+
     const updatedTextDisplaytheme = { ...textDisplayTheme, ...newTheme };
     updateTextDisplayTheme(updatedTextDisplaytheme);
-    localStorage.setItem(LOCAL_STORAGE_KEYS.TEXT_DISPLAY_THEME, JSON.stringify(updatedTextDisplaytheme));
+    const textDisplayThemeKey = addUserIdToStorageKey(userId, LOCAL_STORAGE_KEYS.PLAY_PAGE_THEME);
+    localStorage.setItem(textDisplayThemeKey, JSON.stringify(updatedTextDisplaytheme));
   };
 
   const adjustSymbolRightMargin = (marginRight: string) => {

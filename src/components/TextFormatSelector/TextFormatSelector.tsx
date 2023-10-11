@@ -1,9 +1,8 @@
-import { useContext } from "react";
 import { Box, Divider } from "@mui/material";
 import FontSizeSelector from "./FontSizeSelector/FontSizeSelector";
 import FontFaceSelector from "./FontFaceSelector/FontFaceSelector";
 import { FontData, FontFamily, FontSize } from "../../types/themeTypes";
-import { PlayPageThemeContext } from "../../styles/themeContexts";
+import { usePlayPageTheme } from "../../styles/themeContexts";
 
 interface Props {
   activeFontFamily: FontFamily;
@@ -20,7 +19,7 @@ export default function TextFormatSelector({
   handleFontDataChange,
   isFontDataLoading
 }: Props) {
-  const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
+  const { state: textDisplayTheme } = usePlayPageTheme()!;
 
   const handleFontSizeChange = (fontSize: FontSize) => {
     const marginRight = determineRightMargin(fontSize);

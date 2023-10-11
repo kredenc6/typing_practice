@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
+import React from "react";
 import { FormControlLabel, Switch, Box, Divider } from "@mui/material";
 import { AllowedMistype } from "../../../types/otherTypes";
 import SettingsButton from "../SettingsButton/SettingsButton";
-import { PlayPageThemeContext } from "../../../styles/themeContexts";
+import { usePlayPageTheme } from "../../../styles/themeContexts";
 
 interface Props {
   setAllowedMistype: React.Dispatch<React.SetStateAction<AllowedMistype>>;
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function MistypeSettings({ allowedMistype, setAllowedMistype }: Props) {
-  const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
+  const { state: textDisplayTheme } = usePlayPageTheme()!;
   const buttonStyle = {
     fontSize: "2rem",
     color: `${textDisplayTheme.text.secondary}`,

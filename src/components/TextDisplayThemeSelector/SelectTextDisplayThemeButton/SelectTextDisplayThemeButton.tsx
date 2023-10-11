@@ -1,6 +1,5 @@
 import { Button, ButtonProps, CSSObject, Typography } from "@mui/material";
-import { useContext } from "react";
-import { PlayPageThemeContext } from "../../../styles/themeContexts";
+import { usePlayPageTheme } from "../../../styles/themeContexts";
 import { TextDisplayTheme } from "../../../types/themeTypes";
 import { SymbolCorrectness } from "../../../types/symbolTypes";
 
@@ -13,7 +12,7 @@ interface Props extends ButtonProps {
 export default function SelectTextDisplayThemeButton({
   themeToSelect, ...buttonProps
 }: Props) {
-  const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
+  const { state: textDisplayTheme } = usePlayPageTheme()!;
 
   const ButtonLetterComponents = BUTTON_TEXT
     .split("")

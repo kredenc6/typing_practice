@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, useTheme } from "@mui/material";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import DisplayedSymbol from "../DisplayedSymbol/DisplayedSymbol";
 import FadeAway from "../transitions/FadeAway/FadeAway";
 import { SymbolStyle, AnimateMistyped, CSSObjects } from "../../types/themeTypes";
 import { getSymbolStyle } from "../DisplayedRow/helpFunctions";
-import { PlayPageThemeContext } from "../../styles/themeContexts";
+import { usePlayPageTheme } from "../../styles/themeContexts";
 import TextCursor from "../TextCursor/TextCursor";
 
 interface Props {
@@ -37,7 +37,7 @@ function DisplayedSymbolWrapper({
   animateMistypedSymbol, symbolStyle, symbolPosition
 }: Props) {
   const { transitions } = useTheme();
-  const { state: textDisplayTheme } = useContext(PlayPageThemeContext)
+  const { state: textDisplayTheme } = usePlayPageTheme()!;
   const [displayInvalid, setDisplayInvalid] = useState(false);
   const timeoutIdRef = useRef(-1);
 

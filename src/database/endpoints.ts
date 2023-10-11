@@ -1,6 +1,6 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "./firebase";
-import { isUserObject } from "../dbTypeVerification/dbTypeVerification";
+import { isUserObject } from "./dbTypeVerification/dbTypeVerification";
 import { UserDB } from "../types/otherTypes";
 
 export const getUser = async (userId: string): Promise<UserDB | null> => {

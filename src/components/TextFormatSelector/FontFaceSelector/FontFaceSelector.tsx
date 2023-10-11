@@ -1,10 +1,10 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Box, ClickAwayListener, Grid, Popper, Typography } from "@mui/material";
 import Spinner from "../../Spinner/Spinner";
 import FakeSelect from "../../FakeSelect/FakeSelect";
 import { fontFamilies } from "../../../styles/textDisplayTheme/textDisplayData";
 import { CSSObjectFunctionsWithProp, CSSObjects, FontFamily, TextDisplayTheme } from "../../../types/themeTypes";
-import { PlayPageThemeContext } from "../../../styles/themeContexts";
+import { usePlayPageTheme } from "../../../styles/themeContexts";
 
 interface Props {
   activeFontFamily: FontFamily;
@@ -62,7 +62,7 @@ const styleFunctions: CSSObjectFunctionsWithProp = {
 export default function FontFaceSelector({
   activeFontFamily, handleFontFamilyChange, isFontDataLoading
 }: Props) {
-  const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
+  const { state: textDisplayTheme } = usePlayPageTheme()!;
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [isPopperOpened, setIsPopperOpened] = useState(false);
 

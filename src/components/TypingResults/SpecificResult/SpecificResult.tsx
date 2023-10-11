@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Box, SvgIcon, Typography } from "@mui/material";
-import { PlayPageThemeContext } from "../../../styles/themeContexts";
+import { usePlayPageTheme } from "../../../styles/themeContexts";
 import { CSSObjects } from "../../../types/themeTypes";
 
 interface Props {
@@ -28,7 +28,7 @@ const styles: CSSObjects = {
 };
 
 export default function SpecificResult({ Icon, description, children }: Props) {
-  const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
+  const { state: textDisplayTheme } = usePlayPageTheme()!;
 
   return (
     <Box sx={styles.results}>

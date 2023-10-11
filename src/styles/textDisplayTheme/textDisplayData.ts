@@ -1,11 +1,11 @@
 import { defaultPalette } from "../textDisplayPaletes";
-import { FontFamilies, FontSize, FontData, TextDisplayTheme } from "../../types/themeTypes";
+import { FontFamilies, FontSize, FontStyle, TextDisplayTheme } from "../../types/themeTypes";
+import { DEFAULT_FONT_SIZE } from "../../constants/constants";
 
-export const defaultTextDisplayFontData: FontData = {
+export const defaultTextDisplayFontStyle: FontStyle = {
   fontFamily: "Fira Code",
-  fontSize: "30px",
-  fontLocation: "google",
-  symbolWidths: {}
+  fontSize: DEFAULT_FONT_SIZE,
+  fontLocation: "google"
 };
 
 export const defaultTextDisplayTheme: TextDisplayTheme = {
@@ -17,9 +17,9 @@ export const defaultTextDisplayTheme: TextDisplayTheme = {
       marginBottom: "16px",
       marginLeft: "auto",
       paddingTop: "8px",
-      paddingRight: "24px",
+      paddingRight: DEFAULT_FONT_SIZE,
       paddingBottom: "8px",
-      paddingLeft: "24px"
+      paddingLeft: DEFAULT_FONT_SIZE
     },
     symbol: {
       paddingLeft: "1px",

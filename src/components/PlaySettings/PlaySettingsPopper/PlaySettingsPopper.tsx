@@ -1,9 +1,8 @@
-import { useContext } from "react";
 import { Popper, PopperProps } from "@mui/material";
-import { PlayPageThemeContext } from "../../../styles/themeContexts";
+import { usePlayPageTheme } from "../../../styles/themeContexts";
 
 export default function PlaySettingPopper({ children, ...popperProps }: PopperProps) {
-  const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
+  const { state: textDisplayTheme } = usePlayPageTheme()!;
 
   return (
     <Popper

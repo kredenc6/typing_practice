@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Box, Theme } from "@mui/material";
 import {
   createSymbolWidthsObject, getPositions, updateSymbolCorrectness, updateWordProp,
@@ -11,7 +11,7 @@ import Timer from "../../accessories/Timer";
 import DisplayedRow from "../DisplayedRow/DisplayedRow";
 import { FontData, AnimateMistyped, TextDisplayTheme, CSSObjectFunctionsWithProp, CSSObjects } from "../../types/themeTypes";
 import { Row, SymbolCorrectness } from "../../types/symbolTypes";
-import { PlayPageThemeContext } from "../../styles/themeContexts";
+import { usePlayPageTheme } from "../../styles/themeContexts";
 import { transformTextToSymbolRows } from "../../textFunctions/transformTextToSymbolRows";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 import { AllowedMistype, GameStatus, ResultObj, WordTimeObj } from "../../types/otherTypes";
@@ -104,7 +104,7 @@ export default function TextDisplay({
   const [cssCalculatedRowHeight, setCssCalculatedRowHeight] = useState(50);
   const [animateMistypedSymbol, setAnimateMistypedSymbol] = useState<AnimateMistyped | null>(null);
 
-  const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
+  const { state: textDisplayTheme } = usePlayPageTheme()!;
   const stylePropObject = { textDisplayTheme, fontData, lineCount, rowHeight: cssCalculatedRowHeight };
   const wordTimerObj = useRef<WordTimeObj>({
     timer: new Timer(2),

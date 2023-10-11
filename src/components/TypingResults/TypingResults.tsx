@@ -8,8 +8,7 @@ import { ReactComponent as Target } from "../../svg/target-24px.svg";
 import { ReactComponent as ErrorCircle } from "../../svg/error-circle-24px.svg";
 import { ReactComponent as ThumbUpIcon } from "../../svg/thumb-up-24px.svg";
 import { ReactComponent as Clock } from "../../svg/time-24px.svg";
-import { useContext } from "react";
-import { PlayPageThemeContext } from "../../styles/themeContexts";
+import { usePlayPageTheme } from "../../styles/themeContexts";
 import { CSSObjectFunctionsWithProp, TextDisplayTheme } from "../../types/themeTypes";
 
 interface Props {
@@ -70,7 +69,7 @@ const styleFunctions: CSSObjectFunctionsWithProp = {
 };
 
 export default function TypingResults({ resultObj }: Props) {
-  const { state: textDisplayTheme } = useContext(PlayPageThemeContext);
+  const { state: textDisplayTheme } = usePlayPageTheme()!;
 
   const MistypedWordsComponents = resultObj?.mistypedWords.map((mistypedWord, i) => {
     if(i === resultObj?.mistypedWords.length - 1) { // don't add a comma after the last word

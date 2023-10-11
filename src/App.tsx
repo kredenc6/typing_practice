@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { BrowserRouter as Router, Redirect, Route, RouteProps, Switch, useLocation } from "react-router-dom";
 import { PaletteMode, ThemeProvider as MuiThemeProvider } from "@mui/material";
 import PlayPage from "./pages/PlayPage/PlayPage";
@@ -7,13 +7,10 @@ import Statistics from "./pages/Statistics/Statistics";
 import Login from "./components/Login/Login";
 import Timer from "./accessories/Timer";
 import getFontData from "./async/getFontData";
-import loadFont from "./async/loadFont";
-import { defaultTextDisplayFontData } from "./styles/textDisplayTheme/textDisplayData";
-import { FontData } from "./types/themeTypes";
-import { PlayPageThemeContext, PlayPageThemeProvider } from "./styles/themeContexts";
+import { defaultTextDisplayFontStyle } from "./styles/textDisplayTheme/textDisplayData";
+import { PlayPageThemeProvider } from "./styles/themeContexts";
 import { createAppTheme } from "./styles/appTheme";
 import { AllowedMistype, LatestResult, MistypedWordsLog, User } from "./types/otherTypes";
-import { getKnownSymbols } from "./helpFunctions/getKnownSymbols";
 import CssBaseline from '@mui/material/CssBaseline';
 import "simplebar/dist/simplebar.min.css";
 import { LOCAL_STORAGE_KEYS } from "./constants/constants";
@@ -22,13 +19,14 @@ import { getUser } from "./database/endpoints";
 import handleError from "./helpFunctions/handleError";
 import { onAuthStateChanged } from "firebase/auth";
 import { addUserIdToStorageKey, extractUserFromDbUser, unminifyMistypedWordsLog } from "./appHelpFunctions";
+import { FontData, FontStyle } from "./types/themeTypes";
+import loadFont from "./async/loadFont";
+import parseStorageItem from "./helpFunctions/parseStorageItem";
 
 export default function App() {
-  const [fontData, setFontData] = useState(defaultTextDisplayFontData);
-  const [isFontDataLoading, setIsFontDataLoading] = useState(false);
+  const [fontData, setFontData] = useState<FontData | null>(null);
   const [text, setText] = useState("");
   const [appTheme, setAppTheme] = useState(createAppTheme(null));
-  const { state: playPageTheme, update: updatePlayPageTheme } = useContext(PlayPageThemeContext);
   const [allowedMistype, setAllowedMistype] = useState<AllowedMistype>({
     count: 1, isAllowed: true
   });
@@ -52,59 +50,8 @@ export default function App() {
 
   const timer = useRef(new Timer());
 
-  const handleFontDataChange = async (fieldToUpdate: Partial<FontData>, callback?: () => any) => {
-    const updatedFields = Object.keys(fieldToUpdate) as (keyof FontData)[];
-    const { fontFamily, fontSize } = { ...fontData, ...fieldToUpdate };
-    const newFontData = await getFontData(fontFamily, fontSize);
-
-    if(!newFontData) return;
-    setIsFontDataLoading(true);
-    
-    if(updatedFields.includes("fontSize")) {
-      const updatedTextDisplayTheme = { ...playPageTheme };
-      const updatedSidePadding = fontSize;
-      updatedTextDisplayTheme.offset.display.paddingRight = updatedSidePadding;
-      updatedTextDisplayTheme.offset.display.paddingLeft = updatedSidePadding;
-      updatePlayPageTheme(updatedTextDisplayTheme);
-      callback && callback();
-      setIsFontDataLoading(false);
-    }
-    
-    if(updatedFields.includes("fontFamily")) {
-      if(newFontData.fontLocation === "local") {
-        setFontData(newFontData);
-        callback && callback();
-        setIsFontDataLoading(false);
-      } else {
-        loadFont(newFontData, setFontData, () => {
-          callback && callback();
-          setIsFontDataLoading(false);
-        });
-      }
-      localStorage.setItem(LOCAL_STORAGE_KEYS.FONT_DATA, JSON.stringify(newFontData));
-      return;
-    }
-    
-    setFontData(newFontData);
-    localStorage.setItem(LOCAL_STORAGE_KEYS.FONT_DATA, JSON.stringify(newFontData));
-  };
-
-
   // TODO make it custom and seperate it to several by their functionality
   useEffect(() => {
-    const localFontData = localStorage.getItem(LOCAL_STORAGE_KEYS.FONT_DATA);
-    const determinedFontData = localFontData ? JSON.parse(localFontData) as FontData : fontData;
-    const { fontFamily, fontSize } = determinedFontData;
-    getFontData(fontFamily, fontSize)
-      .then(newFontData => {
-        if(!newFontData) return;
-        handleFontDataChange(newFontData);
-      });
-    const loadedMistypeSetting = localStorage.getItem(LOCAL_STORAGE_KEYS.MISTYPE_SETTINGS);
-    if(loadedMistypeSetting) {
-      setAllowedMistype(JSON.parse(loadedMistypeSetting) as AllowedMistype);
-    }
-
     // AUTH STATE CHANGE LISTENER
     return onAuthStateChanged(auth, async (providerUser) => {
       console.log(`Auth state changed. Current user: `, auth.currentUser?.uid);
@@ -145,6 +92,29 @@ export default function App() {
   }, [])
 
   useEffect(() => {
+    if(!user) return;
+
+    // Get user's font style or use default one.
+    const {fontFamily, fontSize} = parseStorageItem<FontStyle>(
+      addUserIdToStorageKey(user.id, LOCAL_STORAGE_KEYS.FONT_DATA)
+    ) ?? defaultTextDisplayFontStyle;
+
+    getFontData(fontFamily, fontSize)
+      .then(newFontData => {
+        
+        // load font
+        if(newFontData.fontLocation === "local") {
+          setFontData(newFontData);
+        } else {
+          // TODO handle failed load
+          loadFont(newFontData, () => {
+            setFontData(newFontData);
+          });
+        }
+      })
+  },[user])
+
+  useEffect(() => {
     updateTheme();
   }, [updateTheme])
 
@@ -162,17 +132,16 @@ export default function App() {
           <PrivateRoute path="/mainMenu" user={user}>
             <MainMenu
               setText={setText}
-              knownSymbols={getKnownSymbols(fontData)}
+              fontData={fontData}
               setUser={setUser}
               user={user}
             />
           </PrivateRoute>
           <PrivateRoute path="/playArea" user={user}>
-            <PlayPageThemeProvider>
+            <PlayPageThemeProvider userId={user?.id ?? null}>
               <PlayPage
-                fontData={fontData}
-                handleFontDataChange={handleFontDataChange}
-                isFontDataLoading={isFontDataLoading}
+                fontData={fontData!}
+                setFontData={setFontData}
                 text={text}
                 timer={timer.current}
                 setAllowedMistype={setAllowedMistype}
@@ -226,6 +195,7 @@ function PrivateRoute({ children, user, ...routeProps }:PrivateRouteProps & Rout
     />
   );
 };
+
 
 // TODO add typing sounds
 // TODO add $nbsp; after prepositions

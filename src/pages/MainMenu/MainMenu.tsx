@@ -14,15 +14,18 @@ import { useTextToTextField } from "../../customHooks/useTextToTextField";
 import ThemeSwitch from "../../components/ThemeSwith/ThemeSwith";
 import { ReactComponent as StatisticsIcon } from "../../svg/bar-chart-24px.svg";
 import { KeyboardAlt as KeyboardIcon } from "@mui/icons-material";
-import { CSSObjects } from "../../types/themeTypes";
+import { CSSObjects, FontData } from "../../types/themeTypes";
 import { User } from "../../types/otherTypes";
 import UserCard from "../../components/UserCard/UserCard";
 import { auth } from "../../database/firebase";
 import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
+import { getKnownSymbols } from "../../helpFunctions/getKnownSymbols";
+import getFontData from "../../async/getFontData";
+import { defaultTextDisplayFontStyle } from "../../styles/textDisplayTheme/textDisplayData";
 
 interface Props {
   setText: React.Dispatch<React.SetStateAction<string>>;
-  knownSymbols: string[];
+  fontData: FontData | null;
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
@@ -50,17 +53,17 @@ const styles: CSSObjects = {
 };
 
 // TODO setText maximum length
-export default function MainMenu({ setText, knownSymbols, user, setUser }: Props) {
+export default function MainMenu({ setText, fontData, user, setUser }: Props) {
   const [loadedParagraphs, setLoadedParagraphs] = useState<string[]>([]);
   const [insertTextOnLoad, setInsertTextOnLoad] = useState<InsertTextOnLoad>({
     length: 100, boolean: true
   });
   const [textInput, setTextInput] = useTextToTextField();
+  const [knownSymbols, setKnownSymbols] = useState<string[] | null>(null);
 
   const logout = () => {
     // TODO handle failed logout (signOut's promise)
     auth.signOut();
-    // localStorage.removeItem(LOCAL_STORAGE_KEYS.USER);
     // setUser(null)
   };
 
@@ -68,7 +71,7 @@ export default function MainMenu({ setText, knownSymbols, user, setUser }: Props
     // console.log("There's no test atm.");
     console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.FONT_DATA));
     console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.MISTYPE_SETTINGS));
-    console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.TEXT_DISPLAY_THEME));
+    console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.PLAY_PAGE_THEME));
     console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.THEME_TYPES));
   };
 
@@ -123,6 +126,15 @@ export default function MainMenu({ setText, knownSymbols, user, setUser }: Props
     loadedInsertTextOnLoad && setInsertTextOnLoad(JSON.parse(loadedInsertTextOnLoad));
   },[])
 
+  // Load valid symbols.
+  useEffect(() => {
+    const {fontFamily, fontSize} = defaultTextDisplayFontStyle;
+    getFontData(fontFamily, fontSize)
+      .then(newFontData => {
+        setKnownSymbols(Object.keys(newFontData.symbolWidths));
+      })
+  },[])
+
   return (
     <Box sx={styles.mainMenu}>
       <UserCard user={user} logout={logout} />
@@ -156,7 +168,8 @@ export default function MainMenu({ setText, knownSymbols, user, setUser }: Props
         </Button>
         <Button onClick={handleTest}>test</Button>
       </ButtonGroup>
-      <InvalidSymbolsMessage invalidSymbols={getInvalidSymbols(textInput, knownSymbols)} />
+      {knownSymbols &&
+        <InvalidSymbolsMessage invalidSymbols={getInvalidSymbols(textInput, knownSymbols)} />}
     </Box>
   );
 }

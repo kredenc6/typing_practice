@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { Fade, Box } from "@mui/material";
 import PlaySettings from "../../components/PlaySettings/PlaySettings";
 import TextDisplay from "../../components/TextDisplay/TextDisplay";
@@ -8,15 +8,17 @@ import { Redirect } from "react-router";
 import Timer from "../../accessories/Timer";
 import { AllowedMistype, GameStatus, MistypedWordsLog, ResultObj, LatestResult } from "../../types/otherTypes";
 import { updateLatestResults, updateMistypedWords } from "../../components/TextDisplay/helpFunctions";
-import { PlayPageThemeContext } from "../../styles/themeContexts";
+import { usePlayPageTheme } from "../../styles/themeContexts";
 import handleError from "../../helpFunctions/handleError";
 import { updateUser } from "../../database/endpoints";
-import { minifyMistypedWordsLog } from "../../appHelpFunctions";
+import { addUserIdToStorageKey, minifyMistypedWordsLog } from "../../appHelpFunctions";
+import getFontData from "../../async/getFontData";
+import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
+import loadFont from "../../async/loadFont";
 
 interface Props {
   fontData: FontData;
-  handleFontDataChange: (fieldsToUpdate: Partial<Pick<FontData, "fontFamily" | "fontSize">>) => Promise<void>;
-  isFontDataLoading: boolean;
+  setFontData: React.Dispatch<React.SetStateAction<FontData | null>>;
   text: string;
   timer: Timer;
   setAllowedMistype: React.Dispatch<React.SetStateAction<AllowedMistype>>;
@@ -30,8 +32,7 @@ interface Props {
 
 export default function PlayPage({
   fontData,
-  handleFontDataChange,
-  isFontDataLoading,
+  setFontData,
   text,
   timer,
   setAllowedMistype,
@@ -42,10 +43,66 @@ export default function PlayPage({
   latestResults,
   setLatestResults
 }: Props) {
-  const { state: textDisplayTheme } = useContext(PlayPageThemeContext); 
   const [restart , setRestart] = useState(false);
   const [gameStatus, setGameStatus] = useState<GameStatus>("settingUp");
   const [resultObj, setResultObj] = useState<ResultObj | null>(null);
+  const [isFontDataLoading, setIsFontDataLoading] = useState(false);
+  const { state: playPageTheme, update: updatePlayPageTheme } = usePlayPageTheme()!;
+
+  const handleFontDataChange = async (fieldToUpdate: Partial<FontData>, callback?: () => any) => {
+    if(!userId) return;
+    console.log("Font Data Change:");
+    console.log({fieldToUpdate, callback});
+
+    const updatedFields = Object.keys(fieldToUpdate) as (keyof FontData)[];
+    const { fontFamily, fontSize } = { ...fontData, ...fieldToUpdate };
+    const newFontData = await getFontData(fontFamily, fontSize);
+
+    if(!newFontData) return;
+    setIsFontDataLoading(true);
+    
+    // When the font size changes, playPageTheme offsets need to be adjusted.
+    if(updatedFields.includes("fontSize")) {
+      // Make the adjustements.
+      const updatedTextDisplayTheme = { ...playPageTheme };
+      const updatedSidePadding = fontSize;
+      updatedTextDisplayTheme.offset.display.paddingRight = updatedSidePadding;
+      updatedTextDisplayTheme.offset.display.paddingLeft = updatedSidePadding;
+
+      // Update the play page theme context.
+      updatePlayPageTheme(updatedTextDisplayTheme);
+
+      // Run callbacks if available.
+      callback && callback();
+      
+      // Save changes to the local storage.
+      const key = addUserIdToStorageKey(userId, LOCAL_STORAGE_KEYS.PLAY_PAGE_THEME);
+      localStorage.setItem(key, JSON.stringify(updatedTextDisplayTheme));
+
+      setIsFontDataLoading(false);
+    }
+    
+    if(updatedFields.includes("fontFamily")) {
+      if(newFontData.fontLocation === "local") {
+        setFontData(newFontData);
+        callback && callback();
+        setIsFontDataLoading(false);
+      } else {
+        loadFont(newFontData, () => {
+          callback && callback();
+          setFontData(newFontData);
+          setIsFontDataLoading(false);
+        });
+      }
+      const key = addUserIdToStorageKey(userId, LOCAL_STORAGE_KEYS.FONT_DATA);
+      localStorage.setItem(key, JSON.stringify(newFontData));
+      return;
+    }
+    
+    setFontData(newFontData);
+    const key = addUserIdToStorageKey(userId, LOCAL_STORAGE_KEYS.FONT_DATA);
+    localStorage.setItem(key, JSON.stringify(newFontData));
+  };
 
   useEffect(() => {
     if(!resultObj || !userId) return;
@@ -71,6 +128,18 @@ export default function PlayPage({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resultObj])
 
+  useEffect(() => {
+    if(!userId) return;
+
+    const mistypeSettingsKey = addUserIdToStorageKey(userId, LOCAL_STORAGE_KEYS.MISTYPE_SETTINGS);
+    const loadedMistypeSetting = localStorage.getItem(mistypeSettingsKey);
+    if(loadedMistypeSetting) {
+      setAllowedMistype(JSON.parse(loadedMistypeSetting) as AllowedMistype);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId])
+
   return (
     !text
       ? <Redirect to="/mainMenu" />
@@ -80,7 +149,7 @@ export default function PlayPage({
             display: "flex",
             flexDirection: "column",
             height: "100vh",
-            backgroundColor: textDisplayTheme.background.main
+            backgroundColor: playPageTheme.background.main
           }}
         >
           <PlaySettings
@@ -90,7 +159,8 @@ export default function PlayPage({
             restart={restart}
             setRestart={setRestart}
             setAllowedMistype={setAllowedMistype}
-            allowedMistype={allowedMistype} />
+            allowedMistype={allowedMistype}
+            userId={userId} />
           <TextDisplay
             fontData={fontData}
             restart={restart}
