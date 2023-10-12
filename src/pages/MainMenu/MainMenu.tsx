@@ -18,10 +18,9 @@ import { CSSObjects, FontData } from "../../types/themeTypes";
 import { User } from "../../types/otherTypes";
 import UserCard from "../../components/UserCard/UserCard";
 import { auth } from "../../database/firebase";
-import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
-import { getKnownSymbols } from "../../helpFunctions/getKnownSymbols";
 import getFontData from "../../async/getFontData";
 import { defaultTextDisplayFontStyle } from "../../styles/textDisplayTheme/textDisplayData";
+import handleError from "../../helpFunctions/handleError";
 
 interface Props {
   setText: React.Dispatch<React.SetStateAction<string>>;
@@ -62,17 +61,15 @@ export default function MainMenu({ setText, fontData, user, setUser }: Props) {
   const [knownSymbols, setKnownSymbols] = useState<string[] | null>(null);
 
   const logout = () => {
-    // TODO handle failed logout (signOut's promise)
-    auth.signOut();
-    // setUser(null)
+    auth.signOut()
+      .catch(error => {
+        const errorMsg = "Failed to log out.";
+        handleError(error, errorMsg);
+      });
   };
 
   const handleTest = () => {
-    // console.log("There's no test atm.");
-    console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.FONT_DATA));
-    console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.MISTYPE_SETTINGS));
-    console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.PLAY_PAGE_THEME));
-    console.log(localStorage.getItem(LOCAL_STORAGE_KEYS.THEME_TYPES));
+    console.log("There's no test atm.");
   };
 
   const handleStart = async () => {
