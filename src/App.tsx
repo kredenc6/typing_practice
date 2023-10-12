@@ -22,6 +22,7 @@ import { addUserIdToStorageKey, extractUserFromDbUser, unminifyMistypedWordsLog 
 import { FontData, FontStyle } from "./types/themeTypes";
 import loadFont from "./async/loadFont";
 import parseStorageItem from "./helpFunctions/parseStorageItem";
+import Loading from "./components/Loading/Loading";
 
 export default function App() {
   const [fontData, setFontData] = useState<FontData | null>(null);
@@ -34,6 +35,7 @@ export default function App() {
   // TODO rename to just mistypedWords?
   const [savedMistypedWords, setSavedMistypedWords] = useState<MistypedWordsLog | null>(null);
   const [latestResults, setLatestResults] = useState<LatestResult[] | null>(null);
+  const [isLoginPending, setIsLoginPending] = useState(true);
 
   const updateTheme = useCallback((themeType?: PaletteMode) => {
     if(!user?.id) return;
@@ -54,8 +56,11 @@ export default function App() {
   useEffect(() => {
     // AUTH STATE CHANGE LISTENER
     return onAuthStateChanged(auth, async (providerUser) => {
-      console.log(`Auth state changed. Current user: `, auth.currentUser?.uid);
-      console.dir(providerUser)
+      
+      // Disable loading screen flag.
+      if(!providerUser && isLoginPending) {
+        setIsLoginPending(false);
+      }
       
       // user logged in
       if (providerUser) {
@@ -78,6 +83,12 @@ export default function App() {
 
           // Extract and save to the state the user object.
           setUser(extractUserFromDbUser(loggedInUserDB));
+
+          // Disable loading screen flag.
+          if(isLoginPending) {
+            setIsLoginPending(false);
+          }
+
         } catch(error) {
           handleError(error);
         }
@@ -119,6 +130,9 @@ export default function App() {
   }, [updateTheme])
 
   return (
+    isLoginPending
+      ? <Loading />
+      : (
     <MuiThemeProvider theme={{ ...appTheme, updateTheme }}>
       <CssBaseline /> {/* will also enable dark mode for the app's background. */}
       <Router>
@@ -159,7 +173,7 @@ export default function App() {
         </Switch>
       </Router>
     </MuiThemeProvider>
-  );
+  ));
 }
 
 interface PrivateRouteProps {
@@ -233,26 +247,17 @@ function PrivateRoute({ children, user, ...routeProps }:PrivateRouteProps & Rout
 // TODO make tooltip disappear when scrolling and the tooltip arrow is leaving the paragraph window
 // TODO user can set up a typing profile (for example for different keyboards, or devices)
 // TODO use new Intl.Collator("cz").compare(wordA, wordB) instead of the wordA.localCompare(wordB, "cz") - it's more precise
-// TODO get rid of the Login page flashing when auto-loging
 // TODO improve fetching experience and handling (multiple quick calls, errors, etc.) - there should be libraries for this, do some research
 
 // DATABASE:
-// BUG signOut() can fail - it returns a promise, which should be handled
 // TODO write database security rules: https://firebase.google.com/docs/rules/basics?authuser=0
-// TODO mistype timestamps can be reduced to minutes (4-byte integer: Math.trunc(Date.now() / 60000)), however...
-// ...this is expensive, so the best way would be to store raw results from this day in the local storage and...
-// ... once the user logins the next day it would automatically update the DB with optimized and compressed data...
-// ...and deleted the previous day results
-
-// NETLIFY
-// BUG netlify lambda functions can crush the running server (getting articles is the cause?) - needs more investigation to find out the cause
-
 // TODO handling sync with the firebase
 /* Using onbeforeunload listener works only if it triggers the "alert" (the callback must return a string to do that).
 Syncing 1x a day doesn't work if the user uses multiple devices for example in a school. Some results would never be synced.
 There could be a complicated solution for this - manual sync done by the user and alerting him, when no sync was done
 and the broswer is closing. There would also needed to be some FUP in place. It would be increased in a payed version.
-The last option leaves me with the sync every time the transcript is done. */
+The last option leaves me with the sync every time the transcript is done (current solution).  */
 
-// TODO saves to the local storage need to be bound to the user
 // TODO don't save results under 100 (200?) characters
+// TODO make the loading screen theme type same as the last one used in the same browser (use local storage)
+// this should prevent unconsistent theme flipping in most cases

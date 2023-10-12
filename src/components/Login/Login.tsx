@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
-import { setPersistence, signInWithPopup, browserLocalPersistence, inMemoryPersistence } from "firebase/auth";
+import { signInWithPopup, browserLocalPersistence, inMemoryPersistence } from "firebase/auth";
 import { auth, provider } from "../../database/firebase";
 import { Box, Button, Checkbox, FormControlLabel, Paper, Typography } from "@mui/material";
-import { User, UserDB } from "../../types/otherTypes";
+import { User } from "../../types/otherTypes";
 import handleError from "../../helpFunctions/handleError";
 import { getUser, saveUser } from "../../database/endpoints";
 import { extractUserDBFromUser, extractUserFromDbUser } from "../../appHelpFunctions";
@@ -14,62 +14,34 @@ interface Props {
 }
 
 export default function Login({ user, setUser }: Props) {
-  const [rememberTheUser, setRememberTheUser] = useState(false);
+  const [rememberTheUser, setRememberTheUser] = useState(!!user);
 
-  const handleCheckboxChange = () => setRememberTheUser(prevState => !prevState);
+  const handleCheckboxChange = () => {
+    setRememberTheUser(prev => !prev);
 
-  // TODO extract to custom hook
+    const persistence = !rememberTheUser
+      ? browserLocalPersistence
+      : inMemoryPersistence;
+    
+    auth.setPersistence(persistence)
+      .then(() => {
+        let test = auth as any;
+        console.log(`persistence type: ${test.persistenceManager.persistence.type}`);
+      });
+  };
+
   useEffect(() => {
-    if(rememberTheUser) {
-      setPersistence(auth, browserLocalPersistence);
-    } else {
-      setPersistence(auth, inMemoryPersistence);
+    console.log(`user in login page: ${user?.id}`);
+    if(!user) {
+      auth.setPersistence(inMemoryPersistence)
+        .then(() => {
+          let test = auth as any;
+          console.log(`persistence type: ${test.persistenceManager.persistence.type}`);
+        });
     }
-  }, [rememberTheUser])
 
-  // // https://firebase.google.com/docs/auth/web/google-signin
-  // const login = () => signInWithPopup(auth, provider)
-  //   .then( async (result) => {
-
-  //     // find out if the user already exists in the database
-  //     try {
-  //       const user = await getUser(result.user.uid);
-
-  //       // if the user exist, save him to the state
-  //       if(user) {
-  //         setUser(user);
-  //         return;
-  //       }
-  //     }
-  //     catch(error) {
-  //       const errorMessage = `Failed to load the user ${result.user.uid} from the database`;
-  //       handleError(error, errorMessage);
-  //       return;
-  //     }
-
-  //     // if the user doesn't exist in the database create a new user...
-  //     const newUser: User = {
-  //       name: result.user.displayName,
-  //       picture: result.user.photoURL,
-  //       isAdmin: result.user.email === "filip.sran@gmail.com", // BUG THIS CAN'T BE HERE LIKE THAT - EASY TO HACK!!!!
-  //       createdAt: Date.now()
-  //     };
-
-  //     // ...and save the new user to the database and the state
-  //     try {
-  //       await saveUser(result.user.uid, newUser);
-  //       setUser(newUser);
-  //     }
-  //     catch(error) {
-  //       const errorMessage = `Failed to save the user ${newUser.name} to the database`;
-  //       handleError(error, errorMessage);
-  //     }
-        
-  //   })
-  //   .catch(error => {
-  //     const message = `Login failed. ${error.message}`;
-  //     handleError(error, message);
-  //   });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
     return (
       user

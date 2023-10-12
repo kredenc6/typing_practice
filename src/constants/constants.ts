@@ -5,7 +5,8 @@ export const LOCAL_STORAGE_KEYS = {
   FONT_DATA: "typingPracticeFontData",
   MISTYPE_SETTINGS: "typingPracticeMistypeSettings",
   THEME_TYPES: "typingPracticeAppThemeType",
-  PLAY_PAGE_THEME: "typingPracticeTextDisplayTheme"
+  PLAY_PAGE_THEME: "typingPracticeTextDisplayTheme",
+  REMEMBER_LOGIN: "typingPracticeRememberLogin"
 };
 export const MAXIMUM_TEXT_LENGTH = 1500;
 

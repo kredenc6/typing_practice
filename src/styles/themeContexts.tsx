@@ -10,13 +10,7 @@ interface ThemeContextType {
   update: (theme: TextDisplayTheme) => void;
 }
 
-const test = {
-  state: defaultTextDisplayTheme,
-  update: (theme: TextDisplayTheme) => {}
-}
-
-const ThemeContext = createContext<ThemeContextType>(test);
-// const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const usePlayPageTheme = () => {
   const context = useContext(ThemeContext);
