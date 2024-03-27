@@ -7,6 +7,7 @@ import LatestResultsChart from "../../components/LatestResultsChart/LatestResult
 import ThemeSwitch from "../../components/ThemeSwith/ThemeSwith";
 import { CSSObjects } from "../../types/themeTypes";
 import { Link } from "react-router-dom";
+import Footer from "../../components/Footer/Footer";
 
 const styles: CSSObjects = {
   statistics: ({ palette }) => ({
@@ -82,6 +83,7 @@ export default function Statistics({ savedMistypedWords, latestResults }: Props)
         typingSpeed={typingSpeed} />
       <MistypedWordsChartWrapper
         mistypedWordsObj={savedMistypedWords} />
+      <Footer />
     </Box>
   );
 }

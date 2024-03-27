@@ -21,6 +21,7 @@ import { auth } from "../../database/firebase";
 import getFontData from "../../async/getFontData";
 import { defaultTextDisplayFontStyle } from "../../styles/textDisplayTheme/textDisplayData";
 import handleError from "../../helpFunctions/handleError";
+import Footer from "../../components/Footer/Footer";
 
 interface Props {
   setText: React.Dispatch<React.SetStateAction<string>>;
@@ -167,6 +168,7 @@ export default function MainMenu({ setText, fontData, user, setUser }: Props) {
       </ButtonGroup>
       {knownSymbols &&
         <InvalidSymbolsMessage invalidSymbols={getInvalidSymbols(textInput, knownSymbols)} />}
+      <Footer />
     </Box>
   );
 }

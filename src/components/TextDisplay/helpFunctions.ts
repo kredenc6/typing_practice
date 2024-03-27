@@ -2,7 +2,7 @@ import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeTo
 import { calcTypingPrecision, calcTypingSpeedInKeystrokes } from "../../helpFunctions/calcTypigSpeed";
 import { FontData, Offset } from "../../types/themeTypes";
 import { Row, SymbolCorrectness, SymbolWidths, WordObject } from "../../types/symbolTypes";
-import { AllowedMistype, GameStatus, ResultObj, MistypedWordsLog, MistypedWords, Mistypes, LatestResult, MistypedWord, UserDB, User } from "../../types/otherTypes";
+import { AllowedMistype, GameStatus, ResultObj, MistypedWordsLog, MistypedWords, Mistypes, LatestResult, MistypedWord } from "../../types/otherTypes";
 import { secondsToMMSS } from "../../helpFunctions/secondsToMMSS";
 import { LAST_RESULTS_SAVE_COUNT } from "../../constants/constants";
 import _ from "lodash";

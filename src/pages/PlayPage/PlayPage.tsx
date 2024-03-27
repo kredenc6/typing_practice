@@ -15,6 +15,7 @@ import { addUserIdToStorageKey, minifyMistypedWordsLog } from "../../appHelpFunc
 import getFontData from "../../async/getFontData";
 import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
 import loadFont from "../../async/loadFont";
+import Footer from "../../components/Footer/Footer";
 
 interface Props {
   fontData: FontData;
@@ -176,6 +177,7 @@ export default function PlayPage({
               <TypingResults resultObj={resultObj} />
             </Box>
           </Fade>
+          <Footer />
         </Box>
   );
 }

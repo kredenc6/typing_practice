@@ -29,7 +29,6 @@ router.get("/wikiArticleOfTheWeek", async (_, res) => {
   }
 });
 
-
 export default router;
 
 /** @returns relative path for https://cs.wikipedia.org  */

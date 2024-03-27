@@ -1,20 +1,27 @@
 import { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
-import { signInWithPopup, browserLocalPersistence, inMemoryPersistence } from "firebase/auth";
-import { auth, provider } from "../../database/firebase";
-import { Box, Button, Checkbox, FormControlLabel, Paper, Typography } from "@mui/material";
+import { signInWithPopup, browserLocalPersistence, inMemoryPersistence, AuthProvider } from "firebase/auth";
+import { auth } from "../../database/firebase";
+import { Box, Paper, Typography } from "@mui/material";
 import { User } from "../../types/otherTypes";
 import handleError from "../../helpFunctions/handleError";
 import { getUser, saveUser } from "../../database/endpoints";
 import { extractUserDBFromUser, extractUserFromDbUser } from "../../appHelpFunctions";
+import LoginForm from "../LoginForm";
+import CreateAccountForm from "../CreateAccountForm/CreateAccountForm";
 
 interface Props {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  setIsRecaptchaBadgeVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Login({ user, setUser }: Props) {
+export default function Login({ user, setUser, setIsRecaptchaBadgeVisible }: Props) {
   const [rememberTheUser, setRememberTheUser] = useState(!!user);
+
+  // TODO dear lord please change the name to something like "toggleCreateAccount" or similar.
+  // Also setCreateAccount is passed along as createAcount which is even more confusing. Fix!
+  const [createAccount, setCreateAccount] = useState(false);
 
   const handleCheckboxChange = () => {
     setRememberTheUser(prev => !prev);
@@ -43,6 +50,15 @@ export default function Login({ user, setUser }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // toggle reCAPTCHA badge visibility
+  useEffect(() => {
+    setIsRecaptchaBadgeVisible(true);
+
+    return () => { setIsRecaptchaBadgeVisible(false); }
+    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
     return (
       user
       ? <Redirect to="/mainMenu" />
@@ -50,27 +66,17 @@ export default function Login({ user, setUser }: Props) {
         <Box>
           <Paper
             elevation={3}
-            sx={{ width: "30rem", p: "2rem", textAlign: "center", mx: "auto", marginTop: "20vh" }}
+            sx={{ width: "40rem", p: "2rem", textAlign: "center", mx: "auto", marginTop: "20vh" }}
           >
-            <Typography
-              variant="h6"
-              sx={{ marginBottom: "1rem" }}
-            >
-              přihlášení
-            </Typography>
-            <Typography variant="h2" sx={{ marginBottom: "3rem" }}>Deset prstů</Typography>
-            <Button
-              onClick={() => login(setUser)}
-              variant="contained"
-            >
-              Přihlásit se přes Google
-            </Button>
-            <Box>
-              <FormControlLabel
-                control={<Checkbox checked={rememberTheUser} onChange={handleCheckboxChange} />}
-                label="Zůstat přihlášen"
-              />
-            </Box>
+            <Typography variant="h2" sx={{ marginBottom: "1rem" }}>Deset prstů</Typography>
+            {createAccount
+              ? <CreateAccountForm createAccount={setCreateAccount} />
+              : <LoginForm
+                  createAccount={setCreateAccount}
+                  handleCheckboxChange={handleCheckboxChange}
+                  rememberTheUser={rememberTheUser}
+                  login={(provider: AuthProvider) => login(provider, setUser)} />
+            }
           </Paper>
         </Box>
         )
@@ -78,7 +84,7 @@ export default function Login({ user, setUser }: Props) {
 };
 
 // https://firebase.google.com/docs/auth/web/google-signin
-function login(setUser: React.Dispatch<React.SetStateAction<User | null>>) {
+function login(provider: AuthProvider, callback: (user: User | null) => void) {
   signInWithPopup(auth, provider)
     .then( async (result) => {
 
@@ -89,7 +95,7 @@ function login(setUser: React.Dispatch<React.SetStateAction<User | null>>) {
         // if the user exist, save him to the state
         if(userDB) {
           const user = extractUserFromDbUser(userDB);
-          setUser(user);
+          callback(user);
           return;
         }
       }
@@ -112,7 +118,7 @@ function login(setUser: React.Dispatch<React.SetStateAction<User | null>>) {
       const newUserDB = extractUserDBFromUser(newUser)!;
       try {
         await saveUser(result.user.uid, newUserDB);
-        setUser(newUser);
+        callback(newUser);
       }
       catch(error) {
         const errorMessage = `Failed to save the user ${newUser.name} to the database`;
