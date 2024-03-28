@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Box, SvgIcon, Typography } from "@mui/material";
 import { PlayPageThemeContext } from "../../../styles/themeContexts";
-import { CSSObjects } from "../../../types/themeTypes";
+import { type CSSObjects } from "../../../types/themeTypes";
 
 interface Props {
   Icon: React.FunctionComponent<React.SVGProps<SVGSVGElement> & {

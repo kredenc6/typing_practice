@@ -1,4 +1,4 @@
-import { Row, SymbolObject, SymbolWidths, WordObject, WordType } from "../types/symbolTypes";
+import { type Row, type SymbolObject, type SymbolWidths, type WordObject, type WordType } from "../types/symbolTypes";
 
 const splitterRegexp = /[0-9\p{L}']+|\s+|[^0-9\p{L}'\s]/giu; // numbers, letters or apostrophe | whitespace | nothing of the previous
 export const lineEndersRegexp = /[ .,!?;:)\]}]|\n+/;
@@ -80,7 +80,7 @@ export const transformTextToSymbolRows =
     const words: WordObject[] = [];
     
     for(const word of row) {
-      let wordInSymbolObjects: SymbolObject[] = [];
+      const wordInSymbolObjects: SymbolObject[] = [];
       
       for(const symbol of word) {
         wordInSymbolObjects.push({
@@ -105,7 +105,7 @@ export const transformTextToSymbolRows =
 
       words.push(wordObject);
       wordPosition++;
-    };
+    }
     
     rowArray.push({
       highestSymbolPosition: symbolPosition - 1,

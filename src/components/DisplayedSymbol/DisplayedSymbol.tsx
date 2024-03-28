@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { SymbolStyle } from "../../types/themeTypes";
+import { type SymbolStyle } from "../../types/themeTypes";
 
 interface Props {
   symbolStyle: SymbolStyle;
@@ -24,4 +24,4 @@ export default function DisplayedSymbol({ symbol, symbolStyle }: Props) {
       {symbol}
     </Box>
   );
-};
+}

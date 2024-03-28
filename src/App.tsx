@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { BrowserRouter as Router, Redirect, Route, Switch } from "react-router-dom";
-import { PaletteMode, ThemeProvider as MuiThemeProvider } from "@mui/material";
+import { type PaletteMode, ThemeProvider as MuiThemeProvider } from "@mui/material";
 import PlayPage from "./pages/PlayPage/PlayPage";
 import MainMenu from "./pages/MainMenu/MainMenu";
 import Statistics from "./pages/Statistics/Statistics";
@@ -8,10 +8,10 @@ import Timer from "./accessories/Timer";
 import getFontData from "./async/getFontData";
 import loadFont from "./async/loadFont";
 import { defaultTextDisplayFontData } from "./styles/textDisplayTheme/textDisplayData";
-import { FontData } from "./types/themeTypes";
+import { type FontData } from "./types/themeTypes";
 import { PlayPageThemeContext, PlayPageThemeProvider } from "./styles/themeContexts";
 import { createAppTheme } from "./styles/appTheme";
-import { AllowedMistype } from "./types/otherTypes";
+import { type AllowedMistype } from "./types/otherTypes";
 import { getKnownSymbols } from "./helpFunctions/getKnownSymbols";
 import CssBaseline from '@mui/material/CssBaseline';
 import "simplebar/dist/simplebar.min.css";
@@ -34,7 +34,7 @@ export default function App() {
 
   const timer = useRef(new Timer());
 
-  const handleFontDataChange = async (fieldToUpdate: Partial<FontData>, callback?: () => any) => {
+  const handleFontDataChange = async (fieldToUpdate: Partial<FontData>, callback?: () => void) => {
     const updatedFields = Object.keys(fieldToUpdate) as (keyof FontData)[];
     const { fontFamily, fontSize } = { ...fontData, ...fieldToUpdate };
     const newFontData = await getFontData(fontFamily, fontSize);

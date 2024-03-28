@@ -1,4 +1,4 @@
-import { Row } from "../types/symbolTypes";
+import { type Row } from "../types/symbolTypes";
 
 const PENALTY_COEFFICIENT = 10;
 

@@ -1,7 +1,7 @@
 import { Box, useTheme } from "@mui/material";
 import { WbSunnyOutlined, NightsStay } from "@mui/icons-material";
 import { Transition } from "react-transition-group";
-import { CSSObjects } from "../../types/themeTypes";
+import { type CSSObjects } from "../../types/themeTypes";
 
 const styles: CSSObjects = {
   themeSwitch: ({ palette }) => ({

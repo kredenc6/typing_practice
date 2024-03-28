@@ -1,5 +1,5 @@
-import { CSSObject } from "@mui/material";
-import { Theme } from "@mui/material";
+import { type CSSObject } from "@mui/material";
+import { type Theme } from "@mui/material";
 
 // font styles for displaying text
 export type FontSize = "20px" | "30px" | "40px";
@@ -12,7 +12,9 @@ export interface CSSObjects {
 }
 
 export interface CSSObjectFunctionsWithProp {
-  [propName: string]: (theme: Theme, prop: any) => CSSObject;
+  // TODO if this works delete the commented code
+  [propName: string]: (theme: Theme, prop: unknown) => CSSObject;
+  // [propName: string]: (theme: Theme, prop: any) => CSSObject;
 }
 
 export interface FontStyle {

@@ -3,7 +3,7 @@ import { Box, useTheme } from "@mui/material";
 import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import DisplayedSymbol from "../DisplayedSymbol/DisplayedSymbol";
 import FadeAway from "../transitions/FadeAway/FadeAway";
-import { SymbolStyle, AnimateMistyped, CSSObjects } from "../../types/themeTypes";
+import { type SymbolStyle, type AnimateMistyped, type CSSObjects } from "../../types/themeTypes";
 import { getSymbolStyle } from "../DisplayedRow/helpFunctions";
 import { PlayPageThemeContext } from "../../styles/themeContexts";
 import TextCursor from "../TextCursor/TextCursor";

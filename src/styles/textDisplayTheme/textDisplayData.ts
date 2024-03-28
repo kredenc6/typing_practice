@@ -1,5 +1,5 @@
 import { defaultPalette } from "../textDisplayPaletes";
-import { FontFamilies, FontSize, FontData, TextDisplayTheme } from "../../types/themeTypes";
+import { type FontFamilies, type FontSize, type FontData, type TextDisplayTheme } from "../../types/themeTypes";
 
 export const defaultTextDisplayFontData: FontData = {
   fontFamily: "Fira Code",

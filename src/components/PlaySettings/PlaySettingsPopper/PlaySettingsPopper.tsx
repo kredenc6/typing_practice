@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Popper, PopperProps } from "@mui/material";
+import { Popper, type PopperProps } from "@mui/material";
 import { PlayPageThemeContext } from "../../../styles/themeContexts";
 
 export default function PlaySettingPopper({ children, ...popperProps }: PopperProps) {

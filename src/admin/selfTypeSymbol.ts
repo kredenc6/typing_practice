@@ -1,4 +1,4 @@
-import { GameStatus } from "../types/otherTypes";
+import { type GameStatus } from "../types/otherTypes";
 
 interface SelfTypeOptions {
   delay: number,

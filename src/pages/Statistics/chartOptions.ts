@@ -1,8 +1,7 @@
-import { Theme } from "@mui/material";
-import { ApexOptions } from "apexcharts";
+import { type Theme } from "@mui/material";
+import { type ApexOptions } from "apexcharts";
 import dateFormat from "dateformat";
 import { getLastMistypeFromChartOptions } from "./helpFunction";
-// import { customTooltip_mistypedWords } from "./customTooltip_mistypedWords";
 
 export const createLatestResultsChartOptions = (theme: Theme): ApexOptions => ({
   colors: ["rgba(0, 143, 251, 0.9)", "rgba(0, 227, 150, 0.9)", "rgba(254, 176, 25, 0.9)"],
