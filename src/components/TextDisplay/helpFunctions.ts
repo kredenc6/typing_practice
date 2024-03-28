@@ -1,8 +1,8 @@
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 import { calcTypingPrecision, calcTypingSpeedInKeystrokes } from "../../helpFunctions/calcTypigSpeed";
-import { FontData, Offset } from "../../types/themeTypes";
-import { Row, SymbolCorrectness, SymbolWidths, WordObject } from "../../types/symbolTypes";
-import { AllowedMistype, GameStatus, Results, MistypedWordsLogV2 } from "../../types/otherTypes";
+import { type FontData, type Offset } from "../../types/themeTypes";
+import { type Row, type SymbolCorrectness, type SymbolWidths, type WordObject } from "../../types/symbolTypes";
+import { type AllowedMistype, type GameStatus, type Results, type MistypedWordsLogV2 } from "../../types/otherTypes";
 import { secondsToMMSS } from "../../helpFunctions/secondsToMMSS";
 import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
 import _ from "lodash";

@@ -1,5 +1,5 @@
 import { calcWordLength, lineEndersRegexp } from "./transformTextToSymbolRows";
-import { Row, SymbolWidths } from "../types/symbolTypes";
+import { type Row, type SymbolWidths } from "../types/symbolTypes";
 import { getMaxWordPosition, getWordObjectByWordPosition } from "../components/TextDisplay/helpFunctions";
 
 export default function adjustRowsToNewFontData(
@@ -8,7 +8,7 @@ export default function adjustRowsToNewFontData(
   symbolWidths: SymbolWidths
 ) {
   
-  let newRows: Row[] = [];
+  const newRows: Row[] = [];
   let currentTextLineLength = 0;
   let currentTextLineSymbolCount = 0;
   let highestSymbolPosition = -1; // for index positioning start at -1

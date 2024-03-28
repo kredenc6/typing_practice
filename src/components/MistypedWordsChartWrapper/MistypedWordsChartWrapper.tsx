@@ -2,10 +2,10 @@ import { useState, useRef, useEffect } from "react";
 import { Box, Paper, Typography, TextField } from "@mui/material";
 import MistypedWordsSorter from "../MistypedWordsSorter/MistypedWordsSorter";
 import MistypedWordsChart from "../MistypedWordsChart/MistypedWordsChart";
-import { MistypedWordsLogV2, SortBy } from "../../types/otherTypes";
+import { type MistypedWordsLogV2, type SortBy } from "../../types/otherTypes";
 import { getFilteredMistypeWordIndexes, getMistypedWordsChartHeight, sortMistypedWords, transformMistypeWordsToSeries } from "../../pages/Statistics/helpFunction";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
-import { CSSObjects } from "../../types/themeTypes";
+import { type CSSObjects } from "../../types/themeTypes";
 
 const DEFAULT_SORT_BY = "byMistypeCount:desc";
 const SHOWED_MISTYPED_WORDS_COUNT = 10;

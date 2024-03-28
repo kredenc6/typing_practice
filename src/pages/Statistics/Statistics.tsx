@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { Box, IconButton } from "@mui/material";
 import { Menu } from "@mui/icons-material";
 import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
-import { MistypedWordsLogV2, Results } from "../../types/otherTypes";
+import { type MistypedWordsLogV2, type Results } from "../../types/otherTypes";
 import MistypedWordsChartWrapper from "../../components/MistypedWordsChartWrapper/MistypedWordsChartWrapper";
 import LatestResultsChart from "../../components/LatestResultsChart/LatestResultsChart";
 import ThemeSwitch from "../../components/ThemeSwith/ThemeSwith";
-import { CSSObjects } from "../../types/themeTypes";
+import { type CSSObjects } from "../../types/themeTypes";
 import { Link } from "react-router-dom";
 
 const styles: CSSObjects = {

@@ -1,4 +1,4 @@
-import { createTheme, PaletteMode, ThemeOptions } from "@mui/material";
+import { createTheme, type PaletteMode, type ThemeOptions } from "@mui/material";
 import { LOCAL_STORAGE_KEYS } from "../constants/constants";
 
 const darkThemeOptions: ThemeOptions = {

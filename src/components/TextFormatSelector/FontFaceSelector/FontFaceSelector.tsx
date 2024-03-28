@@ -3,7 +3,7 @@ import { Box, ClickAwayListener, Grid, Popper, Typography } from "@mui/material"
 import Spinner from "../../Spinner/Spinner";
 import FakeSelect from "../../FakeSelect/FakeSelect";
 import { fontFamilies } from "../../../styles/textDisplayTheme/textDisplayData";
-import { CSSObjectFunctionsWithProp, CSSObjects, FontFamily, TextDisplayTheme } from "../../../types/themeTypes";
+import { type CSSObjectFunctionsWithProp, type CSSObjects, type FontFamily, type TextDisplayTheme } from "../../../types/themeTypes";
 import { PlayPageThemeContext } from "../../../styles/themeContexts";
 
 interface Props {

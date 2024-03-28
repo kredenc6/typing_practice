@@ -1,4 +1,4 @@
-import { TextDisplayTheme } from "../types/themeTypes";
+import { type TextDisplayTheme } from "../types/themeTypes";
 
 export const defaultPalette: Omit<TextDisplayTheme, "offset"> = {
   name: "defaultPalette",

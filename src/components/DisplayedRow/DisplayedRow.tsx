@@ -1,10 +1,10 @@
 import React, { useLayoutEffect, useRef } from "react";
 import { getRelativePosition, getSymbolStyle } from "./helpFunctions";
-import { WordObject } from "../../types/symbolTypes";
-import { FontSize, TextDisplayTheme, AnimateMistyped, CSSObjects } from "../../types/themeTypes";
+import { type WordObject } from "../../types/symbolTypes";
+import { type FontSize, type TextDisplayTheme, type AnimateMistyped, type CSSObjects } from "../../types/themeTypes";
 import DisplayedSymbolWrapper from "../DisplayedSymbolWrapper/DisplayedSymbolWrapper";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
-import { Box, BoxProps } from "@mui/material";
+import { Box, type BoxProps } from "@mui/material";
 
 interface Props extends BoxProps {
   fontSize: FontSize;
@@ -34,7 +34,6 @@ export default function DisplayedRow({
   shouldSetRowHeight,
   textPosition,
   theme,
-  enteredSymbol,
   animateMistypedSymbol,
   setAnimateMistypedSymbol,
   ...boxProps
@@ -82,4 +81,4 @@ export default function DisplayedRow({
       {DisplayedSymbolWrapperComponents}
     </Box>
   );
-};
+}

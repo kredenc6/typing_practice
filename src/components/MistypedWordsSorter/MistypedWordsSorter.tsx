@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
-import { SortBy } from "../../types/otherTypes";
-import { CSSObjectFunctionsWithProp, CSSObjects } from "../../types/themeTypes";
+import { type SortBy } from "../../types/otherTypes";
+import { type CSSObjectFunctionsWithProp, type CSSObjects } from "../../types/themeTypes";
 
 interface Props {
   sortBy: SortBy;

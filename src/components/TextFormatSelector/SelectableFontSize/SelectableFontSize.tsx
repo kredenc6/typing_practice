@@ -1,6 +1,5 @@
-import React from "react";
-import { Box, Typography, TypographyProps } from "@mui/material";
-import { TypeDescription } from "../FontSizeSelector/FontSizeSelector";
+import { Box, Typography, type TypographyProps } from "@mui/material";
+import { type TypeDescription } from "../FontSizeSelector/FontSizeSelector";
 
 interface Props {
   typographyVariant: Partial<TypographyProps["variant"]>;

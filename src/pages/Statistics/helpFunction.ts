@@ -1,5 +1,5 @@
 import dateFormat from "dateformat";
-import { MistypedWordsLogV2, SortBy } from "../../types/otherTypes";
+import { type MistypedWordsLogV2, type SortBy } from "../../types/otherTypes";
 
 // export const sortMistypedWords = (mistypedWords: MistypedWordsLog, sortBy: SortBy) => {
 //   const [sort, direction] = sortBy.split(":") as [string, "asc" | "desc"];
@@ -54,7 +54,7 @@ export const sortMistypedWords = (
   const [sort, direction] = sortBy
     .split(":") as [keyof MistypedWordsLogV2[0]["sorting"], "asc" | "desc"];
   
-  let sortedWords: ([string, number[]] | undefined)[] = [];
+  const sortedWords: ([string, number[]] | undefined)[] = [];
   filteredIndexes.forEach(wordIndex => {
     const { word, timestamps, sorting } = mistypedWordsObj[wordIndex];
     const wordPosition = sorting[sort];

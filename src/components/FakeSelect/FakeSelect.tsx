@@ -1,6 +1,6 @@
-import { Box, BoxProps } from "@mui/material";
+import { Box, type BoxProps } from "@mui/material";
 import { ArrowDropDown } from "@mui/icons-material";
-import { CSSObjects } from "../../types/themeTypes";
+import { type CSSObjects } from "../../types/themeTypes";
 
 interface Props extends BoxProps {
   value: string;

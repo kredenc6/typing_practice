@@ -12,9 +12,9 @@ import { getInvalidSymbols } from "../../helpFunctions/getInvalidSymbols";
 import adjustTextGeneral from "../../textFunctions/adjustTextGeneral";
 import { useTextToTextField } from "../../customHooks/useTextToTextField";
 import ThemeSwitch from "../../components/ThemeSwith/ThemeSwith";
-import { ReactComponent as StatisticsIcon } from "../../svg/bar-chart-24px.svg";
+import StatisticsIcon from "../../assets/svg/bar-chart-24px.svg?react";
 import { KeyboardAlt as KeyboardIcon } from "@mui/icons-material";
-import { CSSObjects } from "../../types/themeTypes";
+import { type CSSObjects } from "../../types/themeTypes";
 
 interface Props {
   setText: React.Dispatch<React.SetStateAction<string>>;

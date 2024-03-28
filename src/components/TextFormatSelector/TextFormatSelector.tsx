@@ -2,14 +2,14 @@ import { useContext } from "react";
 import { Box, Divider } from "@mui/material";
 import FontSizeSelector from "./FontSizeSelector/FontSizeSelector";
 import FontFaceSelector from "./FontFaceSelector/FontFaceSelector";
-import { FontData, FontFamily, FontSize } from "../../types/themeTypes";
+import { type FontData, type FontFamily, type FontSize } from "../../types/themeTypes";
 import { PlayPageThemeContext } from "../../styles/themeContexts";
 
 interface Props {
   activeFontFamily: FontFamily;
   activeFontSize: FontSize;
   adjustSymbolRightMargin: (marginRight: string) => void;
-  handleFontDataChange: (fieldsToUpdate: Partial<Pick<FontData, "fontFamily" | "fontSize">>, callback?: () => any) => Promise<void>;
+  handleFontDataChange: (fieldsToUpdate: Partial<Pick<FontData, "fontFamily" | "fontSize">>, callback?: () => void) => Promise<void>;
   isFontDataLoading: boolean;
 }
 

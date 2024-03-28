@@ -1,4 +1,4 @@
-import { FontData } from "../types/themeTypes";
+import { type FontData } from "../types/themeTypes";
 
 export const getKnownSymbols = (fontData: FontData) => {
   return Object.keys(fontData.symbolWidths).map(symbol => {

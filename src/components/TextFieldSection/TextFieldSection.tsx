@@ -5,8 +5,8 @@ import TextNormalizeSwitches from "./TextNormalizeSwitches/TextNormalizeSwitches
 import adjustTextGeneral from "../../textFunctions/adjustTextGeneral";
 import adjustTextFromWiki from "../../textFunctions/adjustTextFromWiki";
 import adjustTextForCzechKeyboard from "../../textFunctions/adjustTextForCzechKeyboard";
-import { Unsafe_Entries } from "../../types/otherTypes";
-import { CSSObjects } from "../../types/themeTypes";
+import { type Unsafe_Entries } from "../../types/otherTypes";
+import { type CSSObjects } from "../../types/themeTypes";
 
 interface Props {
   setTextInput: (text: string) => void;

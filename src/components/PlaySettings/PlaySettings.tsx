@@ -6,9 +6,9 @@ import TextFormatSelector from "../TextFormatSelector/TextFormatSelector";
 import TextDisplayThemeSelector from "../TextDisplayThemeSelector/TextDisplayThemeSelector";
 import MistypeSettings from "./MistypeSettings/MistypeSettings";
 import PlaySettingsPopper from "./PlaySettingsPopper/PlaySettingsPopper";
-import { FontData, TextDisplayTheme } from "../../types/themeTypes";
+import { type FontData, type TextDisplayTheme } from "../../types/themeTypes";
 import { PlayPageThemeContext } from "../../styles/themeContexts";
-import { AllowedMistype } from "../../types/otherTypes";
+import { type AllowedMistype } from "../../types/otherTypes";
 import { LOCAL_STORAGE_KEYS } from "../../constants/constants";
 
 interface Props {

@@ -1,10 +1,10 @@
 import WebFont from "webfontloader";
-import { FontData } from "../types/themeTypes";
+import { type FontData } from "../types/themeTypes";
 
 export default function loadFont(
   fontData: FontData,
   setFontData: (value: React.SetStateAction<FontData>) => void,
-  callback?: () => any
+  callback?: () => void
 ) {
   const { fontFamily, fontLocation } = fontData;
   WebFont.load({

@@ -1,9 +1,8 @@
-import React from "react";
 import { Box } from "@mui/material";
 import DisplayedSymbol from "../../DisplayedSymbol/DisplayedSymbol";
-import { WordObject } from "../../../types/symbolTypes";
+import { type WordObject } from "../../../types/symbolTypes";
 import { getSymbolStyle } from "../../DisplayedRow/helpFunctions";
-import { TextDisplayTheme } from "../../../types/themeTypes";
+import { type TextDisplayTheme } from "../../../types/themeTypes";
 
 interface Props {
   mistypedWord: WordObject;

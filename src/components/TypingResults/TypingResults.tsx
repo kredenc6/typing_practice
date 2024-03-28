@@ -1,16 +1,17 @@
 import Simplebar from "simplebar-react";
 import { Box, Paper, SvgIcon, Typography } from "@mui/material";
-import { Results } from "../../types/otherTypes";
+import { type Results } from "../../types/otherTypes";
 import MistypedWord from "./MistypedWord/MistypedWord";
 import SpecificResult from "./SpecificResult/SpecificResult";
-import { ReactComponent as TopSpeed } from "../../svg/top-speed-24px.svg";
-import { ReactComponent as Target } from "../../svg/target-24px.svg";
-import { ReactComponent as ErrorCircle } from "../../svg/error-circle-24px.svg";
-import { ReactComponent as ThumbUpIcon } from "../../svg/thumb-up-24px.svg";
-import { ReactComponent as Clock } from "../../svg/time-24px.svg";
+import TopSpeed from "../../assets/svg/top-speed-24px.svg?react";
+import Target from "../../assets/svg/target-24px.svg?react";
+import ErrorCircle from "../../assets/svg/error-circle-24px.svg?react";
+import ThumbUpIcon from "../../assets/svg/thumb-up-24px.svg?react";
+import Clock from "../../assets/svg/time-24px.svg?react";
 import { useContext } from "react";
 import { PlayPageThemeContext } from "../../styles/themeContexts";
-import { CSSObjectFunctionsWithProp, TextDisplayTheme } from "../../types/themeTypes";
+import { type CSSObjectFunctionsWithProp, type TextDisplayTheme } from "../../types/themeTypes";
+import type { Theme } from "@mui/material/styles";
 
 interface Props {
   resultObj: Results | null;
@@ -113,7 +114,7 @@ export default function TypingResults({ resultObj }: Props) {
                 ? <Typography component="h6" variant="h4">
                     Bez překlepů! Pěkná práce.&nbsp;
                     <SvgIcon
-                      sx={theme => styleFunctions.thumbUp(theme, textDisplayTheme)}
+                      sx={(theme: Theme) => styleFunctions.thumbUp(theme, textDisplayTheme)}
                       component={ThumbUpIcon}
                       inheritViewBox />
                   </Typography>
@@ -121,7 +122,7 @@ export default function TypingResults({ resultObj }: Props) {
                   <Typography component="h6" variant="h4">
                     Žádná chybně napsaná slova.
                     <SvgIcon
-                      sx={theme => styleFunctions.thumbUp(theme, textDisplayTheme)}
+                      sx={(theme: Theme) => styleFunctions.thumbUp(theme, textDisplayTheme)}
                       component={ThumbUpIcon}
                       inheritViewBox />
                   </Typography>

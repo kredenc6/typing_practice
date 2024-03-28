@@ -1,4 +1,4 @@
-import { FontData } from "./themeTypes";
+import { type FontData } from "./themeTypes";
 import { defaultPalette } from "../styles/textDisplayPaletes";
 
 export type WordType = "word" | "whitespace" | "other";

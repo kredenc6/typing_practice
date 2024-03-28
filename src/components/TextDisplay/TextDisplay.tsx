@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Box, Theme } from "@mui/material";
+import { Box, type Theme } from "@mui/material";
 import {
   createSymbolWidthsObject, getPositions, updateSymbolCorrectness, updateWordProp,
   updateSymbolRows, getIndexes, isAllowedKey, isAllowedToMoveToNextSymbolOnMistake,
@@ -9,12 +9,12 @@ import areObjectValuesSame from "../../helpFunctions/areObjectValuesSame";
 import adjustRowsToNewFontData from "../../textFunctions/adjustRowsToNewFontData";
 import Timer from "../../accessories/Timer";
 import DisplayedRow from "../DisplayedRow/DisplayedRow";
-import { FontData, AnimateMistyped, TextDisplayTheme, CSSObjectFunctionsWithProp, CSSObjects } from "../../types/themeTypes";
-import { Row, SymbolCorrectness } from "../../types/symbolTypes";
+import { type FontData, type AnimateMistyped, type TextDisplayTheme, type CSSObjectFunctionsWithProp, type CSSObjects } from "../../types/themeTypes";
+import { type Row, type SymbolCorrectness } from "../../types/symbolTypes";
 import { PlayPageThemeContext } from "../../styles/themeContexts";
 import { transformTextToSymbolRows } from "../../textFunctions/transformTextToSymbolRows";
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
-import { AllowedMistype, GameStatus, Results, WordTimeObj } from "../../types/otherTypes";
+import { type AllowedMistype, type GameStatus, type Results, type WordTimeObj } from "../../types/otherTypes";
 import { shouldStartSelfType, shouldStopSelfType } from "../../admin/selfTypeSymbol";
 
 const LINE_MOVEMENT_MIN_POSITION = 3;
@@ -406,4 +406,4 @@ export default function TextDisplay({
       {DisplayedRowComponents}
     </Box>
   );
-};
+}

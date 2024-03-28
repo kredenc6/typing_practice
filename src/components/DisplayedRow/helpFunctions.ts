@@ -1,5 +1,5 @@
-import { SymbolStyle, TextDisplayTheme } from "../../types/themeTypes";
-import { SymbolCorrectness, RelativeSymbolPosition } from "../../types/symbolTypes";
+import { type SymbolStyle, type TextDisplayTheme } from "../../types/themeTypes";
+import { type SymbolCorrectness, type RelativeSymbolPosition } from "../../types/symbolTypes";
 
 export const getRelativePosition = (textPosition: number, symbolPosition: number): RelativeSymbolPosition => {
   if(textPosition === symbolPosition) return "active";

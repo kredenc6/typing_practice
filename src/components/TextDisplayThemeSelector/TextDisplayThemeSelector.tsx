@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import SelectTextDisplayThemeButton from "./SelectTextDisplayThemeButton/SelectTextDisplayThemeButton";
 import * as availableTextDisplayPalettes from "../../styles/textDisplayPaletes";
-import { TextDisplayTheme } from "../../types/themeTypes";
+import { type TextDisplayTheme } from "../../types/themeTypes";
 
 interface Props {
   handleTextDisplayThemeChange: (fieldChanges: Omit<TextDisplayTheme, "offset">) => void;

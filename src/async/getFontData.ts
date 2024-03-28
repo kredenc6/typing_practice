@@ -1,4 +1,4 @@
-import { FontFamily, FontSize, FontData } from "../types/themeTypes";
+import { type FontFamily, type FontSize, type FontData } from "../types/themeTypes";
 
 export default function getFontData(fontFamily: FontFamily, fontSize: FontSize): Promise<FontData | null> {
   return fetch(`./fontData/${fontFamily} ${fontSize}.json`)

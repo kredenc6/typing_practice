@@ -1,4 +1,4 @@
-import { OutlinedTextFieldProps, TextField } from "@mui/material";
+import { type OutlinedTextFieldProps, TextField } from "@mui/material";
 
 interface Props extends OutlinedTextFieldProps {
   handleInputChange: (text: string) => void;
