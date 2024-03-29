@@ -1,4 +1,4 @@
-import { UserDB } from "../../types/otherTypes";
+import { type UserDB } from "../../types/otherTypes";
 
 export const isUserObject = (obj: any): obj is UserDB => {
   console.log("User obj check:");

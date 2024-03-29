@@ -1,5 +1,5 @@
 import Timer from "../accessories/Timer";
-import { SymbolCorrectness, WordObject, WordType } from "./symbolTypes";
+import { type SymbolCorrectness, type WordObject, type WordType } from "./symbolTypes";
 
 export interface AllowedMistype {
   count: 0 | 1 | 2;

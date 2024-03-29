@@ -1,6 +1,6 @@
-import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
-import { BrowserRouter as Router, Redirect, Route, RouteProps, Switch, useLocation } from "react-router-dom";
-import { PaletteMode, ThemeProvider as MuiThemeProvider } from "@mui/material";
+import { type ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { BrowserRouter as Router, Redirect, Route, type RouteProps, Switch, useLocation } from "react-router-dom";
+import { type PaletteMode, ThemeProvider as MuiThemeProvider } from "@mui/material";
 import PlayPage from "./pages/PlayPage/PlayPage";
 import MainMenu from "./pages/MainMenu/MainMenu";
 import Statistics from "./pages/Statistics/Statistics";
@@ -10,7 +10,7 @@ import getFontData from "./async/getFontData";
 import { defaultTextDisplayFontStyle } from "./styles/textDisplayTheme/textDisplayData";
 import { PlayPageThemeProvider } from "./styles/themeContexts";
 import { createAppTheme } from "./styles/appTheme";
-import { AllowedMistype, LatestResult, MistypedWordsLog, User } from "./types/otherTypes";
+import { type AllowedMistype, type LatestResult, type MistypedWordsLog, type User } from "./types/otherTypes";
 import CssBaseline from '@mui/material/CssBaseline';
 import "simplebar/dist/simplebar.min.css";
 import { LOCAL_STORAGE_KEYS } from "./constants/constants";
@@ -19,7 +19,7 @@ import { getUser } from "./database/endpoints";
 import handleError from "./helpFunctions/handleError";
 import { onAuthStateChanged } from "firebase/auth";
 import { addUserIdToStorageKey, extractUserFromDbUser, unminifyMistypedWordsLog } from "./appHelpFunctions";
-import { FontData, FontStyle } from "./types/themeTypes";
+import { type FontData, type FontStyle } from "./types/themeTypes";
 import loadFont from "./async/loadFont";
 import parseStorageItem from "./helpFunctions/parseStorageItem";
 import Loading from "./components/Loading/Loading";
@@ -132,8 +132,11 @@ export default function App() {
 
   // set visibility for reCAPTCHA badge
   useEffect(() => {
-    const recaptchaNode = document.getElementsByClassName("grecaptcha-badge")?.[0] as HTMLElement;
-    recaptchaNode.style.visibility = isRecaptchaBadgeVisible ? "visible" : "hidden";
+    const recaptchaNode = document.getElementsByClassName("grecaptcha-badge")?.[0] as HTMLElement | null;
+
+    if(recaptchaNode) {
+      recaptchaNode.style.visibility = isRecaptchaBadgeVisible ? "visible" : "hidden";
+    }
   }, [isRecaptchaBadgeVisible])
 
   return (
@@ -218,4 +221,4 @@ function PrivateRoute({ children, user, ...routeProps }:PrivateRouteProps & Rout
       }}
     />
   );
-};
+}

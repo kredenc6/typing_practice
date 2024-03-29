@@ -1,6 +1,6 @@
-import { ReactNode, createContext, useContext, useState } from "react";
+import { type ReactNode, createContext, useContext, useState } from "react";
 import { LOCAL_STORAGE_KEYS } from "../constants/constants";
-import { TextDisplayTheme } from "../types/themeTypes";
+import { type TextDisplayTheme } from "../types/themeTypes";
 import { defaultTextDisplayTheme } from "./textDisplayTheme/textDisplayData";
 import { addUserIdToStorageKey } from "../appHelpFunctions";
 import parseStorageItem from "../helpFunctions/parseStorageItem";

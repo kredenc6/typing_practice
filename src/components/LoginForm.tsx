@@ -1,6 +1,6 @@
 import { Button, Box, Link, TextField, FormControlLabel, Checkbox, Typography } from "@mui/material";
 import { googleProvider } from "../database/firebase";
-import { AuthProvider } from "firebase/auth";
+import { type AuthProvider } from "firebase/auth";
 
 interface Props {
   createAccount: (value: true) => void;

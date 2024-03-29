@@ -1,5 +1,5 @@
-import { CSSObject } from "@mui/material";
-import { Theme } from "@mui/material";
+import { type CSSObject } from "@mui/material";
+import { type Theme } from "@mui/material";
 
 // font styles for displaying text
 export type FontSize = "20px" | "30px" | "40px";

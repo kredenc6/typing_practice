@@ -1,4 +1,4 @@
-import { Popper, PopperProps } from "@mui/material";
+import { Popper, type PopperProps } from "@mui/material";
 import { usePlayPageTheme } from "../../../styles/themeContexts";
 
 export default function PlaySettingPopper({ children, ...popperProps }: PopperProps) {

@@ -1,4 +1,4 @@
-import { FontSize } from "../types/themeTypes";
+import { type FontSize } from "../types/themeTypes";
 
 export const LAST_RESULTS_SAVE_COUNT = 10;
 export const LOCAL_STORAGE_KEYS = {

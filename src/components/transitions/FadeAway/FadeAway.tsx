@@ -1,7 +1,7 @@
-import { ReactNode } from "react";
-import { Box, useTheme, CSSObject, Theme } from "@mui/material";
-import { Transition, TransitionStatus } from "react-transition-group";
-import { TransitionProps } from "react-transition-group/Transition";
+import { type ReactNode } from "react";
+import { Box, useTheme, type CSSObject, type Theme } from "@mui/material";
+import { Transition, type TransitionStatus } from "react-transition-group";
+import { type TransitionProps } from "react-transition-group/Transition";
 
 interface Props {
     inProp: boolean;

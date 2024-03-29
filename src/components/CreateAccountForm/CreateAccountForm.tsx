@@ -59,37 +59,43 @@ export default function CreateAccountForm({ createAccount }: Props) {
       }
 
       setIsLoading(true);
-      const recaptchaResult: boolean | Error = await verifyWithRechaptcha("signIn");
 
-      if(recaptchaResult instanceof Error) {
-        console.log(recaptchaResult.message);
-        setError(recaptchaResult);
-        setIsLoading(false);
-        return;
+      // verify with reCHAPTCHA
+      try {
+        const recaptchaResult = await verifyWithRechaptcha("signIn");
+        
+        if(recaptchaResult === false) {
+          const errorMessage = "Signing in was blocked by reCAPTCHA.";
+          console.log(ErrorMessage);
+          setError(new Error(errorMessage));
+          setIsLoading(false);
+          return;
+        }
+      } catch(error) {
+        if(error instanceof Error) {
+          console.log(error.message);
+          setError(error);
+          setIsLoading(false);
+          return;
+        }
       }
 
-      if(recaptchaResult === false) {
-        const errorMessage = "Signing in was blocked by reCAPTCHA.";
-        console.log(ErrorMessage);
-        setError(new Error(errorMessage));
-        setIsLoading(false);
-        return;
+      // create user
+      try {
+        const { data } = await createUser(email, password, verification);
+        console.log(`The user with the email address ${data.email} was created successfuly. Now try to log in.`);
+
+        // Return user to the login page.
+        createAccount(false);
+      } catch(error) {
+        if(error instanceof Error) {
+          const errorMessage = `Failed to create the user, because: ${error.message}`;
+          console.log(errorMessage);
+          setError(new Error(errorMessage));
+          setIsLoading(false);
+          return;
+        }
       }
-
-      const createUserResult = await createUser(email, password, verification);
-
-      if(createUserResult instanceof Error) {
-        const errorMessage = `Failed to create the user, because: ${createUserResult.message}`;
-        console.log(errorMessage);
-        setError(new Error(errorMessage));
-        setIsLoading(false);
-        return;
-      }
-
-      console.log("The user was created successfuly. Now try to log in.");
-
-      // Return user to the login page.
-      createAccount(false);
     }
   });
 

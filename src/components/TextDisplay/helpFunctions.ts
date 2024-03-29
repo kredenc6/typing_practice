@@ -1,8 +1,8 @@
 import transformPixelSizeToNumber from "../../helpFunctions/transformPixelSizeToNumber";
 import { calcTypingPrecision, calcTypingSpeedInKeystrokes } from "../../helpFunctions/calcTypigSpeed";
-import { FontData, Offset } from "../../types/themeTypes";
-import { Row, SymbolCorrectness, SymbolWidths, WordObject } from "../../types/symbolTypes";
-import { AllowedMistype, GameStatus, ResultObj, MistypedWordsLog, MistypedWords, Mistypes, LatestResult, MistypedWord } from "../../types/otherTypes";
+import { type FontData, type Offset } from "../../types/themeTypes";
+import { type Row, type SymbolCorrectness, type SymbolWidths, type WordObject } from "../../types/symbolTypes";
+import { type AllowedMistype, type GameStatus, type ResultObj, type MistypedWordsLog, type MistypedWords, type Mistypes, type LatestResult, type MistypedWord } from "../../types/otherTypes";
 import { secondsToMMSS } from "../../helpFunctions/secondsToMMSS";
 import { LAST_RESULTS_SAVE_COUNT } from "../../constants/constants";
 import _ from "lodash";
@@ -506,5 +506,5 @@ export const updateLatestResults = (
     });
 
     return { ...resultObj , mistypedWords };
-  };
+  }
 };

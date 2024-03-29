@@ -1,6 +1,6 @@
 import React from "react";
 import { FormControlLabel, Switch, Box, Divider } from "@mui/material";
-import { AllowedMistype } from "../../../types/otherTypes";
+import { type AllowedMistype } from "../../../types/otherTypes";
 import SettingsButton from "../SettingsButton/SettingsButton";
 import { usePlayPageTheme } from "../../../styles/themeContexts";
 

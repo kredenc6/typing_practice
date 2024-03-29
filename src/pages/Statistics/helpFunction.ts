@@ -1,12 +1,15 @@
 import dateFormat from "dateformat";
-import { MistypedWords, MistypedWordsLog, SortBy, SortingDirection, SortingType } from "../../types/otherTypes";
+import {
+  type MistypedWords, type MistypedWordsLog, type  SortBy, type SortingDirection,
+  type SortingType
+} from "../../types/otherTypes";
 
 export const sortMistypedWords = (
   mistypedWordsObj: MistypedWordsLog, filteredIndexes: number[], sortBy: SortBy
 ) => {
   const [sortingType, sortingDirection] = sortBy.split(":") as [SortingType, SortingDirection];
   
-  let sortedWords: ([string, number[]] | undefined)[] = [];
+  const sortedWords: ([string, number[]] | undefined)[] = [];
   filteredIndexes.forEach(wordIndex => {
     const [word, timestamps] = mistypedWordsObj["words"][wordIndex];
 

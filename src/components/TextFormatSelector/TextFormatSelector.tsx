@@ -1,7 +1,7 @@
 import { Box, Divider } from "@mui/material";
 import FontSizeSelector from "./FontSizeSelector/FontSizeSelector";
 import FontFaceSelector from "./FontFaceSelector/FontFaceSelector";
-import { FontData, FontFamily, FontSize } from "../../types/themeTypes";
+import { type FontData, type FontFamily, type FontSize } from "../../types/themeTypes";
 import { usePlayPageTheme } from "../../styles/themeContexts";
 
 interface Props {

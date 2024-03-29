@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
-import { signInWithPopup, browserLocalPersistence, inMemoryPersistence, AuthProvider } from "firebase/auth";
+import { signInWithPopup, browserLocalPersistence, inMemoryPersistence, type AuthProvider } from "firebase/auth";
 import { auth } from "../../database/firebase";
 import { Box, Paper, Typography } from "@mui/material";
-import { User } from "../../types/otherTypes";
+import { type User } from "../../types/otherTypes";
 import handleError from "../../helpFunctions/handleError";
 import { getUser, saveUser } from "../../database/endpoints";
 import { extractUserDBFromUser, extractUserFromDbUser } from "../../appHelpFunctions";
@@ -32,7 +32,7 @@ export default function Login({ user, setUser, setIsRecaptchaBadgeVisible }: Pro
     
     auth.setPersistence(persistence)
       .then(() => {
-        let test = auth as any;
+        const test = auth as any; // TODO wtf is this?
         console.log(`persistence type: ${test.persistenceManager.persistence.type}`);
       });
   };
@@ -42,7 +42,7 @@ export default function Login({ user, setUser, setIsRecaptchaBadgeVisible }: Pro
     if(!user) {
       auth.setPersistence(inMemoryPersistence)
         .then(() => {
-          let test = auth as any;
+          const test = auth as any;
           console.log(`persistence type: ${test.persistenceManager.persistence.type}`);
         });
     }
@@ -81,7 +81,7 @@ export default function Login({ user, setUser, setIsRecaptchaBadgeVisible }: Pro
         </Box>
         )
     );
-};
+}
 
 // https://firebase.google.com/docs/auth/web/google-signin
 function login(provider: AuthProvider, callback: (user: User | null) => void) {

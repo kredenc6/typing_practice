@@ -33,10 +33,5 @@ export default function verifyWithRechaptcha(action) {
         );
         return success;
     })
-    .catch(error => {
-      console.log(error?.message)
-      return error;
-    }
-      );
   });
 }

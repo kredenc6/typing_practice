@@ -1,5 +1,5 @@
 import { MS_IN_A_MINUTE } from "./constants/constants";
-import { MinifiedMistypedWordsLog, MistypedWordsLog, User, UserDB } from "./types/otherTypes";
+import { type MinifiedMistypedWordsLog, type MistypedWordsLog, type User, type UserDB } from "./types/otherTypes";
 
 export const minifyMistypedWordsLog = (
   mistypedWordsLog: MistypedWordsLog

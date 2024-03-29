@@ -4,7 +4,7 @@ import {
   TextField, Box
 } from "@mui/material";
 import LoadedParagraphSummary from "../LoadedParagraphSummary/LoadedParagraphSummary";
-import { InsertTextOnLoad } from "../../pages/MainMenu/MainMenu";
+import { type InsertTextOnLoad } from "../../pages/MainMenu/MainMenu";
 
 const MIN_TEXT_INSERT_LENGTH = 100;
 const MAX_TEXT_INSERT_LENGTH = 9999;

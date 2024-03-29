@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Box, IconButton } from "@mui/material";
 import { Menu } from "@mui/icons-material";
-import { MistypedWordsLog, LatestResult } from "../../types/otherTypes";
+import { type MistypedWordsLog, type LatestResult } from "../../types/otherTypes";
 import MistypedWordsChartWrapper from "../../components/MistypedWordsChartWrapper/MistypedWordsChartWrapper";
 import LatestResultsChart from "../../components/LatestResultsChart/LatestResultsChart";
 import ThemeSwitch from "../../components/ThemeSwith/ThemeSwith";
-import { CSSObjects } from "../../types/themeTypes";
+import { type CSSObjects } from "../../types/themeTypes";
 import { Link } from "react-router-dom";
 import Footer from "../../components/Footer/Footer";
 

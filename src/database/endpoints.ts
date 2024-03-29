@@ -1,7 +1,7 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "./firebase";
 import { isUserObject } from "./dbTypeVerification/dbTypeVerification";
-import { UserDB } from "../types/otherTypes";
+import { type UserDB } from "../types/otherTypes";
 
 export const getUser = async (userId: string): Promise<UserDB | null> => {
   const userRef = doc(db, "users", userId);
@@ -35,9 +35,7 @@ export const loadMistypedWordsFromDB = async (userId: string) => {
   const userRef = doc(db, "users", userId);
   const userSnap = await getDoc(userRef);
 
-  if(userSnap.exists()) {
-
-  } else {
+  if(!userSnap.exists()) {
     throw new Error(`The user ${userId} was not found.`);
   }
 };

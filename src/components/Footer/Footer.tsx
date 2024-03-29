@@ -1,5 +1,5 @@
 import { Box, Link } from "@mui/material";
-import { CSSObjects } from "../../types/themeTypes";
+import { type CSSObjects } from "../../types/themeTypes";
 
 // BUG the background on the PlayPage does not correspond to this Footer backgound (they have different themes).
 // create a separate footer?, provide the theme style of the parent component and base the footer background on that?

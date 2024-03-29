@@ -1,7 +1,7 @@
 import { ButtonGroup, Grid } from "@mui/material";
 import SelectableFontSize from "../SelectableFontSize/SelectableFontSize";
 import { fontSizes } from "../../../styles/textDisplayTheme/textDisplayData";
-import { FontSize, FontStyle } from "../../../types/themeTypes";
+import { type FontSize, type FontStyle } from "../../../types/themeTypes";
 import SettingsButton from "../../PlaySettings/SettingsButton/SettingsButton";
 
 interface Props {

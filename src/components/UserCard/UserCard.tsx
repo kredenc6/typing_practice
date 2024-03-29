@@ -1,6 +1,6 @@
 import React from "react";
-import { Avatar, Box, Button, IconButton, Popover, Typography, AvatarProps } from "@mui/material";
-import { User } from "../../types/otherTypes";
+import { Avatar, Box, Button, IconButton, Popover, Typography, type AvatarProps } from "@mui/material";
+import { type User } from "../../types/otherTypes";
 
 interface Props {
   user: User | null;

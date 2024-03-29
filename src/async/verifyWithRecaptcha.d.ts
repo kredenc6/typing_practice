@@ -1,0 +1,1 @@
+export default function verifyWithRechaptcha(action: string): Promise<boolean>;

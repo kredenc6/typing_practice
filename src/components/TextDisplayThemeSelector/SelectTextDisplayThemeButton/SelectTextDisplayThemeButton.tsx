@@ -1,7 +1,7 @@
-import { Button, ButtonProps, CSSObject, Typography } from "@mui/material";
+import { Button, type ButtonProps, type CSSObject, Typography } from "@mui/material";
 import { usePlayPageTheme } from "../../../styles/themeContexts";
-import { TextDisplayTheme } from "../../../types/themeTypes";
-import { SymbolCorrectness } from "../../../types/symbolTypes";
+import { type TextDisplayTheme } from "../../../types/themeTypes";
+import { type SymbolCorrectness } from "../../../types/symbolTypes";
 
 const BUTTON_TEXT = "barevné téma";
 

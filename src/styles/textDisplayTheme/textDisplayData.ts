@@ -1,5 +1,5 @@
 import { defaultPalette } from "../textDisplayPaletes";
-import { FontFamilies, FontSize, FontStyle, TextDisplayTheme } from "../../types/themeTypes";
+import { type FontFamilies, type FontSize, type FontStyle, type TextDisplayTheme } from "../../types/themeTypes";
 import { DEFAULT_FONT_SIZE } from "../../constants/constants";
 
 export const defaultTextDisplayFontStyle: FontStyle = {
