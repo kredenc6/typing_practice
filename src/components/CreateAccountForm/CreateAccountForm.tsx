@@ -7,6 +7,7 @@ import { ScaleLoader } from "react-spinners";
 import scaleCssLength from "../../helpFunctions/scaleCssLength";
 import { BUTTON_SPINNER_SIZE_COEFICIENT } from "../../constants/constants";
 import createUser from "../../async/createUser";
+import axios from "axios";
 
 const validationSchema = yup.object({
   email: yup
@@ -51,8 +52,16 @@ export default function CreateAccountForm({ createAccount }: Props) {
     // TODO implement user messaging
     onSubmit: async ({ email, password, verification }) => {
       // TODO for testing delete after
-      // createUser(email, password, verification);
-      // createUser(email, password, verification);
+      // try {
+      //   createUser(email, password, verification);
+      //   // setTimeout(() => createUser(email, password, verification), 50);
+
+      // } catch(error) {
+      //   if(error instanceof Error) {
+      //     console.log(error.message);
+      //   }
+      // }
+      // return;
 
       if(error) {
         setError(null);
@@ -82,19 +91,34 @@ export default function CreateAccountForm({ createAccount }: Props) {
 
       // create user
       try {
+        // BUG SECURITY HAZARD - HASH THE PASSWORD AND THE VERIFICATION FIRST!!!!
         const { data } = await createUser(email, password, verification);
         console.log(`The user with the email address ${data.email} was created successfuly. Now try to log in.`);
 
         // Return user to the login page.
         createAccount(false);
       } catch(error) {
-        if(error instanceof Error) {
-          const errorMessage = `Failed to create the user, because: ${error.message}`;
-          console.log(errorMessage);
+        console.log("Failed to create the user.");
+        let errorMessage = "Unknown error.";
+
+        // axios error
+        if(axios.isAxiosError(error)) {
+          errorMessage = error.response?.data;
+          setError(error);
+
+        // standart error
+        } else if(error instanceof Error) {
+          errorMessage = error.message;
+          setError(error);
+
+        // unknown error
+        } else {
           setError(new Error(errorMessage));
-          setIsLoading(false);
-          return;
         }
+
+        console.log(errorMessage);
+        setIsLoading(false);
+        return;
       }
     }
   });
