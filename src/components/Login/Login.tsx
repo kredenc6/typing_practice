@@ -9,6 +9,7 @@ import { getUser, saveUser } from "../../database/endpoints";
 import { extractUserDBFromUser, extractUserFromDbUser } from "../../appHelpFunctions";
 import LoginForm from "../LoginForm";
 import CreateAccountForm from "../CreateAccountForm/CreateAccountForm";
+import { ADMIN_EMAIL } from "../../constants/secretConstants";
 
 interface Props {
   user: User | null;
@@ -110,7 +111,7 @@ function login(provider: AuthProvider, callback: (user: User | null) => void) {
         id: result.user.uid,
         name: result.user.displayName,
         picture: result.user.photoURL,
-        isAdmin: result.user.email === "filip.sran@gmail.com", // BUG THIS CAN'T BE HERE LIKE THAT - EASY TO HACK!!!!
+        isAdmin: result.user.email === ADMIN_EMAIL,
         createdAt: Date.now()
       };
 
