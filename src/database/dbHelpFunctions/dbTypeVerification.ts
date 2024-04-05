@@ -15,6 +15,6 @@ export const isUserObject = (obj: any): obj is UserDB => {
       "c" in obj &&
       typeof obj.c === "number" &&
       "p" in obj &&
-      (typeof obj.p === "string" || obj.picture === null)
+      (typeof obj.p === "string" || obj.p === null)
     );
 };

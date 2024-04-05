@@ -1,23 +1,18 @@
 import { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
-import { signInWithPopup, browserLocalPersistence, inMemoryPersistence, type AuthProvider } from "firebase/auth";
+import { browserLocalPersistence, inMemoryPersistence } from "firebase/auth";
 import { auth } from "../../database/firebase";
 import { Box, Paper, Typography } from "@mui/material";
 import { type User } from "../../types/otherTypes";
-import handleError from "../../helpFunctions/handleError";
-import { getUser, saveUser } from "../../database/endpoints";
-import { extractUserDBFromUser, extractUserFromDbUser } from "../../appHelpFunctions";
 import LoginForm from "../LoginForm";
 import CreateAccountForm from "../CreateAccountForm/CreateAccountForm";
-import { ADMIN_EMAIL } from "../../constants/secretConstants";
 
 interface Props {
   user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
   setIsRecaptchaBadgeVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Login({ user, setUser, setIsRecaptchaBadgeVisible }: Props) {
+export default function Login({ user, setIsRecaptchaBadgeVisible }: Props) {
   const [rememberTheUser, setRememberTheUser] = useState(!!user);
 
   // TODO dear lord please change the name to something like "toggleCreateAccount" or similar.
@@ -75,8 +70,7 @@ export default function Login({ user, setUser, setIsRecaptchaBadgeVisible }: Pro
               : <LoginForm
                   createAccount={setCreateAccount}
                   handleCheckboxChange={handleCheckboxChange}
-                  rememberTheUser={rememberTheUser}
-                  login={(provider: AuthProvider) => login(provider, setUser)} />
+                  rememberTheUser={rememberTheUser} />
             }
           </Paper>
         </Box>
@@ -84,50 +78,50 @@ export default function Login({ user, setUser, setIsRecaptchaBadgeVisible }: Pro
     );
 }
 
-// https://firebase.google.com/docs/auth/web/google-signin
-function login(provider: AuthProvider, callback: (user: User | null) => void) {
-  signInWithPopup(auth, provider)
-    .then( async (result) => {
+// // https://firebase.google.com/docs/auth/web/google-signin
+// function login(provider: AuthProvider, callback: (user: User | null) => void) {
+//   signInWithPopup(auth, provider)
+//     .then( async (result) => {
 
-      // find out if the user already exists in the database
-      try {
-        const userDB = await getUser(result.user.uid);
+//       // find out if the user already exists in the database
+//       try {
+//         const userDB = await getUser(result.user.uid);
 
-        // if the user exist, save him to the state
-        if(userDB) {
-          const user = extractUserFromDbUser(userDB);
-          callback(user);
-          return;
-        }
-      }
-      catch(error) {
-        const errorMessage = `Failed to load the user ${result.user.uid} from the database`;
-        handleError(error, errorMessage);
-        return;
-      }
+//         // if the user exist, save him to the state
+//         if(userDB) {
+//           const user = extractUserFromDbUser(userDB);
+//           callback(user);
+//           return;
+//         }
+//       }
+//       catch(error) {
+//         const errorMessage = `Failed to load the user ${result.user.uid} from the database`;
+//         handleError(error, errorMessage);
+//         return;
+//       }
 
-      // if the user doesn't exist in the database create a new user...
-      const newUser: User = {
-        id: result.user.uid,
-        name: result.user.displayName,
-        picture: result.user.photoURL,
-        isAdmin: result.user.email === ADMIN_EMAIL,
-        createdAt: Date.now()
-      };
+//       // if the user doesn't exist in the database create a new user...
+//       const newUser: User = {
+//         id: result.user.uid,
+//         name: result.user.displayName,
+//         picture: result.user.photoURL,
+//         isAdmin: result.user.email === ADMIN_EMAIL,
+//         createdAt: Date.now()
+//       };
 
-      // ...and save the new user to the database and the state
-      const newUserDB = extractUserDBFromUser(newUser)!;
-      try {
-        await saveUser(result.user.uid, newUserDB);
-        callback(newUser);
-      }
-      catch(error) {
-        const errorMessage = `Failed to save the user ${newUser.name} to the database`;
-        handleError(error, errorMessage);
-      }
-    })
-    .catch(error => {
-      const message = `Login failed. ${error.message}`;
-      handleError(error, message);
-    });
-}
+//       // ...and save the new user to the database and the state
+//       const newUserDB = extractUserDBFromUser(newUser)!;
+//       try {
+//         await saveUser(result.user.uid, newUserDB);
+//         callback(newUser);
+//       }
+//       catch(error) {
+//         const errorMessage = `Failed to save the user ${newUser.name} to the database`;
+//         handleError(error, errorMessage);
+//       }
+//     })
+//     .catch(error => {
+//       const message = `Login failed. ${error.message}`;
+//       handleError(error, message);
+//     });
+// }

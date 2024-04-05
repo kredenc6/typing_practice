@@ -1,6 +1,10 @@
-import axios from "axios";
+import axios, { type AxiosResponse } from "axios";
+import { type User } from "../types/otherTypes";
 
-export default function createUser(email: string, password: string, verification: string) {
+// This is not handled on the frontend for a secure email and password validation.
+export default function createUser(
+  email: string, password: string, verification: string
+): Promise<AxiosResponse<User>> {
   return axios.post(
     "/.netlify/functions/proxy/createUser",
     { email, password, verification }

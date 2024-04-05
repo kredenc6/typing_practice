@@ -29,7 +29,6 @@ interface Props {
   createAccount: (value: false) => void;
 }
 
-// TODO disable the fields and the button when waiting for a response
 // TODO invalidate the email field when the email is already in use (response will say that)
 // a session storage might be good to remember that
 
@@ -51,25 +50,13 @@ export default function CreateAccountForm({ createAccount }: Props) {
 
     // TODO implement user messaging
     onSubmit: async ({ email, password, verification }) => {
-      // TODO for testing delete after
-      // try {
-      //   createUser(email, password, verification);
-      //   // setTimeout(() => createUser(email, password, verification), 50);
-
-      // } catch(error) {
-      //   if(error instanceof Error) {
-      //     console.log(error.message);
-      //   }
-      // }
-      // return;
-
       if(error) {
         setError(null);
       }
 
       setIsLoading(true);
 
-      // verify with reCHAPTCHA
+      // Verify with reCHAPTCHA.
       try {
         const recaptchaResult = await verifyWithRechaptcha("signIn");
         
@@ -89,11 +76,10 @@ export default function CreateAccountForm({ createAccount }: Props) {
         }
       }
 
-      // create user
+      // Create user.
       try {
-        // BUG SECURITY HAZARD - HASH THE PASSWORD AND THE VERIFICATION FIRST!!!!
-        const { data } = await createUser(email, password, verification);
-        console.log(`The user with the email address ${data.email} was created successfuly. Now try to log in.`);
+        await createUser(email, password, verification);
+        console.log("The user was created successfuly. Now try to log in.");
 
         // Return user to the login page.
         createAccount(false);
@@ -140,7 +126,7 @@ export default function CreateAccountForm({ createAccount }: Props) {
             size="small"
             id="email"
             name="email"
-            label="Email"
+            label="email"
             value={email}
             onChange={handleChange}
             onBlur={handleBlur}

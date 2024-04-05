@@ -36,26 +36,41 @@ export default function getFirebaseErrorHttpStatusCode(errorCode: string) {
     "auth/invalid-provider-data",
     "auth/invalid-provider-id",
     "auth/invalid-oauth-responsetype",
+    "auth/invalid-uid",
     "auth/invalid-session-cookie-duration",
     "auth/missing-android-pkg-name",
     "auth/missing-continue-uri",
     "auth/missing-hash-algorithm",
     "auth/missing-ios-bundle-id",
+    "auth/missing-oauth-client-secret",
     "auth/missing-uid",
+    "auth/reserved-claims",
     "auth/unauthorized-continue-uri"
   ];
 
   // Errors corresponding to 401 Unauthorized
   const unauthorizedErrors = [
     "auth/id-token-expired", // Can also be 400
-    "auth/insufficient-permission"
+    "auth/id-token-revoked",
+    "auth/insufficient-permission",
+    "auth/session-cookie-expired",
+    "auth/session-cookie-revoked"
   ];
 
   // Errors corresponding to 403 Forbidden
-  const forbiddenErrors = ["auth/operation-not-allowed"];
+  const forbiddenErrors = ["auth/maximum-user-count-exceeded", "auth/operation-not-allowed"];
 
   // Errors corresponding to 404 Not Found
   const notFoundErrors = ["auth/project-not-found", "auth/user-not-found"];
+  
+  // Errors corresponding to 409 Conflict
+  const confictErrors = ["auth/phone-number-already-exists", "auth/uid-already-exists"];
+  
+  // Errors corresponding to 422 Unprocessable Content
+  const unprocessableErrors = ["auth/invalid-user-import"];
+
+  // Errors corresponding to 429 Too Many Requests
+  const tooManyRequestsErrors = ["auth/too-many-requests"];
 
   // Errors corresponding to 500 Internal Server Error
   const internalErrors = ["auth/internal-error"];
@@ -64,6 +79,9 @@ export default function getFirebaseErrorHttpStatusCode(errorCode: string) {
   if(unauthorizedErrors.includes(errorCode)) return 401;
   if(forbiddenErrors.includes(errorCode)) return 403;
   if(notFoundErrors.includes(errorCode)) return 404;
+  if(confictErrors.includes(errorCode)) return 409;
+  if(unprocessableErrors.includes(errorCode)) return 422;
+  if(tooManyRequestsErrors.includes(errorCode)) return 429;
   if(internalErrors.includes(errorCode)) return 500;
 
   console.error(`Unknown firebase error code: ${errorCode}.`);

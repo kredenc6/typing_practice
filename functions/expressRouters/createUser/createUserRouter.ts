@@ -28,10 +28,10 @@ const validate = (schema: yup.ObjectSchema<SignIn>) => async (req: Request, res:
     return next();
   } catch (err) {
     if (err instanceof yup.ValidationError) {
-      return res.status(400).json({ type: "ValidationError", message: err.message });
+      return res.status(400).send(err.message);
     }
     
-    return res.status(500).json({ type: "UnknownError", message: "An unknown error occurred." });
+    return res.status(500).send("An unknown error occurred.");
   }
 };
 
@@ -52,8 +52,7 @@ router.post("/createUser", validate(signInSchema), async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const createUserResponse = await createUserWithEmailAndPassword(auth, email, password);
-    res.json(createUserResponse.user);
+    await createUserWithEmailAndPassword(auth, email, password);
   } catch(error) {
     if(error instanceof FirebaseError) {
       const status = getFirebaseErrorHttpStatusCode(error.code);

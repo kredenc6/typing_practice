@@ -65,11 +65,7 @@ export const unminifyMistypedWordsLog = (
   };
 };
 
-export const extractUserFromDbUser = (userDB: UserDB | null): User | null => {
-  if(!userDB) {
-    return null;
-  }
-  
+export const formatToUserFromDbUser = (userDB: UserDB): User => {
   return {
     id: userDB.i,
     name: userDB.n,
@@ -79,11 +75,7 @@ export const extractUserFromDbUser = (userDB: UserDB | null): User | null => {
   };
 };
 
-export const extractUserDBFromUser = (user: User | null): UserDB | null => {
-  if(!user) {
-    return null;
-  }
-  
+export const formatToUserDBFromUser = (user: User): UserDB => {
   return {
     i: user.id,
     n: user.name,

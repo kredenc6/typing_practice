@@ -53,6 +53,7 @@ const styles: CSSObjects = {
 };
 
 // TODO setText maximum length
+// TODO get rid of the unsused props
 export default function MainMenu({ setText, fontData, user, setUser }: Props) {
   const [loadedParagraphs, setLoadedParagraphs] = useState<string[]>([]);
   const [insertTextOnLoad, setInsertTextOnLoad] = useState<InsertTextOnLoad>({

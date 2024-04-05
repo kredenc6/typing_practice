@@ -1,9 +1,9 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "./firebase";
-import { isUserObject } from "./dbTypeVerification/dbTypeVerification";
+import { isUserObject } from "./dbHelpFunctions/dbTypeVerification";
 import { type UserDB } from "../types/otherTypes";
 
-export const getUser = async (userId: string): Promise<UserDB | null> => {
+export const getUser = async (userId: string): Promise<UserDB> => {
   const userRef = doc(db, "users", userId);
   const userSnap = await getDoc(userRef);
 
@@ -18,7 +18,13 @@ export const getUser = async (userId: string): Promise<UserDB | null> => {
     return existingUser;
   }
     
-  return null;
+  throw new Error(`User ${userId} doesn't exits in the database.`);
+};
+
+export const isUserInDB = async (userId: string): Promise<boolean> => {
+  const userRef = doc(db, "users", userId);
+  const userSnap = await getDoc(userRef);
+  return userSnap.exists();
 };
 
 export const saveUser = async (userId: string, user: UserDB) => {

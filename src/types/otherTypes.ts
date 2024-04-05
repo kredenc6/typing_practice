@@ -129,5 +129,3 @@ export type MistypedWord = {
   typedSpeed: number;
   mistypes: Mistypes[];
 }
-
-

@@ -22,3 +22,4 @@ export const MINIMUM_BUFFER_LENGTH = 150;
 
 export const DEFAULT_FONT_SIZE: FontSize = "30px";
 export const BUTTON_SPINNER_SIZE_COEFICIENT = 1.45;
+export const ALLOWED_PROVIDER_IDS = ["google.com", "password"];

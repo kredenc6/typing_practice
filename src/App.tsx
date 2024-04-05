@@ -13,16 +13,17 @@ import { createAppTheme } from "./styles/appTheme";
 import { type AllowedMistype, type LatestResult, type MistypedWordsLog, type User } from "./types/otherTypes";
 import CssBaseline from '@mui/material/CssBaseline';
 import "simplebar/dist/simplebar.min.css";
-import { LOCAL_STORAGE_KEYS } from "./constants/constants";
+import { ALLOWED_PROVIDER_IDS, LOCAL_STORAGE_KEYS } from "./constants/constants";
 import { auth } from "./database/firebase";
-import { getUser } from "./database/endpoints";
+import { getUser, isUserInDB, saveUser } from "./database/endpoints";
 import handleError from "./helpFunctions/handleError";
 import { onAuthStateChanged } from "firebase/auth";
-import { addUserIdToStorageKey, extractUserFromDbUser, unminifyMistypedWordsLog } from "./appHelpFunctions";
+import { addUserIdToStorageKey, formatToUserDBFromUser, formatToUserFromDbUser, unminifyMistypedWordsLog } from "./appHelpFunctions";
 import { type FontData, type FontStyle } from "./types/themeTypes";
 import loadFont from "./async/loadFont";
 import parseStorageItem from "./helpFunctions/parseStorageItem";
 import Loading from "./components/Loading/Loading";
+import createNewUser from "./helpFunctions/createNewDbUser";
 
 export default function App() {
   const [fontData, setFontData] = useState<FontData | null>(null);
@@ -56,34 +57,62 @@ export default function App() {
   // TODO make it custom and seperate it to several by their functionality
   useEffect(() => {
     // AUTH STATE CHANGE LISTENER
-    return onAuthStateChanged(auth, async (providerUser) => {
+    return onAuthStateChanged(auth, async (firebaseUser) => {
       
-      // Disable loading screen flag.
-      if(!providerUser && isLoginPending) {
-        setIsLoginPending(false);
-      }
-      
-      // user logged in
-      if (providerUser) {
+      // User logged in.
+      if (firebaseUser) {
         try {
-          const loggedInUserDB = await getUser(providerUser.uid);
-          console.log(`Logged in user name: ${loggedInUserDB?.n}.`);
 
-          // Extract and save to the state mistyped words from the user object.
-          if(loggedInUserDB?.m) {
-            const minifiedMistypedWordsLog = JSON.parse(loggedInUserDB.m);
-            const unminified = unminifyMistypedWordsLog(minifiedMistypedWordsLog);
-            setSavedMistypedWords(unminified);
-          }
-          
-          // Extract and save to the state latest results from the user object.
-          if(loggedInUserDB?.r) {
-            const latestResults = JSON.parse(loggedInUserDB.r);
-            setLatestResults(latestResults);
-          }
+          // When the user is in the database:
+          if(await isUserInDB(firebaseUser.uid)) {
+            const loggedInUserDB = await getUser(firebaseUser.uid);
+            console.log(`Logged in user name: ${loggedInUserDB.n}.`);
+  
+            // Extract and save to the state mistyped words from the user object.
+            if(loggedInUserDB.m) {
+              const minifiedMistypedWordsLog = JSON.parse(loggedInUserDB.m);
+              const unminified = unminifyMistypedWordsLog(minifiedMistypedWordsLog);
+              setSavedMistypedWords(unminified);
+            }
+            
+            // Extract and save to the state latest results from the user object.
+            if(loggedInUserDB.r) {
+              const latestResults = JSON.parse(loggedInUserDB.r);
+              setLatestResults(latestResults);
+            }
+  
+            // Extract and save to the state the user object.
+            setUser(formatToUserFromDbUser(loggedInUserDB));
 
-          // Extract and save to the state the user object.
-          setUser(extractUserFromDbUser(loggedInUserDB));
+          // When the user is not in the database:
+          } else {
+
+            // The logic works when the length === 1. It should correspond to the 1 provider linked to the 1 account.
+            // In this case Google. If it's bigger find out why. There's a possibility to link multiple providers
+            // to the one account. The logic here does no account for that.
+            if(firebaseUser.providerData.length !== 1) {
+              throw new Error("Invalid provider count.");
+            }
+
+            const providerId = firebaseUser.providerData[0].providerId;
+            if(ALLOWED_PROVIDER_IDS.includes(providerId)) {
+              throw new Error(`Not allowed provider id: ${providerId}`);
+            }
+            
+            try {
+              // Create a new DB user.
+              const newUser = createNewUser(firebaseUser);
+        
+              // Save the new user to the database and the state.
+              const newUserDB = formatToUserDBFromUser(newUser);
+              await saveUser(firebaseUser.uid, newUserDB);
+              setUser(newUser);
+            }
+            catch(error) {
+              const errorMessage = "Failed to save the user to the database";
+              handleError(error, errorMessage);
+            }
+          }
 
           // Disable loading screen flag.
           if(isLoginPending) {
@@ -94,9 +123,14 @@ export default function App() {
           handleError(error);
         }
 
-      // user logged out
+      // User logged out.
       } else {
         setUser(null);
+        setSavedMistypedWords(null);
+        setLatestResults(null);
+
+        // Disable loading screen flag.
+        setIsLoginPending(false);
       }
     });
 
@@ -152,7 +186,6 @@ export default function App() {
           </PrivateRoute>
           <Route path="/login">
             <Login
-              setUser={setUser}
               user={user}
               setIsRecaptchaBadgeVisible={setIsRecaptchaBadgeVisible} />
           </Route>
