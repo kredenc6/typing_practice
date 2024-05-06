@@ -1,13 +1,15 @@
 import { Box, Button, Link, TextField, Typography, useTheme } from "@mui/material";
 import * as yup from "yup";
-import { ErrorMessage, useFormik } from "formik";
+import { useFormik } from "formik";
 import verifyWithRechaptcha from "../../async/verifyWithRecaptcha";
 import { useState } from "react";
 import { ScaleLoader } from "react-spinners";
 import scaleCssLength from "../../helpFunctions/scaleCssLength";
-import { BUTTON_SPINNER_SIZE_COEFICIENT } from "../../constants/constants";
+import { BUTTON_SPINNER_SIZE_COEFICIENT, RECAPTCHA_KEYS } from "../../constants/constants";
 import createUser from "../../async/createUser";
 import axios from "axios";
+import EmailVerification from "../EmailVerification/EmailVerification";
+import { loginWithEmail } from "../../async/loginUser";
 
 const validationSchema = yup.object({
   email: yup
@@ -29,13 +31,11 @@ interface Props {
   createAccount: (value: false) => void;
 }
 
-// TODO invalidate the email field when the email is already in use (response will say that)
-// a session storage might be good to remember that
-
 export default function CreateAccountForm({ createAccount }: Props) {
   const { palette, typography } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<null | Error>(null);
+  const [newUserSignedIn, setNewUserSignedIn] = useState(false);
 
   const {
     handleBlur, handleChange, handleSubmit,
@@ -58,11 +58,11 @@ export default function CreateAccountForm({ createAccount }: Props) {
 
       // Verify with reCHAPTCHA.
       try {
-        const recaptchaResult = await verifyWithRechaptcha("signIn");
+        const recaptchaResult = await verifyWithRechaptcha(RECAPTCHA_KEYS.SIGN_IN);
         
         if(recaptchaResult === false) {
           const errorMessage = "Signing in was blocked by reCAPTCHA.";
-          console.log(ErrorMessage);
+          console.log(errorMessage);
           setError(new Error(errorMessage));
           setIsLoading(false);
           return;
@@ -80,9 +80,6 @@ export default function CreateAccountForm({ createAccount }: Props) {
       try {
         await createUser(email, password, verification);
         console.log("The user was created successfuly. Now try to log in.");
-
-        // Return user to the login page.
-        createAccount(false);
       } catch(error) {
         console.log("Failed to create the user.");
         let errorMessage = "Unknown error.";
@@ -106,11 +103,25 @@ export default function CreateAccountForm({ createAccount }: Props) {
         setIsLoading(false);
         return;
       }
+
+      // Login the firebaseUser ()
+      try {
+        await loginWithEmail(email, password);
+        setNewUserSignedIn(true);
+      } catch(error) {
+        if(error instanceof Error) {
+          console.log(error.message);
+        } else {
+          console.log("An unknown error has occured during firebaseUser login.");
+        }
+      }
     }
   });
 
   return (
-    <Box>
+    newUserSignedIn
+      ? <EmailVerification createAccount={createAccount} />
+      : <Box>
       <Typography variant="h6" sx={{ marginBottom: "2rem" }}>
         Vytvoření účtu
       </Typography>

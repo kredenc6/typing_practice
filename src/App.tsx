@@ -38,6 +38,7 @@ export default function App() {
   const [latestResults, setLatestResults] = useState<LatestResult[] | null>(null);
   const [isLoginPending, setIsLoginPending] = useState(true);
   const [isRecaptchaBadgeVisible, setIsRecaptchaBadgeVisible] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
   const updateTheme = useCallback((themeType?: PaletteMode) => {
     if(!user?.id) return;
@@ -58,9 +59,17 @@ export default function App() {
   useEffect(() => {
     // AUTH STATE CHANGE LISTENER
     return onAuthStateChanged(auth, async (firebaseUser) => {
-      
+      console.log("sdlkfj klsd fljk ls lsedklf jl")
       // User logged in.
       if (firebaseUser) {
+
+        // User doesn't have a verified email.
+        if(!firebaseUser.emailVerified) {
+          console.log(`Unverified email ${firebaseUser.email}. Pausing the login attempt.`);
+          return;
+        }
+
+        // User is verified.
         try {
 
           // When the user is in the database:
@@ -95,7 +104,13 @@ export default function App() {
             }
 
             const providerId = firebaseUser.providerData[0].providerId;
-            if(ALLOWED_PROVIDER_IDS.includes(providerId)) {
+            if(!ALLOWED_PROVIDER_IDS.includes(providerId)) {
+              auth.signOut()
+                .catch(error => {
+                  const errorMsg = "Failed to log out.";
+                  handleError(error, errorMsg);
+                });
+
               throw new Error(`Not allowed provider id: ${providerId}`);
             }
             
@@ -187,6 +202,8 @@ export default function App() {
           <Route path="/login">
             <Login
               user={user}
+              openModal={openModal}
+              setOpenModal={setOpenModal}
               setIsRecaptchaBadgeVisible={setIsRecaptchaBadgeVisible} />
           </Route>
           <PrivateRoute path="/mainMenu" user={user}>
@@ -194,8 +211,7 @@ export default function App() {
               setText={setText}
               fontData={fontData}
               setUser={setUser}
-              user={user}
-            />
+              user={user} />
           </PrivateRoute>
           <PrivateRoute path="/playArea" user={user}>
             <PlayPageThemeProvider userId={user?.id ?? null}>

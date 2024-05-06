@@ -1,13 +1,15 @@
 import { Button, Box, Link, TextField, FormControlLabel, Checkbox, Typography } from "@mui/material";
 import { loginWithEmail, loginWithProvider } from "../async/loginUser";
-import { googleProvider } from "../database/firebase";
+import { auth, googleProvider } from "../database/firebase";
 import * as yup from "yup";
 import { useFormik } from "formik";
+import type React from "react";
 
 interface Props {
   createAccount: (value: true) => void;
   rememberTheUser: boolean;
   handleCheckboxChange: () => void;
+  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const validationSchema = yup.object({
@@ -21,7 +23,7 @@ const validationSchema = yup.object({
 });
 
 export default function LoginForm({
-  createAccount, rememberTheUser, handleCheckboxChange
+  createAccount, rememberTheUser, handleCheckboxChange, setOpenModal
 }: Props) {
   const {
     handleBlur, handleChange, handleSubmit,
@@ -30,8 +32,31 @@ export default function LoginForm({
     initialValues: { email: "", password: "" },
     validationSchema: validationSchema,
     onSubmit: async ({ email, password }) => {
+
+      // In case the user verifies his email, while he's logged in.
+      // He needs to be relogged in in order to trigger the login logic.
+      if(auth.currentUser &&
+        auth.currentUser.email === email &&
+        auth.currentUser.emailVerified) {
+          try {
+            await auth.signOut();
+          } catch(error) {
+            if(error instanceof Error) {
+              console.log(error.message);
+            } else {
+              console.log("An unknown error occured during user sing out.");
+            }
+          }
+      }
       try {
+
+        // The login logic is handled by "onAuthStateChanged" listener.
         await loginWithEmail(email, password);
+        
+        // If the user doesn't have verified email, open NotVerified modal.
+        if(auth.currentUser && !auth.currentUser.emailVerified) {
+          setOpenModal(true);
+        }
       } catch(error) {
         if(error instanceof Error) {
           console.log(error.message);

@@ -6,13 +6,18 @@ import { Box, Paper, Typography } from "@mui/material";
 import { type User } from "../../types/otherTypes";
 import LoginForm from "../LoginForm";
 import CreateAccountForm from "../CreateAccountForm/CreateAccountForm";
+import NotVerified from "../NotVerified/NotVerified";
 
 interface Props {
   user: User | null;
+  openModal: boolean;
+  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   setIsRecaptchaBadgeVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Login({ user, setIsRecaptchaBadgeVisible }: Props) {
+export default function Login({
+  user, openModal, setOpenModal, setIsRecaptchaBadgeVisible
+}: Props) {
   const [rememberTheUser, setRememberTheUser] = useState(!!user);
 
   // TODO dear lord please change the name to something like "toggleCreateAccount" or similar.
@@ -70,58 +75,12 @@ export default function Login({ user, setIsRecaptchaBadgeVisible }: Props) {
               : <LoginForm
                   createAccount={setCreateAccount}
                   handleCheckboxChange={handleCheckboxChange}
-                  rememberTheUser={rememberTheUser} />
+                  rememberTheUser={rememberTheUser}
+                  setOpenModal={setOpenModal} />
             }
           </Paper>
+          <NotVerified open={openModal} setOpen={setOpenModal}/>
         </Box>
         )
     );
 }
-
-// // https://firebase.google.com/docs/auth/web/google-signin
-// function login(provider: AuthProvider, callback: (user: User | null) => void) {
-//   signInWithPopup(auth, provider)
-//     .then( async (result) => {
-
-//       // find out if the user already exists in the database
-//       try {
-//         const userDB = await getUser(result.user.uid);
-
-//         // if the user exist, save him to the state
-//         if(userDB) {
-//           const user = extractUserFromDbUser(userDB);
-//           callback(user);
-//           return;
-//         }
-//       }
-//       catch(error) {
-//         const errorMessage = `Failed to load the user ${result.user.uid} from the database`;
-//         handleError(error, errorMessage);
-//         return;
-//       }
-
-//       // if the user doesn't exist in the database create a new user...
-//       const newUser: User = {
-//         id: result.user.uid,
-//         name: result.user.displayName,
-//         picture: result.user.photoURL,
-//         isAdmin: result.user.email === ADMIN_EMAIL,
-//         createdAt: Date.now()
-//       };
-
-//       // ...and save the new user to the database and the state
-//       const newUserDB = extractUserDBFromUser(newUser)!;
-//       try {
-//         await saveUser(result.user.uid, newUserDB);
-//         callback(newUser);
-//       }
-//       catch(error) {
-//         const errorMessage = `Failed to save the user ${newUser.name} to the database`;
-//         handleError(error, errorMessage);
-//       }
-//     })
-//     .catch(error => {
-//       const message = `Login failed. ${error.message}`;
-//       handleError(error, message);
-//     });
-// }

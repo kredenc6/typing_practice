@@ -4,6 +4,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../../src/database/firebase";
 import { FirebaseError } from "firebase/app";
 import getFirebaseErrorHttpStatusCode from "./getFirebaseErrorHttpStatusCode";
+import sendVerificationEmail from "../../../src/async/sendVerificationEmail";
 
 interface SignIn {
   email: string;
@@ -11,6 +12,7 @@ interface SignIn {
   verification: string;
 }
 
+// Validation
 const signInSchema: yup.ObjectSchema<SignIn> = yup.object({
   email: yup.string().email().required("Invalid email."),
   password: yup.string().min(8).max(20).required("Invalid password."),
@@ -35,6 +37,14 @@ const validate = (schema: yup.ObjectSchema<SignIn>) => async (req: Request, res:
   }
 };
 
+// email verification settings
+// const actionCodeSettings = {
+//   // URL you want to redirect back to. The domain (www.example.com) for this
+//   // URL must be in the authorized domains list in the Firebase Console.
+//   url: URLS.LOCAL, // TODO replace with .APP for production
+//   handleCodeInApp: false,
+// };
+
 const router = express.Router();
 
 router.post("/createUser", validate(signInSchema), async (req, res) => {
@@ -52,8 +62,11 @@ router.post("/createUser", validate(signInSchema), async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    await createUserWithEmailAndPassword(auth, email, password);
+    const { user } = await createUserWithEmailAndPassword(auth, email, password);
+    await sendVerificationEmail(user);
+    return res.json(user);
   } catch(error) {
+
     if(error instanceof FirebaseError) {
       const status = getFirebaseErrorHttpStatusCode(error.code);
       return res.status(status).send(error.message);
